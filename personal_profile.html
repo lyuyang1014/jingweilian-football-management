@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>球员资料 - 2025京蔚联足球队</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --secondary-blue: #5AC8FA;
+            --tertiary-blue: #E8F2FF;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --text-tertiary: #8E8E93;
+            --separator: rgba(60, 60, 67, 0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            opacity: 0.7;
+        }
+
+        .nav-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 页头基本信息 */
+        .header-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .jersey-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .jersey-display {
+            position: relative;
+            width: 90px;
+            height: 110px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M25 20 L75 20 L82 20 L82 42 L75 42 L75 95 Q75 97 73 97 L27 97 Q25 97 25 95 L25 42 L18 42 L18 20 Z" fill="none" stroke="%23007AFF" stroke-width="2" stroke-linejoin="round"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .jersey-pinyin-text {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 9px;
+            font-weight: 700;
+            color: #007AFF;
+        }
+
+        .jersey-number-text {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: 900;
+            color: #007AFF;
+        }
+
+        .jersey-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .player-main-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .player-basic-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .info-icon {
+            color: var(--primary-blue);
+            width: 16px;
+        }
+
+        .info-value {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 位置和评分 */
+        .position-rating {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--separator);
+        }
+
+        .position-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .position-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .position-badge.secondary {
+            background: var(--secondary-blue);
+        }
+
+        .overall-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        /* 标签区域 */
+        .tags-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .tags-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .group-tag {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .feature-tag {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* 专业技术描述 */
+        .description-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .description-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* 雷达图 */
+        .radar-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .radar-container {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        /* 擅长位置 */
+        .formations-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .field-container {
+            margin: 20px 0;
+        }
+
+        .formation-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+
+        .formation-btn {
+            padding: 8px 16px;
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .formation-btn:hover {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+        }
+
+        .formation-btn.active {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .football-field {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            aspect-ratio: 2/3;
+            background: linear-gradient(
+                90deg,
+                #2d8a3e 0%,
+                #359946 20%,
+                #2d8a3e 40%,
+                #359946 60%,
+                #2d8a3e 80%,
+                #359946 100%
+            );
+            border: 3px solid white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .field-markings {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        /* 中圈 */
+        .center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .center-spot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 中线 */
+        .halfway-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white;
+            transform: translateY(-50%);
+        }
+
+        /* 大禁区（18码区域）*/
+        .penalty-area-top, .penalty-area-bottom {
+            position: absolute;
+            left: 20%;
+            width: 60%;
+            height: 16%;
+            border: 2px solid white;
+        }
+
+        .penalty-area-top {
+            top: 0;
+            border-top: none;
+        }
+
+        .penalty-area-bottom {
+            bottom: 0;
+            border-bottom: none;
+        }
+
+        /* 小禁区（6码区域）*/
+        .goal-area-top, .goal-area-bottom {
+            position: absolute;
+            left: 35%;
+            width: 30%;
+            height: 8%;
+            border: 2px solid white;
+        }
+
+        .goal-area-top {
+            top: 0;
+            border-top: none;
+        }
+
+        .goal-area-bottom {
+            bottom: 0;
+            border-bottom: none;
+        }
+
+        /* 点球点 */
+        .penalty-spot-top, .penalty-spot-bottom {
+            position: absolute;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .penalty-spot-top {
+            top: 12%;
+        }
+
+        .penalty-spot-bottom {
+            bottom: 12%;
+        }
+
+        /* 角球弧 */
+        .corner-arc {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+
+        .corner-arc.top-left {
+            top: -10px;
+            left: -10px;
+            border-bottom: none;
+            border-right: none;
+        }
+
+        .corner-arc.top-right {
+            top: -10px;
+            right: -10px;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        .corner-arc.bottom-left {
+            bottom: -10px;
+            left: -10px;
+            border-top: none;
+            border-right: none;
+        }
+
+        .corner-arc.bottom-right {
+            bottom: -10px;
+            right: -10px;
+            border-top: none;
+            border-left: none;
+        }
+
+        /* 球门 */
+        .goal-top, .goal-bottom {
+            position: absolute;
+            left: 42%;
+            width: 16%;
+            height: 3%;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .goal-top {
+            top: -3%;
+        }
+
+        .goal-bottom {
+            bottom: -3%;
+        }
+
+        /* 球员位置点 */
+        .player-position {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 3px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: white;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .player-position.main-position {
+            background: #1e40af;
+            border-color: #1e40af;
+            z-index: 10;
+        }
+
+        .player-position.secondary-position {
+            background: #60a5fa;
+            border-color: #60a5fa;
+            z-index: 8;
+        }
+
+        .player-position:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .position-label {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            font-weight: 600;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .football-field {
+                max-width: 300px;
+            }
+            
+            .player-position {
+                width: 24px;
+                height: 24px;
+                font-size: 9px;
+            }
+            
+            .position-label {
+                font-size: 7px;
+            }
+        }
+
+        /* 数值统计 */
+        .stats-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stats-category {
+            margin-bottom: 24px;
+        }
+
+        .category-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--background);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .stat-item:hover {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+        }
+
+        .stat-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-body {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .modal-score {
+            display: inline-block;
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .player-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .player-basic-info {
+                grid-template-columns: 1fr;
+            }
+
+            .position-rating {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 球场阵容图样式 */
+        .field-container {
+            margin: 20px 0;
+        }
+
+        /* 活动统计样式 */
+        .activity-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-item.highlight {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .stat-item.highlight .stat-value {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .activity-stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 比赛事件样式 */
+        .events-summary, .network-summary {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--tertiary-blue);
+            border-radius: var(--radius-md);
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-number {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .events-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--background);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .event-icon {
+            font-size: 20px;
+            width: 32px;
+            text-align: center;
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .event-type {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .event-time {
+            font-size: 12px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .event-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .events-more, .cooperation-more {
+            text-align: center;
+            padding: 12px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* 合作网络样式 */
+        .cooperation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .cooperation-item {
+            padding: 16px;
+            background: var(--background);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--separator);
+        }
+
+        .partner-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .cooperation-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .stat-pair {
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--surface);
+        }
+
+        .stat-pair.highlight {
+            background: var(--tertiary-blue);
+        }
+
+        .stat-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-pair .stat-value {
+            display: block;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        /* 个人偏好 */
+        .preferences-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preferences-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .preference-category {
+            background: var(--background);
+            border-radius: var(--radius-md);
+            padding: 16px;
+        }
+
+        .preference-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preference-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preference-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--separator);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .preference-item:hover {
+            background: var(--tertiary-blue);
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .preference-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .club-icon {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+        }
+
+        .player-icon {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .preference-info {
+            flex: 1;
+        }
+
+        .preference-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .preference-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .preference-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* 属性描述模态框样式 */
+        .attribute-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .attribute-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+        }
+
+        .attribute-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--separator);
+            padding-bottom: 12px;
+        }
+
+        .attribute-modal-header h3 {
+            margin: 0;
+            color: var(--primary-blue);
+        }
+
+        .attribute-score {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-tertiary);
+        }
+
+        .close-modal:hover {
+            color: var(--text-primary);
+        }
+
+        .attribute-modal-body p {
+            margin: 0;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <a href="display.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span>返回</span>
+            </a>
+            <div class="nav-title">球员资料</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 页头基本信息 -->
+        <div class="header-section">
+            <div class="player-header">
+                <div class="jersey-container">
+                    <div class="jersey-display" id="jerseyDisplay">
+                        <div class="jersey-number-text" id="jerseyNumber">?</div>
+                        <div class="jersey-pinyin-text" id="jerseyPinyin">UNKNOWN</div>
+                    </div>
+                    <div class="jersey-label" id="jerseyLabel">球衣号码</div>
+                </div>
+                <div class="player-main-info">
+                    <div class="player-name" id="playerName">加载中...</div>
+                    <div class="player-basic-info" id="basicInfo">
+                        <!-- 基本信息将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="position-rating">
+                <div class="position-badges" id="positionBadges">
+                    <!-- 位置徽章将在这里动态生成 -->
+                </div>
+                <div class="overall-rating">
+                    <span id="overallRating">0</span>
+                    <span>总评</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 标签 -->
+        <div class="tags-section">
+            <div class="section-title">球员标签</div>
+            <div class="tags-container" id="tagsContainer">
+                <!-- 标签将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 喜爱俱乐部和球员 -->
+        <div class="preferences-section">
+            <div class="section-title">个人偏好</div>
+            <div class="preferences-container" id="preferencesContainer">
+                <!-- 偏好信息将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 专业技术描述 -->
+        <div class="description-section" id="descriptionSection">
+            <div class="section-title">专业技术描述</div>
+            <div class="description-text" id="descriptionText">
+                <!-- 描述将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 雷达图 -->
+        <div class="radar-section">
+            <div class="section-title">能力雷达图</div>
+            <div class="radar-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 擅长位置 -->
+        <div class="formations-section" id="formationsSection">
+            <div class="section-title">阵型中擅长位置</div>
+            <div class="field-container">
+                <div class="formation-selector" id="formationSelector">
+                    <!-- 阵型按钮将在这里动态生成 -->
+                </div>
+                <div class="football-field">
+                    <!-- 球场标线 -->
+                    <div class="field-markings">
+                        <div class="center-circle"></div>
+                        <div class="center-spot"></div>
+                        <div class="halfway-line"></div>
+                        <div class="penalty-area-top"></div>
+                        <div class="penalty-area-bottom"></div>
+                        <div class="goal-area-top"></div>
+                        <div class="goal-area-bottom"></div>
+                        <div class="penalty-spot-top"></div>
+                        <div class="penalty-spot-bottom"></div>
+                        <div class="corner-arc top-left"></div>
+                        <div class="corner-arc top-right"></div>
+                        <div class="corner-arc bottom-left"></div>
+                        <div class="corner-arc bottom-right"></div>
+                        <div class="goal-top"></div>
+                        <div class="goal-bottom"></div>
+                    </div>
+                    <!-- 球员位置将在这里动态生成 -->
+                    <div id="playersOnField"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活动统计 -->
+        <div class="stats-section">
+            <div class="section-title">活动统计</div>
+            <div id="activityStatsContainer">
+                <!-- 活动统计数据将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 比赛事件记录 -->
+        <div class="stats-section">
+            <div class="section-title">比赛事件记录</div>
+            <div id="matchEventsContainer">
+                <!-- 比赛事件将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 合作网络 -->
+        <div class="stats-section">
+            <div class="section-title">队友合作网络</div>
+            <div id="cooperationNetworkContainer">
+                <!-- 合作网络将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 各项数值 -->
+        <div class="stats-section">
+            <div class="section-title">详细数值</div>
+            <div id="statsContainer">
+                <!-- 统计数据将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据描述模态框 -->
+    <div class="modal" id="descriptionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">属性描述</div>
+                <button class="close-button" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- 描述内容将在这里显示 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPlayer = null;
+        let attributeDescriptions = {};
+
+        // 获取URL参数
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 中文姓氏转拼音
+        function chineseNameToPinyin(name) {
+            const pinyinMap = {
+                '艾': 'AI', '安': 'AN', '敖': 'AO',
+                '白': 'BAI', '班': 'BAN', '包': 'BAO', '鲍': 'BAO', '贝': 'BEI', '毕': 'BI', '卞': 'BIAN', '边': 'BIAN', '卜': 'BU',
+                '蔡': 'CAI', '曹': 'CAO', '岑': 'CEN', '查': 'ZHA', '柴': 'CHAI', '常': 'CHANG', '车': 'CHE', '陈': 'CHEN', '成': 'CHENG', '程': 'CHENG', '池': 'CHI', '仇': 'QIU', '楚': 'CHU', '储': 'CHU', '崔': 'CUI', '从': 'CONG', '迟': 'CHI',
+                '戴': 'DAI', '单': 'SHAN', '邓': 'DENG', '狄': 'DI', '刁': 'DIAO', '丁': 'DING', '董': 'DONG', '窦': 'DOU', '杜': 'DU', '段': 'DUAN', '独': 'DU',
+                '鄂': 'E',
+                '范': 'FAN', '方': 'FANG', '费': 'FEI', '冯': 'FENG', '封': 'FENG', '符': 'FU', '傅': 'FU', '富': 'FU',
+                '盖': 'GAI', '甘': 'GAN', '高': 'GAO', '葛': 'GE', '耿': 'GENG', '弓': 'GONG', '宫': 'GONG', '龚': 'GONG', '谷': 'GU', '顾': 'GU', '关': 'GUAN', '管': 'GUAN', '郭': 'GUO', '国': 'GUO',
+                '海': 'HAI', '韩': 'HAN', '杭': 'HANG', '郝': 'HAO', '何': 'HE', '贺': 'HE', '洪': 'HONG', '侯': 'HOU', '胡': 'HU', '花': 'HUA', '华': 'HUA', '黄': 'HUANG', '霍': 'HUO',
+                '纪': 'JI', '季': 'JI', '贾': 'JIA', '简': 'JIAN', '江': 'JIANG', '姜': 'JIANG', '蒋': 'JIANG', '焦': 'JIAO', '金': 'JIN', '景': 'JING', '荆': 'JING', '井': 'JING',
+                '康': 'KANG', '柯': 'KE', '孔': 'KONG', '寇': 'KOU', '库': 'KU',
+                '赖': 'LAI', '蓝': 'LAN', '郎': 'LANG', '劳': 'LAO', '乐': 'LE', '雷': 'LEI', '黎': 'LI', '李': 'LI', '连': 'LIAN', '廉': 'LIAN', '梁': 'LIANG', '廖': 'LIAO', '林': 'LIN', '凌': 'LING', '刘': 'LIU', '柳': 'LIU', '龙': 'LONG', '娄': 'LOU', '卢': 'LU', '陆': 'LU', '路': 'LU', '吕': 'LV', '罗': 'LUO', '骆': 'LUO',
+                '马': 'MA', '麦': 'MAI', '满': 'MAN', '毛': 'MAO', '梅': 'MEI', '孟': 'MENG', '米': 'MI', '苗': 'MIAO', '闵': 'MIN', '明': 'MING', '莫': 'MO', '牟': 'MOU', '穆': 'MU',
+                '南': 'NAN', '倪': 'NI', '聂': 'NIE', '宁': 'NING', '牛': 'NIU', '农': 'NONG',
+                '欧': 'OU', '欧阳': 'OUYANG',
+                '潘': 'PAN', '庞': 'PANG', '裴': 'PEI', '彭': 'PENG', '皮': 'PI', '平': 'PING', '蒲': 'PU', '濮': 'PU',
+                '戚': 'QI', '钱': 'QIAN', '强': 'QIANG', '乔': 'QIAO', '秦': 'QIN', '邱': 'QIU', '屈': 'QU', '全': 'QUAN',
+                '冉': 'RAN', '饶': 'RAO', '任': 'REN', '容': 'RONG', '阮': 'RUAN', '芮': 'RUI',
+                '萨': 'SA', '邵': 'SHAO', '申': 'SHEN', '沈': 'SHEN', '盛': 'SHENG', '师': 'SHI', '石': 'SHI', '时': 'SHI', '史': 'SHI', '司': 'SI', '宋': 'SONG', '苏': 'SU', '孙': 'SUN',
+                '谭': 'TAN', '唐': 'TANG', '陶': 'TAO', '滕': 'TENG', '田': 'TIAN', '童': 'TONG', '涂': 'TU', '屠': 'TU',
+                '万': 'WAN', '汪': 'WANG', '王': 'WANG', '韦': 'WEI', '魏': 'WEI', '温': 'WEN', '文': 'WEN', '翁': 'WENG', '巫': 'WU', '吴': 'WU', '武': 'WU',
+                '夏': 'XIA', '冼': 'XIAN', '项': 'XIANG', '肖': 'XIAO', '谢': 'XIE', '辛': 'XIN', '邢': 'XING', '熊': 'XIONG', '徐': 'XU', '许': 'XU', '薛': 'XUE', '荀': 'XUN',
+                '严': 'YAN', '颜': 'YAN', '杨': 'YANG', '姚': 'YAO', '叶': 'YE', '易': 'YI', '殷': 'YIN', '尹': 'YIN', '应': 'YING', '游': 'YOU', '于': 'YU', '余': 'YU', '俞': 'YU', '袁': 'YUAN', '岳': 'YUE', '云': 'YUN', '衣': 'YI',
+                '曾': 'ZENG', '翟': 'ZHAI', '张': 'ZHANG', '章': 'ZHANG', '赵': 'ZHAO', '郑': 'ZHENG', '钟': 'ZHONG', '周': 'ZHOU', '朱': 'ZHU', '竹': 'ZHU', '庄': 'ZHUANG', '卓': 'ZHUO', '宗': 'ZONG', '邹': 'ZOU', '祖': 'ZU', '左': 'ZUO'
+            };
+            
+            const firstChar = name.charAt(0);
+            return pinyinMap[firstChar] || 'UNKNOWN';
+        }
+
+        // 从球员特点描述中提取惯用脚
+        function extractPreferredFoot(description) {
+            if (!description) return '未知';
+            if (description.includes('左脚')) return '左脚';
+            if (description.includes('右脚')) return '右脚';
+            if (description.includes('双足') || description.includes('逆足几乎无差别')) return '双足';
+            return '未知';
+        }
+
+        // 逆足能力转换为星星
+        function weakFootToStars(value) {
+            const score = parseInt(value) || 58;
+            if (score >= 58 && score <= 63) return '🌟';
+            if (score >= 64 && score <= 66) return '🌟🌟';
+            if (score >= 67 && score <= 68) return '🌟🌟🌟';
+            if (score >= 69 && score <= 72) return '🌟🌟🌟🌟';
+            if (score >= 73) return '🌟🌟🌟🌟🌟';
+            return '🌟';
+        }
+
+        // 计算雷达图数据
+        function calculateRadarData(player) {
+            // 检查是否为门将
+            if (player.主要位置 === 'GK') {
+                // 门将专用雷达图
+                const goalkeeping = Math.round((
+                    (parseInt(player.反应速度) || 0) +
+                    (parseInt(player.守门扑救) || 0) +
+                    (parseInt(player.扑接出击) || 0)
+                ) / 3);
+
+                const distribution = Math.round((
+                    (parseInt(player.守门长传) || 0) +
+                    (parseInt(player.传球短传) || 0) +
+                    (parseInt(player.传球长传) || 0)
+                ) / 3);
+
+                const aerial = Math.round((
+                    (parseInt(player.扑接高球) || 0) +
+                    (parseInt(player.高空球控制) || 0) +
+                    (parseInt(player.跑动跳跃) || 0)
+                ) / 3);
+
+                const positioning = parseInt(player.守门站位) || 0;
+                const physical = Math.round((
+                    (parseInt(player.跑动体力) || 0) +
+                    (parseInt(player.跑动敏捷) || 0)
+                ) / 2);
+                const reflexes = parseInt(player.反应速度) || 0;
+
+                return [goalkeeping, distribution, aerial, positioning, physical, reflexes];
+            } else {
+                // 非门将球员雷达图（使用简化字段名）
+                const attack = Math.round((
+                    (parseInt(player.射门) || 0) +
+                    (parseInt(player.远射) || 0) +
+                    (parseInt(player.头球) || 0)
+                ) / 3);
+
+                const technique = Math.round((
+                    (parseInt(player.传球) || 0) +
+                    (parseInt(player.盘带) || 0) +
+                    (parseInt(player.停球) || 0)
+                ) / 3);
+
+                const physical = Math.round((
+                    (parseInt(player.耐力) || 0) +
+                    (parseInt(player.体能恢复) || 0)
+                ) / 2);
+
+                const defense = parseInt(player.抢断) || 0;
+                const strength = parseInt(player.强壮) || 0;
+                const speed = parseInt(player.速度) || 0;
+
+                return [attack, technique, physical, defense, strength, speed];
+            }
+        }
+
+        // 创建雷达图
+        function createRadarChart(player) {
+            const ctx = document.getElementById('radarChart');
+            const radarData = calculateRadarData(player);
+            
+            // 根据球员位置选择标签
+            const labels = player.主要位置 === 'GK' ? 
+                ['扑救', '传球', '高空球', '位置感', '体能', '反应'] :
+                ['进攻', '技术', '体能', '防守', '力量', '速度'];
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: radarData,
+                        borderColor: '#007AFF',
+                        backgroundColor: 'rgba(0, 122, 255, 0.15)',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#007AFF',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: false,
+                            max: 99,
+                            min: 60,
+                            ticks: {
+                                display: false,
+                                stepSize: 5
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#666666'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 加载属性描述
+        async function loadAttributeDescriptions() {
+            try {
+                const response = await fetch('/api/attributes');
+                if (response.ok) {
+                    const data = await response.json();
+                    attributeDescriptions = data;
+                }
+            } catch (error) {
+                console.error('加载属性描述失败:', error);
+            }
+        }
+
+        // 获取属性描述
+        function getAttributeDescription(attributeName, value) {
+            if (!attributeDescriptions[attributeName]) return null;
+            
+            const descriptions = attributeDescriptions[attributeName];
+            for (const desc of descriptions) {
+                const [min, max] = desc.range;
+                if (value >= min && value <= max) {
+                    return desc.description;
+                }
+            }
+            return null;
+        }
+
+        // 显示属性描述模态框
+        function showAttributeDescription(attributeName, value) {
+            const description = getAttributeDescription(attributeName, value);
+            if (!description) return;
+
+            document.getElementById('modalTitle').textContent = attributeName;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="modal-score">数值：${value}</div>
+                <p>${description}</p>
+            `;
+            document.getElementById('descriptionModal').style.display = 'block';
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('descriptionModal').style.display = 'none';
+        }
+
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('descriptionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // 332阵型位置映射（基于实际位置的动态布局）
+        const formationPositions = {
+            '332': {  // 3后卫-3中场-2前锋的基本布局
+                // 后卫线（3人）
+                'CB': [50, 75], 'LB': [25, 75], 'RB': [75, 75],
+                // 中场线（3人）  
+                'CDM': [50, 55], 'CM': [35, 50], 'CAM': [50, 45],
+                'LM': [20, 50], 'RM': [80, 50],
+                // 前锋线（2人）
+                'ST': [50, 25], 'LW': [30, 25], 'RW': [70, 25]
+            }
+        };
+
+        // 创建球场阵容图
+        function createFormationField(player) {
+            const formationSelector = document.getElementById('formationSelector');
+            const playersOnField = document.getElementById('playersOnField');
+            
+            // 只检查332阵型
+            const formation = '332';
+            const playerPosition = player[`${formation}擅长位置`];
+            
+            if (!playerPosition || !playerPosition.trim()) {
+                document.getElementById('formationsSection').style.display = 'none';
+                return;
+            }
+            
+            // 隐藏阵型选择器，因为只有一个阵型
+            formationSelector.style.display = 'none';
+            
+            // 直接显示332阵型
+            showFormation(formation);
+        }
+
+        // 显示特定阵型
+        function showFormation(formation) {
+            const playersOnField = document.getElementById('playersOnField');
+            const positions = formationPositions[formation];
+            const mainPosition = currentPlayer['主要位置'];
+            const secondaryPosition = currentPlayer['次要位置'];
+            
+            if (!positions) return;
+            
+            let fieldHtml = '';
+            
+            // 显示主要位置
+            if (mainPosition && mainPosition.trim()) {
+                let position = positions[mainPosition];
+                if (!position) {
+                    // 如果没有预设位置，根据位置类型给一个合理的默认坐标
+                    if (mainPosition.includes('CB') || mainPosition.includes('B')) {
+                        position = [50, 75]; // 后卫位置
+                    } else if (mainPosition.includes('M') || mainPosition.includes('CM') || mainPosition.includes('DM')) {
+                        position = [40, 50]; // 中场位置  
+                    } else if (mainPosition.includes('W') || mainPosition.includes('ST')) {
+                        position = [50, 25]; // 前锋位置
+                    } else {
+                        position = [50, 50]; // 默认中场
+                    }
+                }
+                
+                const [x, y] = position;
+                const playerNumber = currentPlayer.背号 || currentPlayer.球衣号码 || '?';
+                
+                fieldHtml += `
+                    <div class="player-position main-position" 
+                         style="left: ${x}%; top: ${y}%;"
+                         title="${currentPlayer.姓名} - ${mainPosition}">
+                        <div class="position-label">${mainPosition}</div>
+                        ${playerNumber}
+                    </div>
+                `;
+            }
+            
+            // 显示次要位置
+            if (secondaryPosition && secondaryPosition.trim() && secondaryPosition !== mainPosition) {
+                let position = positions[secondaryPosition];
+                if (!position) {
+                    // 如果没有预设位置，根据位置类型给一个合理的默认坐标
+                    if (secondaryPosition.includes('CB') || secondaryPosition.includes('B')) {
+                        position = [65, 75]; // 后卫位置（错开主要位置）
+                    } else if (secondaryPosition.includes('M') || secondaryPosition.includes('CM') || secondaryPosition.includes('DM')) {
+                        position = [60, 50]; // 中场位置（错开主要位置）
+                    } else if (secondaryPosition.includes('W') || secondaryPosition.includes('ST')) {
+                        position = [65, 25]; // 前锋位置（错开主要位置）
+                    } else {
+                        position = [60, 50]; // 默认中场（错开主要位置）
+                    }
+                }
+                
+                const [x, y] = position;
+                const playerNumber = currentPlayer.背号 || currentPlayer.球衣号码 || '?';
+                
+                fieldHtml += `
+                    <div class="player-position secondary-position" 
+                         style="left: ${x}%; top: ${y}%;"
+                         title="${currentPlayer.姓名} - ${secondaryPosition}">
+                        <div class="position-label">${secondaryPosition}</div>
+                        ${playerNumber}
+                    </div>
+                `;
+            }
+            
+            playersOnField.innerHTML = fieldHtml;
+        }
+
+        // 渲染球员信息
+        function renderPlayerProfile(player) {
+            currentPlayer = player;
+            
+            // 更新页面标题
+            document.title = `${player.姓名} - 球员资料`;
+            
+            // 基本信息
+            document.getElementById('playerName').textContent = player.姓名;
+            
+            // 门将使用"背号"字段，其他球员使用"球衣号码"字段
+            const jerseyNumber = player.背号 || player.球衣号码 || '?';
+            const playerPinyin = chineseNameToPinyin(player.姓名);
+            
+            document.getElementById('jerseyNumber').textContent = jerseyNumber;
+            document.getElementById('jerseyPinyin').textContent = playerPinyin;
+            document.getElementById('jerseyLabel').textContent = jerseyNumber === '?' ? '未选号码' : `${jerseyNumber}号球衣`;
+            
+            // 基本信息网格
+            const basicInfo = document.getElementById('basicInfo');
+            const zodiacIcons = {
+                '白羊座': '♈', '金牛座': '♉', '双子座': '♊', '巨蟹座': '♋',
+                '狮子座': '♌', '处女座': '♍', '天秤座': '♎', '天蝎座': '♏',
+                '射手座': '♐', '摩羯座': '♑', '水瓶座': '♒', '双鱼座': '♓'
+            };
+            
+            basicInfo.innerHTML = `
+                <div class="info-item">
+                    <i class="fas fa-id-card info-icon"></i>
+                    <span class="info-value">${player.蔚来app昵称 || '未设置'}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-birthday-cake info-icon"></i>
+                    <span class="info-value">${player.年龄}岁</span>
+                </div>
+                <div class="info-item">
+                    <span style="font-size: 16px;">${zodiacIcons[player.星座] || '⭐'}</span>
+                    <span class="info-value">${player.星座}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-shoe-prints info-icon"></i>
+                    <span class="info-value">${extractPreferredFoot(player.球员特点描述)}</span>
+                </div>
+                <div class="info-item">
+                    <span style="font-size: 16px;">⚽</span>
+                    <span class="info-value">逆足 ${weakFootToStars(player.逆足能力)}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-coins info-icon" style="color: #FFD700;"></i>
+                    <span class="info-value" style="color: #FF6B35; font-weight: 600;">
+                        身价 ${formatMarketValue(player.身价 || player.marketValue)}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-star info-icon" style="color: #FFD700;"></i>
+                    <span class="info-value">平均分 ${player.averageRating ? player.averageRating.toFixed(1) : '0.0'}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-crown info-icon" style="color: #FF6B35;"></i>
+                    <span class="info-value">MVP ${player.mvpCount || 0}次</span>
+                </div>
+            `;
+
+            // 位置和评分
+            const positionBadges = document.getElementById('positionBadges');
+            let badgesHtml = '';
+            if (player.主要位置) {
+                badgesHtml += `<span class="position-badge">${player.主要位置}</span>`;
+            }
+            if (player.次要位置) {
+                badgesHtml += `<span class="position-badge secondary">${player.次要位置}</span>`;
+            }
+            positionBadges.innerHTML = badgesHtml;
+            
+            // 门将使用"综合评分"，其他球员使用"综合能力"
+            const overallRating = player.综合评分 || player.综合能力 || '0';
+            document.getElementById('overallRating').textContent = overallRating;
+            
+            // 标签
+            const tagsContainer = document.getElementById('tagsContainer');
+            let tagsHtml = `<span class="tag group-tag">${player.组别}</span>`;
+            
+            if (player.标签1) tagsHtml += `<span class="tag feature-tag">${player.标签1}</span>`;
+            if (player.标签2) tagsHtml += `<span class="tag feature-tag">${player.标签2}</span>`;
+            if (player.标签3) tagsHtml += `<span class="tag feature-tag">${player.标签3}</span>`;
+            if (player.标签4) tagsHtml += `<span class="tag feature-tag">${player.标签4}</span>`;
+            
+            tagsContainer.innerHTML = tagsHtml;
+            
+            // 个人偏好
+            renderPreferences(player.preferences);
+            
+            // 专业技术描述
+            const descriptionSection = document.getElementById('descriptionSection');
+            if (player.指挥交流 && player.指挥交流.trim()) {
+                document.getElementById('descriptionText').textContent = player.指挥交流;
+            } else {
+                descriptionSection.style.display = 'none';
+            }
+            
+            // 雷达图
+            setTimeout(() => {
+                createRadarChart(player);
+            }, 100);
+            
+            // 阵型擅长位置 - 门将不显示这个部分
+            const formationsSection = document.getElementById('formationsSection');
+            if (player.主要位置 === 'GK') {
+                formationsSection.style.display = 'none';
+            } else {
+                createFormationField(player);
+            }
+            
+            // 各项数值
+            renderStats(player);
+            
+            // 加载活动统计
+            loadActivityStats(player.姓名);
+            
+            // 加载比赛事件
+            loadMatchEvents(player.姓名);
+            
+            // 加载合作网络
+            loadCooperationNetwork(player.姓名);
+        }
+
+        // 渲染统计数据
+        function renderStats(player) {
+            const statsContainer = document.getElementById('statsContainer');
+            
+            let categories;
+            
+            if (player.主要位置 === 'GK') {
+                // 门将专用属性分类
+                categories = {
+                    '守门员属性': ['反应速度', '扑接高球', '扑接出击', '守门站位', '守门扑救', '守门长传', '高空球控制'],
+                    '技术属性': ['传球短传', '传球长传', '传球穿透', '盘带基础', '盘带速度', '盘带技巧'],
+                    '身体属性': ['跑动体力', '跑动爆发', '跑动瞬间', '跑动平衡', '跑动敏捷', '跑动跳跃'],
+                    '精神属性': ['进攻意识', '终结能力', '远射', '头球精度']
+                };
+            } else {
+                // 非门将球员属性分类（移除守门员属性）
+                categories = {
+                    '技术属性': ['传球', '停球', '盘带', '射门', '头球', '抢断', '远射', '传中', '定位球', '技术综合'],
+                    '精神属性': ['积极性', '比赛阅读', '勇敢决心', '冷静', '专注度', '团队合作', '大局观', '领导力'],
+                    '身体属性': ['速度', '耐力', '强壮', '敏捷平衡', '弹跳', '体能恢复'],
+                    '综合评价': ['逆足能力', '综合评分', '综合能力']
+                };
+            }
+            
+            let statsHtml = '';
+            
+            Object.entries(categories).forEach(([categoryName, attributes]) => {
+                const categoryStats = attributes.filter(attr => player[attr] && player[attr] !== '0' && player[attr] !== '');
+                
+                if (categoryStats.length > 0) {
+                    statsHtml += `
+                        <div class="stats-category">
+                            <div class="category-title">${categoryName}</div>
+                            <div class="stats-grid">
+                    `;
+                    
+                    categoryStats.forEach(attr => {
+                        const value = player[attr];
+                        // 对于逆足能力，显示星星而不是数值
+                        let displayValue = value;
+                        if (attr === '逆足能力') {
+                            displayValue = weakFootToStars(value);
+                        }
+                        
+                        statsHtml += `
+                            <div class="stat-item" onclick="showAttributeDescription('${attr}', ${value})">
+                                <span class="stat-name">${attr}</span>
+                                <span class="stat-value">${displayValue}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    statsHtml += `
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            statsContainer.innerHTML = statsHtml;
+        }
+
+        // 获取和渲染活动统计
+        async function loadActivityStats(playerName) {
+            try {
+                const response = await fetch(`/api/player/${encodeURIComponent(playerName)}/stats`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        renderActivityStats(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('加载活动统计失败:', error);
+            }
+        }
+
+        // 渲染活动统计数据
+        function renderActivityStats(statsData) {
+            const container = document.getElementById('activityStatsContainer');
+            const { matchStats, trainingStats } = statsData;
+            
+            const html = `
+                <div class="activity-stats-grid">
+                    <!-- 比赛统计 -->
+                    <div class="stats-category">
+                        <div class="category-title">⚽ 比赛数据</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-name">总比赛场次</span>
+                                <span class="stat-value">${matchStats.totalMatches}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">首发次数</span>
+                                <span class="stat-value">${matchStats.starterMatches}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">替补次数</span>
+                                <span class="stat-value">${matchStats.substituteMatches}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">总进球数</span>
+                                <span class="stat-value">${matchStats.totalGoals}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">总助攻数</span>
+                                <span class="stat-value">${matchStats.totalAssists}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">竞技组比赛</span>
+                                <span class="stat-value">${matchStats.competitiveMatches}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">兴趣组比赛</span>
+                                <span class="stat-value">${matchStats.recreationalMatches}</span>
+                            </div>
+                            <div class="stat-item highlight">
+                                <span class="stat-name">场均进球</span>
+                                <span class="stat-value">${matchStats.totalMatches > 0 ? (matchStats.totalGoals / matchStats.totalMatches).toFixed(2) : '0.00'}</span>
+                            </div>
+                            <div class="stat-item highlight">
+                                <span class="stat-name">平均评分</span>
+                                <span class="stat-value">${currentPlayer && currentPlayer.averageRating ? currentPlayer.averageRating.toFixed(1) : '0.0'}</span>
+                            </div>
+                            <div class="stat-item highlight">
+                                <span class="stat-name">MVP次数</span>
+                                <span class="stat-value">${currentPlayer && currentPlayer.mvpCount ? currentPlayer.mvpCount : 0}次</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 训练统计 -->
+                    <div class="stats-category">
+                        <div class="category-title">🏃 训练数据</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-name">报名总次数</span>
+                                <span class="stat-value">${trainingStats.totalRegistrations}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">实际出勤</span>
+                                <span class="stat-value">${trainingStats.totalAttendance}</span>
+                            </div>
+                            <div class="stat-item highlight">
+                                <span class="stat-name">出勤率</span>
+                                <span class="stat-value">${trainingStats.attendanceRate}%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">队内训练</span>
+                                <span class="stat-value">${trainingStats.attendedTeamTrainings}/${trainingStats.teamTrainings}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-name">对抗比赛</span>
+                                <span class="stat-value">${trainingStats.attendedSkirmishMatches}/${trainingStats.skirmishMatches}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // 获取和渲染比赛事件
+        async function loadMatchEvents(playerName) {
+            try {
+                const response = await fetch(`/api/player/${encodeURIComponent(playerName)}/events`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        renderMatchEvents(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('加载比赛事件失败:', error);
+            }
+        }
+
+        // 渲染比赛事件记录
+        function renderMatchEvents(eventsData) {
+            const container = document.getElementById('matchEventsContainer');
+            const { events, goals, assists, matchSummary } = eventsData;
+            
+            if (events.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-tertiary); padding: 20px;">暂无比赛事件记录</p>';
+                return;
+            }
+            
+            // 按比赛分组显示
+            const matchesHtml = (matchSummary || []).slice(0, 8).map(match => {
+                // 获取该比赛的activityId
+                const activityId = match.events && match.events.length > 0 ? match.events[0].activityId : null;
+                
+                const eventsInMatch = match.events.map(event => {
+                    const isGoal = event.role === '进球者';
+                    const icon = isGoal ? '⚽' : '🅰️';
+                    const roleText = isGoal ? '进球' : '助攻';
+                    const partnerText = isGoal ? 
+                        (event.assister ? `🅰️ ${event.assister}` : '无助攻') :
+                        `⚽ ${event.scorer}`;
+                    
+                    return `
+                        <div class="event-detail" style="display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 0.85rem;">
+                            <span style="font-size: 1rem;">${icon}</span>
+                            <span style="background: #667eea; color: white; padding: 2px 6px; border-radius: 10px; min-width: 30px; text-align: center; font-size: 0.75rem;">${event.minute}'</span>
+                            <span style="font-weight: 500;">${roleText}</span>
+                            <span style="color: #666;">${partnerText}</span>
+                        </div>
+                    `;
+                }).join('');
+                
+                return `
+                    <div class="match-event-item clickable-match" 
+                         onclick="goToMatchDetail('${activityId}')" 
+                         style="background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s ease;" 
+                         onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.15)'" 
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)'">
+                        <div class="match-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div class="match-info" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-weight: 600; color: #333;">${match.date}</span>
+                                <span style="color: #999;">vs</span>
+                                <span style="font-weight: 500; color: #667eea;">${match.opponent}</span>
+                                <i class="fas fa-external-link-alt" style="color: #999; font-size: 0.8rem; margin-left: 8px;" title="点击查看比赛详情"></i>
+                            </div>
+                            <div class="match-stats" style="display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #f0f7ff; color: #667eea; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">${match.group}</span>
+                                <span style="background: ${match.participationStatus === '首发' ? '#e8f5e8' : '#fff3e0'}; color: ${match.participationStatus === '首发' ? '#2e7d32' : '#f57c00'}; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">${match.participationStatus}</span>
+                            </div>
+                        </div>
+                        <div class="match-performance">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                <span style="background: #4caf50; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">${match.goals}球</span>
+                                <span style="background: #2196f3; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">${match.assists}助攻</span>
+                                <span style="background: #ff9800; color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 500;">${match.goals + match.assists}贡献</span>
+                            </div>
+                            <div class="event-details-list">
+                                ${eventsInMatch}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // 最近10个事件的时间线显示
+            const timelineHtml = events.slice(0, 10).map(event => {
+                const isGoal = event.role === '进球者';
+                const icon = isGoal ? '⚽' : '🅰️';
+                const roleText = isGoal ? '进球' : '助攻';
+                const partnerText = isGoal ? 
+                    (event.assister ? `助攻：${event.assister}` : '单独破门') :
+                    `进球者：${event.scorer}`;
+                
+                return `
+                    <div class="timeline-item clickable-match" 
+                         onclick="goToMatchDetail('${event.activityId}')"
+                         style="display: flex; gap: 12px; padding: 12px; background: white; border-radius: 8px; margin-bottom: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.3s ease;"
+                         onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'" 
+                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 1px 4px rgba(0,0,0,0.1)'">
+                        <div style="font-size: 1.2rem; margin-top: 2px;">${icon}</div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <span style="font-weight: 600; color: #333;">${roleText}</span>
+                                <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">${event.minute}'</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 4px; font-size: 0.9rem;">
+                                <span style="color: #666;">${event.date}</span>
+                                <span style="color: #999;">vs</span>
+                                <span style="color: #667eea; font-weight: 500;">${event.opponent}</span>
+                                <span style="background: #f0f7ff; color: #667eea; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${event.group}</span>
+                                <i class="fas fa-external-link-alt" style="color: #999; font-size: 0.7rem;" title="点击查看比赛详情"></i>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+                                <span style="color: #666;">${partnerText}</span>
+                                <span style="background: ${event.participationStatus === '首发' ? '#e8f5e8' : '#fff3e0'}; color: ${event.participationStatus === '首发' ? '#2e7d32' : '#f57c00'}; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">${event.participationStatus}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `
+                <div class="events-summary">
+                    <div class="summary-item">
+                        <span class="summary-number">${goals}</span>
+                        <span class="summary-label">进球</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-number">${assists}</span>
+                        <span class="summary-label">助攻</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-number">${events.length}</span>
+                        <span class="summary-label">总事件</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-number">${(matchSummary || []).length}</span>
+                        <span class="summary-label">参与比赛</span>
+                    </div>
+                </div>
+                
+                <div class="events-tabs" style="display: flex; margin: 20px 0 16px 0; border-bottom: 2px solid #f0f0f0;">
+                    <button class="tab-btn active" onclick="switchEventsTab('matches')" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 500; color: #667eea; border-bottom: 2px solid #667eea; cursor: pointer;">按比赛分组</button>
+                    <button class="tab-btn" onclick="switchEventsTab('timeline')" style="flex: 1; padding: 12px; border: none; background: none; font-weight: 500; color: #999; cursor: pointer;">时间线</button>
+                </div>
+                
+                <div id="matchesTab" class="tab-content active">
+                    <div class="matches-list">
+                        ${matchesHtml}
+                        ${(matchSummary || []).length > 8 ? '<div style="text-align: center; color: #999; padding: 16px; font-size: 0.9rem;">仅显示最近8场比赛 · 点击比赛记录查看详情</div>' : ''}
+                    </div>
+                </div>
+                
+                <div id="timelineTab" class="tab-content" style="display: none;">
+                    <div class="timeline-list">
+                        ${timelineHtml}
+                        ${events.length > 10 ? '<div style="text-align: center; color: #999; padding: 16px; font-size: 0.9rem;">仅显示最近10个事件 · 点击事件记录查看比赛详情</div>' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 跳转到比赛详情页
+        function goToMatchDetail(activityId) {
+            if (activityId && activityId !== 'null' && activityId !== 'undefined') {
+                // 保存当前球员名称到sessionStorage，用于比赛详情页的返回按钮
+                if (currentPlayer && currentPlayer.姓名) {
+                    sessionStorage.setItem('previousPlayerName', currentPlayer.姓名);
+                    sessionStorage.setItem('previousPage', 'player');
+                }
+                window.location.href = `match_detail.html?id=${activityId}`;
+            } else {
+                alert('比赛详情暂时无法查看');
+            }
+        }
+
+        // 切换事件显示标签
+        function switchEventsTab(tabName) {
+            // 更新按钮状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.style.color = '#999';
+                btn.style.borderBottom = 'none';
+            });
+            
+            event.target.classList.add('active');
+            event.target.style.color = '#667eea';
+            event.target.style.borderBottom = '2px solid #667eea';
+            
+            // 切换内容
+            document.getElementById('matchesTab').style.display = tabName === 'matches' ? 'block' : 'none';
+            document.getElementById('timelineTab').style.display = tabName === 'timeline' ? 'block' : 'none';
+        }
+
+        // 获取和渲染合作网络
+        async function loadCooperationNetwork(playerName) {
+            try {
+                const response = await fetch(`/api/player/${encodeURIComponent(playerName)}/network`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        renderCooperationNetwork(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('加载合作网络失败:', error);
+            }
+        }
+
+        // 渲染合作网络
+        function renderCooperationNetwork(networkData) {
+            const container = document.getElementById('cooperationNetworkContainer');
+            const { cooperations, networkSize } = networkData;
+            
+            if (cooperations.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-tertiary); padding: 20px;">暂无合作记录</p>';
+                return;
+            }
+            
+            const networkHtml = cooperations.slice(0, 8).map(coop => `
+                <div class="cooperation-item">
+                    <div class="partner-name">${coop.partnerName}</div>
+                    <div class="cooperation-stats">
+                        <div class="stat-pair">
+                            <span class="stat-label">助攻给我</span>
+                            <span class="stat-value">${coop.assistsToMe}</span>
+                        </div>
+                        <div class="stat-pair">
+                            <span class="stat-label">我助攻</span>
+                            <span class="stat-value">${coop.assistsFromMe}</span>
+                        </div>
+                        <div class="stat-pair highlight">
+                            <span class="stat-label">总配合</span>
+                            <span class="stat-value">${coop.totalCooperations}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `
+                <div class="network-summary">
+                    <div class="summary-item">
+                        <span class="summary-number">${networkSize}</span>
+                        <span class="summary-label">合作队友</span>
+                    </div>
+                </div>
+                <div class="cooperation-grid">
+                    ${networkHtml}
+                    ${cooperations.length > 8 ? '<div class="cooperation-more">仅显示前8名合作队友</div>' : ''}
+                </div>
+            `;
+        }
+
+        // 获取球员数据
+        async function fetchPlayer() {
+            const playerName = getUrlParameter('name');
+            if (!playerName) {
+                alert('未指定球员姓名');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/player/${encodeURIComponent(playerName)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderPlayerProfile(data.data);
+                } else {
+                    alert('未找到该球员');
+                }
+            } catch (error) {
+                console.error('获取球员数据失败:', error);
+                alert('获取球员数据失败');
+            }
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadAttributeDescriptions();
+            await fetchPlayer();
+        });
+
+        // 显示身价详情模态框
+        function showMarketValueDetail() {
+            if (!currentPlayer || !currentPlayer.marketValue) {
+                alert('身价信息加载中，请稍后再试');
+                return;
+            }
+            
+            const mv = currentPlayer.marketValue;
+            const breakdown = mv.breakdown;
+            
+            const modalHtml = `
+                <div class="modal" id="marketValueModal" style="
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.7); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; padding: 20px;">
+                    <div style="
+                        background: white; border-radius: 20px; padding: 30px; 
+                        max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <h2 style="margin-bottom: 10px; color: #333;">💰 球员身价评估</h2>
+                            <div style="font-size: 2rem; font-weight: bold; color: #FF6B35; margin-bottom: 5px;">
+                                ${mv.formatted}
+                            </div>
+                            <div style="color: #666; font-size: 0.9rem;">
+                                基于综合表现的市场估值
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 15px; color: #333; font-size: 1.1rem;">📊 评估因子</h3>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">⭐ 综合能力评分</span>
+                                <span style="color: #007AFF; font-weight: 600;">${breakdown.rating}分</span>
+                            </div>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">⚽ 主要位置</span>
+                                <span style="color: #007AFF; font-weight: 600;">${breakdown.position} (×${breakdown.positionMultiplier})</span>
+                            </div>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">🏟️ 出场次数</span>
+                                <span style="color: #007AFF; font-weight: 600;">${breakdown.matches}场</span>
+                            </div>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">⚽ 进球数</span>
+                                <span style="color: #4CAF50; font-weight: 600;">${breakdown.goals}球</span>
+                            </div>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">🅰️ 助攻数</span>
+                                <span style="color: #2196F3; font-weight: 600;">${breakdown.assists}次</span>
+                            </div>
+                            
+                            <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: 500;">📈 训练出勤率</span>
+                                <span style="color: #FF9800; font-weight: 600;">${breakdown.attendanceRate}%</span>
+                            </div>
+                            
+                            ${breakdown.isGoalkeeper ? `
+                                <div class="breakdown-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                                    <span style="font-weight: 500;">🧤 专业门将</span>
+                                    <span style="color: #E91E63; font-weight: 600;">+50%加成</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">身价范围</div>
+                            <div style="font-size: 1.1rem; font-weight: 600;">10万 - 100万 人民币</div>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button onclick="closeMarketValueModal()" style="
+                                background: #007AFF; color: white; border: none; 
+                                padding: 12px 30px; border-radius: 8px; font-size: 1rem; 
+                                cursor: pointer; transition: all 0.3s ease;">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // 点击背景关闭
+            document.getElementById('marketValueModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeMarketValueModal();
+                }
+            });
+        }
+
+        // 关闭身价详情模态框
+        function closeMarketValueModal() {
+            const modal = document.getElementById('marketValueModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 渲染个人偏好
+        function renderPreferences(preferences) {
+            const container = document.getElementById('preferencesContainer');
+            
+            if (!preferences || (!preferences.favoriteClubs?.length && !preferences.favoritePlayers?.length)) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-tertiary); padding: 20px;">暂无偏好数据</p>';
+                return;
+            }
+            
+            let html = '';
+            
+            // 喜爱俱乐部
+            if (preferences.favoriteClubs?.length > 0) {
+                html += `
+                    <div class="preference-category">
+                        <div class="preference-title">
+                            <i class="fas fa-shield-alt"></i>
+                            喜爱俱乐部
+                        </div>
+                        <div class="preference-items">
+                `;
+                
+                preferences.favoriteClubs.forEach(club => {
+                    html += `
+                        <div class="preference-item" onclick="showClubFans('${club.id}')">
+                            <div class="preference-icon club-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="preference-info">
+                                <div class="preference-name">${club.name}</div>
+                                <div class="preference-details">${club.country} · ${club.league}</div>
+                            </div>
+                            <div class="preference-badge">${club.nickname}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // 喜爱球员
+            if (preferences.favoritePlayers?.length > 0) {
+                html += `
+                    <div class="preference-category">
+                        <div class="preference-title">
+                            <i class="fas fa-star"></i>
+                            喜爱球员
+                        </div>
+                        <div class="preference-items">
+                `;
+                
+                preferences.favoritePlayers.forEach(player => {
+                    html += `
+                        <div class="preference-item" onclick="showPlayerFans('${player.id}')">
+                            <div class="preference-icon player-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="preference-info">
+                                <div class="preference-name">${player.name}</div>
+                                <div class="preference-details">${player.nationality} · ${player.position} · ${player.era}</div>
+                            </div>
+                            <div class="preference-badge">${player.nickname}</div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // 显示俱乐部粉丝
+        async function showClubFans(clubId) {
+            try {
+                const response = await fetch(`/api/club-fans/${clubId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        showFansModal(data.data, 'club');
+                    }
+                }
+            } catch (error) {
+                console.error('获取俱乐部粉丝失败:', error);
+            }
+        }
+
+        // 显示球员粉丝
+        async function showPlayerFans(playerId) {
+            try {
+                const response = await fetch(`/api/player-fans/${playerId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success) {
+                        showFansModal(data.data, 'player');
+                    }
+                }
+            } catch (error) {
+                console.error('获取球员粉丝失败:', error);
+            }
+        }
+
+        // 显示粉丝模态框
+        function showFansModal(data, type) {
+            const isClub = type === 'club';
+            const entity = isClub ? data.club : data.player;
+            const fans = data.fans;
+            
+            const modalHtml = `
+                <div class="modal" id="fansModal" style="
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                    background: rgba(0,0,0,0.7); display: flex; align-items: center; 
+                    justify-content: center; z-index: 1000; padding: 20px;">
+                    <div style="
+                        background: white; border-radius: 20px; padding: 30px; 
+                        max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;
+                        box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <h2 style="margin-bottom: 10px; color: #333;">
+                                ${isClub ? '🏆' : '⭐'} ${entity.name}
+                            </h2>
+                            <div style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">
+                                ${isClub ? `${entity.country} · ${entity.league}` : `${entity.nationality} · ${entity.position}`}
+                            </div>
+                            <div style="color: #007AFF; font-weight: 600;">
+                                共有 ${fans.length} 名队友也喜欢
+                            </div>
+                        </div>
+                        
+                        ${fans.length > 0 ? `
+                            <div style="display: grid; gap: 12px;">
+                                ${fans.map(fan => `
+                                    <div style="
+                                        display: flex; align-items: center; gap: 12px; 
+                                        padding: 12px; background: #f8f9fa; border-radius: 12px;
+                                        border: 1px solid #e9ecef;">
+                                        <div style="
+                                            width: 40px; height: 40px; border-radius: 50%; 
+                                            background: linear-gradient(135deg, #007AFF, #5AC8FA);
+                                            display: flex; align-items: center; justify-content: center;
+                                            color: white; font-weight: 600; font-size: 14px;">
+                                            ${fan.name.charAt(0)}
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 600; color: #333; margin-bottom: 2px;">
+                                                ${fan.name}
+                                            </div>
+                                            <div style="font-size: 13px; color: #666;">
+                                                ${fan.position} · ${fan.group} · 评分${fan.rating}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div style="text-align: center; color: #666; padding: 40px;">
+                                暂无其他队友喜欢这个${isClub ? '俱乐部' : '球员'}
+                            </div>
+                        `}
+                        
+                        <div style="text-align: center; margin-top: 25px;">
+                            <button onclick="closeFansModal()" style="
+                                background: #007AFF; color: white; border: none; 
+                                padding: 12px 30px; border-radius: 8px; font-size: 1rem; 
+                                cursor: pointer; transition: all 0.3s ease;">
+                                关闭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // 点击背景关闭
+            document.getElementById('fansModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeFansModal();
+                }
+            });
+        }
+
+        // 关闭粉丝模态框
+        function closeFansModal() {
+            const modal = document.getElementById('fansModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 格式化身价显示
+        function formatMarketValue(value) {
+            if (!value || value === '0') return '未评估';
+            const num = parseInt(value);
+            if (num >= 10000) {
+                return `${(num / 10000).toFixed(1)}万元`;
+            }
+            return `${num}元`;
+        }
+
+        // 显示属性描述
+        function showAttributeDescription(attributeName, value) {
+            // 首先尝试加载属性描述
+            loadAttributeDescription(attributeName, value);
+        }
+
+        // 从服务器加载属性描述
+        async function loadAttributeDescription(attributeName, value) {
+            try {
+                const response = await fetch('/api/attribute-description', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        attribute: attributeName,
+                        score: parseInt(value) || 0
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.description) {
+                        showAttributeModal(attributeName, value, data.description);
+                    } else {
+                        showAttributeModal(attributeName, value, '暂无详细描述');
+                    }
+                } else {
+                    showAttributeModal(attributeName, value, '加载描述失败');
+                }
+            } catch (error) {
+                console.error('加载属性描述失败:', error);
+                showAttributeModal(attributeName, value, '加载描述失败');
+            }
+        }
+
+        // 显示属性描述模态框
+        function showAttributeModal(attributeName, value, description) {
+            const modal = document.createElement('div');
+            modal.className = 'attribute-modal';
+            modal.innerHTML = `
+                <div class="attribute-modal-content">
+                    <div class="attribute-modal-header">
+                        <h3>${attributeName}</h3>
+                        <span class="attribute-score">分值: ${value}</span>
+                        <button class="close-modal" onclick="closeAttributeModal()">&times;</button>
+                    </div>
+                    <div class="attribute-modal-body">
+                        <p>${description}</p>
+                    </div>
+                </div>
+            `;
+            
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .attribute-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                }
+                .attribute-modal-content {
+                    background: white;
+                    border-radius: 16px;
+                    padding: 24px;
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 70vh;
+                    overflow-y: auto;
+                    box-shadow: var(--shadow-md);
+                }
+                .attribute-modal-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                    border-bottom: 1px solid var(--separator);
+                    padding-bottom: 12px;
+                }
+                .attribute-modal-header h3 {
+                    margin: 0;
+                    color: var(--primary-blue);
+                }
+                .attribute-score {
+                    background: var(--primary-blue);
+                    color: white;
+                    padding: 4px 8px;
+                    border-radius: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+                .close-modal {
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: var(--text-tertiary);
+                }
+                .close-modal:hover {
+                    color: var(--text-primary);
+                }
+                .attribute-modal-body p {
+                    margin: 0;
+                    line-height: 1.6;
+                    color: var(--text-secondary);
+                }
+            `;
+            
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // 点击背景关闭
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeAttributeModal();
+                }
+            });
+        }
+
+        // 关闭属性描述模态框
+        function closeAttributeModal() {
+            const modal = document.querySelector('.attribute-modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+    </script>
+</body>
+</html> 

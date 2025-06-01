@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025京蔚联足球队成员管理</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --secondary-blue: #5AC8FA;
+            --tertiary-blue: #E8F2FF;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --text-tertiary: #8E8E93;
+            --separator: rgba(60, 60, 67, 0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--separator);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* 统计信息 */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        /* 过滤标签 */
+        .filter-section {
+            margin-bottom: 24px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tag:hover {
+            background: var(--tertiary-blue);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .filter-tag.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 48px 14px 20px;
+            background: var(--surface);
+            border: 1px solid var(--separator);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        /* 球员列表 */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 20px;
+        }
+
+        .player-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            min-height: 280px;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* 球员卡片主要内容区域 */
+        .player-content {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .player-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-right {
+            width: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .player-nickname {
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 使用背景图片的T恤设计 */
+        .jersey-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .jersey-display {
+            position: relative;
+            width: 90px;
+            height: 110px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M25 20 L75 20 L82 20 L82 42 L75 42 L75 95 Q75 97 73 97 L27 97 Q25 97 25 95 L25 42 L18 42 L18 20 Z" fill="none" stroke="%23007AFF" stroke-width="2" stroke-linejoin="round"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .jersey-pinyin-text {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 9px;
+            font-weight: 700;
+            color: #007AFF;
+            z-index: 2;
+        }
+
+        .jersey-number-text {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            font-weight: 900;
+            color: #007AFF;
+            z-index: 2;
+        }
+
+        .jersey-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* 隐藏Canvas相关 */
+        .jersey-canvas {
+            display: none;
+        }
+
+        /* 移除SVG相关样式 */
+        .jersey-svg {
+            display: none;
+        }
+
+        .player-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .detail-icon {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            width: 16px;
+        }
+
+        .zodiac-icon {
+            font-size: 16px;
+        }
+
+        /* 位置和综合评分 */
+        .player-positions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .position-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .position-badge.secondary {
+            background: var(--secondary-blue);
+        }
+
+        .overall-rating {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-left: auto;
+        }
+
+        .rating-number {
+            font-size: 18px;
+        }
+
+        /* 雷达图容器 */
+        .radar-container {
+            width: 140px;
+            height: 120px;
+            position: relative;
+        }
+
+        .radar-canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--separator);
+            border-top-color: var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .player-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .player-right {
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .radar-container {
+                width: 120px;
+                height: 100px;
+            }
+        }
+
+        /* 暗黑模式支持 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #000000;
+                --surface: #1C1C1E;
+                --text-primary: #FFFFFF;
+                --text-secondary: #EBEBF5;
+                --text-tertiary: #8E8E93;
+                --separator: rgba(84, 84, 88, 0.65);
+            }
+        }
+
+        /* 组别标签单独显示 */
+        .player-group {
+            margin-bottom: 12px;
+        }
+
+        .group-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* 特征标签区域 */
+        .player-features {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .feature-tag {
+            padding: 4px 8px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .feature-tag.tag-1 {
+            background: #FF3B30;
+            color: white;
+        }
+
+        .feature-tag.tag-2 {
+            background: #FF9500;
+            color: white;
+        }
+
+        .feature-tag.tag-3 {
+            background: #30D158;
+            color: white;
+        }
+
+        .feature-tag.tag-empty {
+            background: var(--separator);
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <img src="logo.png" alt="队徽" class="logo">
+                <span>2025京蔚联足球队成员管理</span>
+            </div>
+            <div class="nav-menu">
+                <a href="formation_analyzer.html" class="nav-link">⚽ 阵容评分</a>
+                <a href="match_simulator_v2.html" class="nav-link">🏆 队内对抗</a>
+                <a href="match_history.html" class="nav-link">📋 历史赛事</a>
+                <a href="leaderboard.html" class="nav-link">🏆 排行榜</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 统计信息 -->
+        <div class="stats-section" id="statsSection">
+            <div class="stat-card">
+                <div class="stat-value" id="totalPlayers">-</div>
+                <div class="stat-label">球员总数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgAge">-</div>
+                <div class="stat-label">平均年龄</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="competitiveCount">-</div>
+                <div class="stat-label">竞技组</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="hobbyCount">-</div>
+                <div class="stat-label">兴趣组</div>
+            </div>
+        </div>
+
+        <!-- 过滤标签 -->
+        <div class="filter-section">
+            <div class="filter-title">按组别筛选</div>
+            <div class="filter-tags">
+                <div class="filter-tag active" data-filter="all">全部</div>
+                <div class="filter-tag" data-filter="竞技组">竞技组</div>
+                <div class="filter-tag" data-filter="兴趣组">兴趣组</div>
+            </div>
+        </div>
+
+        <!-- 排序选项 -->
+        <div class="filter-section">
+            <div class="filter-title">排序方式</div>
+            <div class="filter-tags">
+                <div class="filter-tag active" data-sort="name">姓名拼音</div>
+                <div class="filter-tag" data-sort="jersey">球衣号码</div>
+                <div class="filter-tag" data-sort="age">年龄</div>
+                <div class="filter-tag" data-sort="rating">综合评分</div>
+            </div>
+        </div>
+
+        <!-- 排序方向 -->
+        <div class="filter-section">
+            <div class="filter-title">排序方向</div>
+            <div class="filter-tags">
+                <div class="filter-tag active" data-order="asc">升序 ↑</div>
+                <div class="filter-tag" data-order="desc">降序 ↓</div>
+            </div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索球员姓名、昵称或球衣号码...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <!-- 球员列表 -->
+        <div class="players-grid" id="playersGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allPlayers = [];
+        let currentFilter = 'all';
+        let currentSort = 'name';
+        let currentOrder = 'asc';
+
+        // 星座图标映射
+        const zodiacIcons = {
+            '白羊座': '♈',
+            '金牛座': '♉', 
+            '双子座': '♊',
+            '巨蟹座': '♋',
+            '狮子座': '♌',
+            '处女座': '♍',
+            '天秤座': '♎',
+            '天蝎座': '♏',
+            '射手座': '♐',
+            '摩羯座': '♑',
+            '水瓶座': '♒',
+            '双鱼座': '♓'
+        };
+
+        // 完整的中文姓氏拼音映射（确保所有姓氏都有拼音）
+        function chineseNameToPinyin(name) {
+            const pinyinMap = {
+                // 常见姓氏A-Z完整映射
+                '艾': 'AI', '安': 'AN', '敖': 'AO',
+                '白': 'BAI', '班': 'BAN', '包': 'BAO', '鲍': 'BAO', '贝': 'BEI', '毕': 'BI', '卞': 'BIAN', '边': 'BIAN', '卜': 'BU',
+                '蔡': 'CAI', '曹': 'CAO', '岑': 'CEN', '查': 'ZHA', '柴': 'CHAI', '常': 'CHANG', '车': 'CHE', '陈': 'CHEN', '成': 'CHENG', '程': 'CHENG', '池': 'CHI', '仇': 'QIU', '楚': 'CHU', '储': 'CHU', '崔': 'CUI',
+                '戴': 'DAI', '单': 'SHAN', '邓': 'DENG', '狄': 'DI', '刁': 'DIAO', '丁': 'DING', '董': 'DONG', '窦': 'DOU', '杜': 'DU', '段': 'DUAN', '独': 'DU',
+                '鄂': 'E',
+                '范': 'FAN', '方': 'FANG', '费': 'FEI', '冯': 'FENG', '封': 'FENG', '符': 'FU', '傅': 'FU', '富': 'FU',
+                '盖': 'GAI', '甘': 'GAN', '高': 'GAO', '葛': 'GE', '耿': 'GENG', '弓': 'GONG', '宫': 'GONG', '龚': 'GONG', '谷': 'GU', '顾': 'GU', '关': 'GUAN', '管': 'GUAN', '郭': 'GUO', '国': 'GUO',
+                '海': 'HAI', '韩': 'HAN', '杭': 'HANG', '郝': 'HAO', '何': 'HE', '贺': 'HE', '洪': 'HONG', '侯': 'HOU', '胡': 'HU', '花': 'HUA', '华': 'HUA', '黄': 'HUANG', '霍': 'HUO',
+                '纪': 'JI', '季': 'JI', '贾': 'JIA', '简': 'JIAN', '江': 'JIANG', '姜': 'JIANG', '蒋': 'JIANG', '焦': 'JIAO', '金': 'JIN', '景': 'JING', '荆': 'JING', '井': 'JING',
+                '康': 'KANG', '柯': 'KE', '孔': 'KONG', '寇': 'KOU', '库': 'KU',
+                '赖': 'LAI', '蓝': 'LAN', '郎': 'LANG', '劳': 'LAO', '乐': 'LE', '雷': 'LEI', '黎': 'LI', '李': 'LI', '连': 'LIAN', '廉': 'LIAN', '梁': 'LIANG', '廖': 'LIAO', '林': 'LIN', '凌': 'LING', '刘': 'LIU', '柳': 'LIU', '龙': 'LONG', '娄': 'LOU', '卢': 'LU', '陆': 'LU', '路': 'LU', '吕': 'LV', '罗': 'LUO', '骆': 'LUO',
+                '马': 'MA', '麦': 'MAI', '满': 'MAN', '毛': 'MAO', '梅': 'MEI', '孟': 'MENG', '米': 'MI', '苗': 'MIAO', '闵': 'MIN', '明': 'MING', '莫': 'MO', '牟': 'MOU', '穆': 'MU',
+                '南': 'NAN', '倪': 'NI', '聂': 'NIE', '宁': 'NING', '牛': 'NIU', '农': 'NONG',
+                '欧': 'OU', '欧阳': 'OUYANG',
+                '潘': 'PAN', '庞': 'PANG', '裴': 'PEI', '彭': 'PENG', '皮': 'PI', '平': 'PING', '蒲': 'PU', '濮': 'PU',
+                '戚': 'QI', '钱': 'QIAN', '强': 'QIANG', '乔': 'QIAO', '秦': 'QIN', '邱': 'QIU', '屈': 'QU', '全': 'QUAN',
+                '冉': 'RAN', '饶': 'RAO', '任': 'REN', '容': 'RONG', '阮': 'RUAN', '芮': 'RUI',
+                '萨': 'SA', '邵': 'SHAO', '申': 'SHEN', '沈': 'SHEN', '盛': 'SHENG', '师': 'SHI', '石': 'SHI', '时': 'SHI', '史': 'SHI', '司': 'SI', '宋': 'SONG', '苏': 'SU', '孙': 'SUN',
+                '谭': 'TAN', '唐': 'TANG', '陶': 'TAO', '滕': 'TENG', '田': 'TIAN', '童': 'TONG', '涂': 'TU', '屠': 'TU',
+                '万': 'WAN', '汪': 'WANG', '王': 'WANG', '韦': 'WEI', '魏': 'WEI', '温': 'WEN', '文': 'WEN', '翁': 'WENG', '巫': 'WU', '吴': 'WU', '武': 'WU',
+                '夏': 'XIA', '冼': 'XIAN', '项': 'XIANG', '肖': 'XIAO', '谢': 'XIE', '辛': 'XIN', '邢': 'XING', '熊': 'XIONG', '徐': 'XU', '许': 'XU', '薛': 'XUE', '荀': 'XUN',
+                '严': 'YAN', '颜': 'YAN', '杨': 'YANG', '姚': 'YAO', '叶': 'YE', '易': 'YI', '殷': 'YIN', '尹': 'YIN', '应': 'YING', '游': 'YOU', '于': 'YU', '余': 'YU', '俞': 'YU', '袁': 'YUAN', '岳': 'YUE', '云': 'YUN',
+                '曾': 'ZENG', '翟': 'ZHAI', '张': 'ZHANG', '章': 'ZHANG', '赵': 'ZHAO', '郑': 'ZHENG', '钟': 'ZHONG', '周': 'ZHOU', '朱': 'ZHU', '竹': 'ZHU', '庄': 'ZHUANG', '卓': 'ZHUO', '宗': 'ZONG', '邹': 'ZOU', '祖': 'ZU', '左': 'ZUO',
+                // 补充更多可能的姓氏
+                '阿': 'A', '昂': 'ANG', '巴': 'BA', '北': 'BEI', '别': 'BIE', '宾': 'BIN', '伯': 'BO', '步': 'BU',
+                '蔡': 'CAI', '仓': 'CANG', '操': 'CAO', '茶': 'CHA', '昌': 'CHANG', '超': 'CHAO', '陈': 'CHEN', '迟': 'CHI', '充': 'CHONG', '初': 'CHU',
+                '达': 'DA', '代': 'DAI', '但': 'DAN', '道': 'DAO', '德': 'DE', '邸': 'DI', '第': 'DI', '典': 'DIAN', '刀': 'DAO', '都': 'DU',
+                '尔': 'ER',
+                '法': 'FA', '樊': 'FAN', '房': 'FANG', '飞': 'FEI', '丰': 'FENG', '奉': 'FENG', '佛': 'FO', '府': 'FU',
+                '改': 'GAI', '刚': 'GANG', '告': 'GAO', '格': 'GE', '给': 'GEI', '更': 'GENG', '工': 'GONG', '古': 'GU', '贵': 'GUI',
+                '哈': 'HA', '汉': 'HAN', '豪': 'HAO', '合': 'HE', '黑': 'HEI', '恒': 'HENG', '红': 'HONG', '后': 'HOU', '忽': 'HU', '怀': 'HUAI', '环': 'HUAN', '皇': 'HUANG', '汇': 'HUI', '火': 'HUO',
+                '即': 'JI', '加': 'JIA', '见': 'JIAN', '剑': 'JIAN', '将': 'JIANG', '交': 'JIAO', '接': 'JIE', '今': 'JIN', '九': 'JIU', '巨': 'JU', '军': 'JUN',
+                '开': 'KAI', '看': 'KAN', '可': 'KE', '空': 'KONG', '快': 'KUAI',
+                '来': 'LAI', '老': 'LAO', '类': 'LEI', '冷': 'LENG', '里': 'LI', '力': 'LI', '立': 'LI', '利': 'LI', '亮': 'LIANG', '烈': 'LIE', '令': 'LING', '六': 'LIU', '楼': 'LOU', '录': 'LU', '绿': 'LV',
+                '买': 'MAI', '慢': 'MAN', '忙': 'MANG', '美': 'MEI', '门': 'MEN', '梦': 'MENG', '面': 'MIAN', '民': 'MIN', '名': 'MING', '末': 'MO',
+                '那': 'NA', '内': 'NEI', '年': 'NIAN', '鸟': 'NIAO', '您': 'NIN', '女': 'NV',
+                '怕': 'PA', '派': 'PAI', '跑': 'PAO', '培': 'PEI', '片': 'PIAN', '票': 'PIAO', '品': 'PIN', '破': 'PO',
+                '其': 'QI', '起': 'QI', '气': 'QI', '千': 'QIAN', '前': 'QIAN', '青': 'QING', '清': 'QING', '求': 'QIU', '去': 'QU', '权': 'QUAN',
+                '让': 'RANG', '热': 'RE', '人': 'REN', '日': 'RI', '如': 'RU', '入': 'RU',
+                '三': 'SAN', '色': 'SE', '山': 'SHAN', '上': 'SHANG', '少': 'SHAO', '什': 'SHEN', '生': 'SHENG', '十': 'SHI', '收': 'SHOU', '书': 'SHU', '水': 'SHUI', '说': 'SHUO', '四': 'SI', '送': 'SONG', '所': 'SUO',
+                '他': 'TA', '台': 'TAI', '太': 'TAI', '特': 'TE', '天': 'TIAN', '条': 'TIAO', '听': 'TING', '通': 'TONG', '头': 'TOU', '图': 'TU',
+                '外': 'WAI', '完': 'WAN', '往': 'WANG', '为': 'WEI', '位': 'WEI', '我': 'WO', '无': 'WU', '五': 'WU',
+                '西': 'XI', '希': 'XI', '下': 'XIA', '先': 'XIAN', '现': 'XIAN', '想': 'XIANG', '小': 'XIAO', '校': 'XIAO', '新': 'XIN', '行': 'XING', '学': 'XUE',
+                '要': 'YAO', '也': 'YE', '一': 'YI', '已': 'YI', '用': 'YONG', '有': 'YOU', '又': 'YOU', '右': 'YOU', '鱼': 'YU', '雨': 'YU', '语': 'YU', '元': 'YUAN', '远': 'YUAN', '月': 'YUE', '运': 'YUN',
+                '在': 'ZAI', '早': 'ZAO', '怎': 'ZEN', '站': 'ZHAN', '长': 'ZHANG', '找': 'ZHAO', '这': 'ZHE', '真': 'ZHEN', '正': 'ZHENG', '知': 'ZHI', '只': 'ZHI', '中': 'ZHONG', '重': 'ZHONG', '主': 'ZHU', '住': 'ZHU', '专': 'ZHUAN', '准': 'ZHUN', '字': 'ZI', '自': 'ZI', '总': 'ZONG', '走': 'ZOU', '最': 'ZUI', '作': 'ZUO'
+            };
+            
+            // 只返回姓氏的拼音（第一个字符）
+            const firstChar = name.charAt(0);
+            return pinyinMap[firstChar] || 'UNKNOWN';
+        }
+
+        // 计算六维雷达图数据，坐标范围60-99，简化各维度参考数据
+        function calculateRadarData(player) {
+            // 检查是否为门将
+            if (player.主要位置 === 'GK') {
+                // 门将专用雷达图（简化版）
+                const goalkeeping = Math.round((
+                    (parseInt(player.反应速度) || 0) +
+                    (parseInt(player.守门扑救) || 0) +
+                    (parseInt(player.扑接出击) || 0)
+                ) / 3);
+
+                const distribution = Math.round((
+                    (parseInt(player.守门长传) || 0) +
+                    (parseInt(player.传球短传) || 0) +
+                    (parseInt(player.传球长传) || 0)
+                ) / 3);
+
+                const aerial = Math.round((
+                    (parseInt(player.扑接高球) || 0) +
+                    (parseInt(player.高空球控制) || 0) +
+                    (parseInt(player.跑动跳跃) || 0)
+                ) / 3);
+
+                const positioning = parseInt(player.守门站位) || 0;
+                const physical = Math.round((
+                    (parseInt(player.跑动体力) || 0) +
+                    (parseInt(player.跑动敏捷) || 0)
+                ) / 2);
+                const reflexes = parseInt(player.反应速度) || 0;
+
+                let radarData = [goalkeeping, distribution, aerial, positioning, physical, reflexes];
+                
+                // 将数值映射到60-99范围
+                radarData = radarData.map(value => {
+                    value = Math.max(51, Math.min(99, value));
+                    const mapped = Math.round((value - 51) / 48 * 39 + 60);
+                    return Math.max(60, Math.min(99, mapped));
+                });
+
+                return radarData;
+            } else {
+                // 非门将球员雷达图（使用简化字段名）
+                // 进攻 = (射门 + 远射 + 头球) / 3 （核心进攻属性）
+                const attack = Math.round((
+                    (parseInt(player.射门) || 0) +
+                    (parseInt(player.远射) || 0) +
+                    (parseInt(player.头球) || 0)
+                ) / 3);
+
+                // 技术 = (传球 + 盘带 + 停球) / 3 （核心技术属性）
+                const technique = Math.round((
+                    (parseInt(player.传球) || 0) +
+                    (parseInt(player.盘带) || 0) +
+                    (parseInt(player.停球) || 0)
+                ) / 3);
+
+                // 体能 = (耐力 + 体能恢复) / 2 （简化体能）
+                const physical = Math.round((
+                    (parseInt(player.耐力) || 0) +
+                    (parseInt(player.体能恢复) || 0)
+                ) / 2);
+
+                // 防守 = 抢断 （只参考抢断）
+                const defense = parseInt(player.抢断) || 0;
+
+                // 力量 = 强壮 （只参考强壮）
+                const strength = parseInt(player.强壮) || 0;
+
+                // 速度 = 速度 （只参考速度）
+                const speed = parseInt(player.速度) || 0;
+
+                // 原始数据，不做任何调整
+                let radarData = [attack, technique, physical, defense, strength, speed];
+
+                // 将数值映射到60-99范围
+                // 原始范围假设为51-99，映射到新范围60-99
+                radarData = radarData.map(value => {
+                    // 确保数值在合理范围内
+                    value = Math.max(51, Math.min(99, value));
+                    // 线性映射：(value - 51) / (99 - 51) * (99 - 60) + 60
+                    const mapped = Math.round((value - 51) / 48 * 39 + 60);
+                    return Math.max(60, Math.min(99, mapped));
+                });
+
+                return radarData;
+            }
+        }
+
+        // 创建雷达图
+        function createRadarChart(canvasId, player) {
+            const ctx = document.getElementById(canvasId);
+            if (!ctx) return;
+
+            const radarData = calculateRadarData(player);
+            
+            // 根据球员位置选择标签
+            const labels = player.主要位置 === 'GK' ? 
+                ['扑救', '传球', '高空球', '位置感', '体能', '反应'] :
+                ['进攻', '技术', '体能', '防守', '力量', '速度'];
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: radarData,
+                        borderColor: '#007AFF',
+                        backgroundColor: 'rgba(0, 122, 255, 0.15)',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#007AFF',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: false,
+                            max: 99,
+                            min: 60,
+                            ticks: {
+                                display: false,
+                                stepSize: 5
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            },
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: 1
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 9,
+                                    weight: '500'
+                                },
+                                color: '#666666'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 获取球员数据
+        async function fetchPlayers() {
+            try {
+                const response = await fetch('/api/players');
+                const data = await response.json();
+                if (data.success) {
+                    allPlayers = data.data;
+                    // 立即应用默认排序（姓名拼音升序）
+                    filterPlayers();
+                    updateStats(allPlayers);
+                }
+            } catch (error) {
+                console.error('获取球员数据失败:', error);
+                document.getElementById('playersGrid').innerHTML = 
+                    '<div class="loading">加载失败，请刷新页面重试</div>';
+            }
+        }
+
+        // 显示球员列表
+        function displayPlayers(players) {
+            const grid = document.getElementById('playersGrid');
+            
+            if (players.length === 0) {
+                grid.innerHTML = '<div class="loading">没有找到匹配的球员</div>';
+                return;
+            }
+
+            grid.innerHTML = players.map((player, index) => {
+                const canvasId = `radar-${index}`;
+                const jerseyCanvasId = `jersey-${index}`;
+                const overallRating = player.综合评分 || player.综合能力 || '0';
+                const primaryPosition = player.主要位置 || '';
+                const secondaryPosition = player.次要位置 || '';
+                const jerseyNumber = player.球衣号码 || '?';
+                const playerPinyin = chineseNameToPinyin(player.姓名);
+                
+                // 处理标签，确保总是显示3个
+                const tag1 = player.标签1 || '待评估';
+                const tag2 = player.标签2 || '待评估'; 
+                const tag3 = player.标签3 || '待评估';
+                
+                return `
+                <a href="personal_profile.html?name=${encodeURIComponent(player.姓名)}" class="player-card">
+                    <div class="player-content">
+                        <div class="player-left">
+                            <div class="player-header">
+                                <div class="player-info">
+                                    <div class="player-name">${player.姓名}</div>
+                                    <div class="player-nickname">
+                                        <i class="fas fa-id-card detail-icon"></i>
+                                        <span>${player.蔚来app昵称 || '未设置'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="player-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-birthday-cake detail-icon"></i>
+                                    <span>${player.年龄}岁</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="zodiac-icon">${zodiacIcons[player.星座] || '⭐'}</span>
+                                    <span>${player.星座}</span>
+                                </div>
+                            </div>
+                            <div class="player-positions">
+                                <i class="fas fa-map-marker-alt detail-icon"></i>
+                                ${primaryPosition ? `<span class="position-badge">${primaryPosition}</span>` : ''}
+                                ${secondaryPosition ? `<span class="position-badge secondary">${secondaryPosition}</span>` : ''}
+                                <div class="overall-rating">
+                                    <span class="rating-number">${overallRating}</span>
+                                    <span>总评</span>
+                                </div>
+                            </div>
+                            <div class="player-group">
+                                <span class="group-badge">${player.组别}</span>
+                            </div>
+                            <div class="player-features">
+                                <span class="feature-tag tag-1 ${!player.标签1 ? 'tag-empty' : ''}">${tag1}</span>
+                                <span class="feature-tag tag-2 ${!player.标签2 ? 'tag-empty' : ''}">${tag2}</span>
+                                <span class="feature-tag tag-3 ${!player.标签3 ? 'tag-empty' : ''}">${tag3}</span>
+                            </div>
+                        </div>
+                        <div class="player-right">
+                            <div class="jersey-container">
+                                <div class="jersey-display">
+                                    <div class="jersey-number-text">${jerseyNumber}</div>
+                                    <div class="jersey-pinyin-text">${playerPinyin}</div>
+                                </div>
+                                <div class="jersey-label">${jerseyNumber === '?' ? '未选号码' : jerseyNumber + '号球衣'}</div>
+                            </div>
+                            <div class="radar-container">
+                                <canvas id="${canvasId}" class="radar-canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                `;
+            }).join('');
+
+            // 创建雷达图和绘制球衣
+            setTimeout(() => {
+                players.forEach((player, index) => {
+                    // 创建雷达图
+                    createRadarChart(`radar-${index}`, player);
+                });
+            }, 100);
+        }
+
+        // 更新统计信息
+        function updateStats(players) {
+            document.getElementById('totalPlayers').textContent = players.length;
+            
+            // 平均年龄保留1位小数
+            const avgAge = (
+                players.reduce((sum, p) => sum + parseInt(p.年龄), 0) / players.length
+            ).toFixed(1);
+            document.getElementById('avgAge').textContent = avgAge;
+            
+            const competitive = players.filter(p => p.组别 === '竞技组').length;
+            const hobby = players.filter(p => p.组别 === '兴趣组').length;
+            
+            document.getElementById('competitiveCount').textContent = competitive;
+            document.getElementById('hobbyCount').textContent = hobby;
+        }
+
+        // 排序函数
+        function sortPlayers(players) {
+            const sorted = [...players];
+            
+            let result;
+            switch (currentSort) {
+                case 'jersey':
+                    result = sorted.sort((a, b) => {
+                        const aJersey = parseInt(a.球衣号码) || 999;
+                        const bJersey = parseInt(b.球衣号码) || 999;
+                        return aJersey - bJersey;
+                    });
+                    break;
+                case 'name':
+                    result = sorted.sort((a, b) => {
+                        const aPinyin = chineseNameToPinyin(a.姓名);
+                        const bPinyin = chineseNameToPinyin(b.姓名);
+                        if (aPinyin === bPinyin) {
+                            return a.姓名.localeCompare(b.姓名, 'zh-CN');
+                        }
+                        return aPinyin.localeCompare(bPinyin);
+                    });
+                    break;
+                case 'age':
+                    result = sorted.sort((a, b) => {
+                        const aAge = parseInt(a.年龄) || 0;
+                        const bAge = parseInt(b.年龄) || 0;
+                        return aAge - bAge;
+                    });
+                    break;
+                case 'rating':
+                    result = sorted.sort((a, b) => {
+                        const aRating = parseInt(a.综合评分 || a.综合能力) || 0;
+                        const bRating = parseInt(b.综合评分 || b.综合能力) || 0;
+                        return aRating - bRating; // 先按升序排列
+                    });
+                    break;
+                default:
+                    result = sorted;
+            }
+            
+            // 根据排序方向决定是否反转
+            if (currentOrder === 'desc') {
+                return result.reverse();
+            }
+            
+            return result;
+        }
+
+        // 过滤和排序功能
+        function filterPlayers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = allPlayers;
+            
+            // 按组别过滤
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(p => p.组别 === currentFilter);
+            }
+            
+            // 按搜索词过滤
+            if (searchTerm) {
+                filtered = filtered.filter(p => 
+                    p.姓名.toLowerCase().includes(searchTerm) ||
+                    (p.蔚来app昵称 && p.蔚来app昵称.toLowerCase().includes(searchTerm)) ||
+                    p.球衣号码.toString().includes(searchTerm)
+                );
+            }
+            
+            // 排序
+            const sortedAndFiltered = sortPlayers(filtered);
+            
+            displayPlayers(sortedAndFiltered);
+        }
+
+        // 绑定过滤标签点击事件
+        document.querySelectorAll('.filter-tag[data-filter]').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tag[data-filter]').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                currentFilter = tag.dataset.filter;
+                filterPlayers();
+            });
+        });
+
+        // 绑定排序标签点击事件
+        document.querySelectorAll('.filter-tag[data-sort]').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tag[data-sort]').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                currentSort = tag.dataset.sort;
+                filterPlayers();
+            });
+        });
+
+        // 绑定排序方向点击事件
+        document.querySelectorAll('.filter-tag[data-order]').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tag[data-order]').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                currentOrder = tag.dataset.order;
+                filterPlayers();
+            });
+        });
+
+        // 绑定搜索框输入事件
+        document.getElementById('searchInput').addEventListener('input', filterPlayers);
+
+        // 页面加载时获取数据
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchPlayers();
+        });
+    </script>
+</body>
+</html>

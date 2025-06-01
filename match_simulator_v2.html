@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>队内对抗模拟 - 京蔚联足球队</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --secondary-blue: #5AC8FA;
+            --tertiary-blue: #E8F2FF;
+            --success-green: #30D158;
+            --warning-orange: #FF9500;
+            --danger-red: #FF3B30;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --separator: rgba(60, 60, 67, 0.12);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius-lg: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .back-btn {
+            padding: 12px 20px;
+            background: var(--primary-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 参与人员选择样式 */
+        .participant-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        .player-search {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid var(--separator);
+            border-radius: 10px;
+            font-size: 16px;
+            background: var(--surface);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .player-item:hover {
+            background: var(--tertiary-blue);
+        }
+
+        .player-item.selected {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .player-position {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .player-item.selected .player-position {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .player-rating {
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .player-item.selected .player-rating {
+            color: white;
+        }
+
+        /* 球场可视化 */
+        .field-container {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .field-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .formation-selector {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .formation-select {
+            padding: 12px 16px;
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            background: var(--surface);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .formation-select:hover {
+            border-color: var(--primary-blue);
+            background-color: var(--tertiary-blue);
+        }
+
+        .formation-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background-color: var(--tertiary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        /* 通用下拉菜单样式 */
+        select {
+            padding: 12px 16px;
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            background: var(--surface);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select:hover {
+            border-color: var(--primary-blue);
+            background-color: var(--tertiary-blue);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            background-color: var(--tertiary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .football-field {
+            background: linear-gradient(45deg, #4a7c59 0%, #2d5016 100%);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            aspect-ratio: 3/2;
+            min-height: 400px;
+            border: 3px solid white;
+            overflow: hidden;
+        }
+
+        .field-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+        }
+
+        .center-line {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            bottom: 10%;
+            width: 2px;
+            background: white;
+            transform: translateX(-50%);
+        }
+
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 80px;
+            height: 80px;
+            border: 2px solid white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .penalty-area {
+            position: absolute;
+            width: 60px;
+            height: 120px;
+            border: 2px solid white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .penalty-area.left {
+            left: 10px;
+        }
+
+        .penalty-area.right {
+            right: 10px;
+        }
+
+        .formation-positions {
+            position: relative;
+            height: 100%;
+            z-index: 10;
+        }
+
+        .position-slot {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .position-slot:hover {
+            border-color: white;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .position-slot.occupied {
+            border-color: white;
+            background: var(--primary-blue);
+            border-style: solid;
+        }
+
+        .position-slot.occupied:hover {
+            background: #0051D5;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--primary-blue);
+        }
+
+        .position-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .selected-count {
+            text-align: center;
+            margin-top: 20px;
+            padding: 12px;
+            background: var(--tertiary-blue);
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        /* 智能分组样式 */
+        .grouping-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 24px;
+        }
+
+        .grouping-controls {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .grouping-rules {
+            margin-bottom: 24px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--separator);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rule-item:hover {
+            background: var(--tertiary-blue);
+        }
+
+        .rule-item.selected {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .rule-checkbox {
+            margin-right: 12px;
+        }
+
+        .rule-info {
+            flex: 1;
+        }
+
+        .rule-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .rule-description {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .rule-item.selected .rule-description {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .group-button {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .group-button:hover {
+            background: #0051D5;
+        }
+
+        .group-button:disabled {
+            background: var(--separator);
+            cursor: not-allowed;
+        }
+
+        /* 队伍展示 */
+        .teams-display {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .team-card {
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--surface);
+        }
+
+        .team-card.team-a {
+            border-color: var(--danger-red);
+        }
+
+        .team-card.team-b {
+            border-color: var(--primary-blue);
+        }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .team-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .team-card.team-a .team-title {
+            color: var(--danger-red);
+        }
+
+        .team-card.team-b .team-title {
+            color: var(--primary-blue);
+        }
+
+        .team-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .team-players {
+            list-style: none;
+        }
+
+        .team-player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .team-player:last-child {
+            border-bottom: none;
+        }
+
+        .player-name-pos {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .position-tag {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* 模式选择样式 */
+        .mode-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: var(--surface);
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--primary-blue);
+            background: var(--tertiary-blue);
+        }
+
+        .mode-btn.active {
+            border-color: var(--primary-blue);
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .mode-btn i {
+            font-size: 24px;
+            color: var(--primary-blue);
+        }
+
+        .mode-btn.active i {
+            color: white;
+        }
+
+        .mode-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .mode-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .mode-btn.active .mode-desc {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .mode-content {
+            display: none;
+        }
+
+        .mode-content.active {
+            display: block;
+        }
+
+        /* 手动选择模式样式 */
+        .manual-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .team-selection {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .team-a-field {
+            border: 3px solid var(--danger-red);
+        }
+
+        .team-b-field {
+            border: 3px solid var(--primary-blue);
+        }
+
+        .team-stats {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--tertiary-blue);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-player-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .modal-player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--separator);
+        }
+
+        .modal-player-item:hover {
+            background: var(--tertiary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .modal-player-item.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--separator);
+        }
+
+        .player-suitability {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .suitability-bar {
+            width: 60px;
+            height: 8px;
+            background: var(--separator);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .suitability-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .suitability-excellent {
+            background: linear-gradient(90deg, #30D158, #34C759);
+        }
+
+        .suitability-good {
+            background: linear-gradient(90deg, #32ADE6, #007AFF);
+        }
+
+        .suitability-average {
+            background: linear-gradient(90deg, #FF9500, #FFCC02);
+        }
+
+        .suitability-poor {
+            background: linear-gradient(90deg, #FF453A, #FF6961);
+        }
+
+        /* 位置槽优化 */
+        .position-slot.team-a {
+            border-color: var(--danger-red);
+        }
+
+        .position-slot.team-b {
+            border-color: var(--primary-blue);
+        }
+
+        .position-slot.team-a.occupied {
+            background: var(--danger-red);
+        }
+
+        .position-slot.team-b.occupied {
+            background: var(--primary-blue);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .manual-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .football-field {
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mode-btn {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .participant-container {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+
+        /* 状态提示样式 */
+        .status-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .status-message.success {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .status-message.warning {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .status-message.info {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 标签页状态指示 */
+        .tab.completed::after {
+            content: '✓';
+            margin-left: 8px;
+            color: var(--success-green);
+            font-weight: 700;
+        }
+
+        .tab.ready::after {
+            content: '●';
+            margin-left: 8px;
+            color: var(--warning-orange);
+            font-weight: 700;
+        }
+
+        .tab.completed.ready::after {
+            content: '✓';
+            color: var(--success-green);
+        }
+
+        .match-details {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .match-details.show {
+            max-height: 500px;
+        }
+
+        .match-details.hide {
+            max-height: 0;
+        }
+
+        /* 改进下拉菜单的样式 */
+        
+        /* 榜单样式 */
+        .leaderboard-tab {
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+        }
+
+        .leaderboard-tab.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .leaderboard-tab:hover:not(.active) {
+            background: var(--tertiary-blue);
+            color: var(--primary-blue);
+        }
+
+        .leaderboard-content {
+            display: none;
+        }
+
+        .leaderboard-content.active {
+            display: block;
+        }
+
+        .player-rank-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .player-rank-item:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .player-rank-item.selected {
+            border-color: var(--primary-blue);
+            background: var(--tertiary-blue);
+        }
+
+        .rank-position {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 60px;
+        }
+
+        .rank-number {
+            background: var(--primary-blue);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .rank-number.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .rank-number.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+        }
+
+        .rank-number.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+        }
+
+        .player-info-rank {
+            flex: 1;
+            margin-left: 12px;
+        }
+
+        .player-name-rank {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .player-position-rank {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--primary-blue);
+        }
+
+        .partnership-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .partnership-item:hover {
+            border-color: var(--success-green);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .partnership-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .partnership-names {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .partnership-positions {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .detail-record-item {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--primary-blue);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .detail-record-item:hover {
+            background: var(--tertiary-blue);
+            transform: translateX(4px);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .record-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .record-description {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .match-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-futbol"></i> 队内对抗模拟</h1>
+            <a href="display.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> 返回主页
+            </a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('participant-selection', event)">
+                <i class="fas fa-users"></i> 参与人员选择
+            </button>
+            <button class="tab" onclick="switchTab('team-assignment', event)">
+                <i class="fas fa-sitemap"></i> 智能分组
+            </button>
+            <button class="tab" onclick="switchTab('match-simulation', event)">
+                <i class="fas fa-play-circle"></i> 比赛模拟
+            </button>
+        </div>
+
+        <!-- 参与人员选择标签页 -->
+        <div id="participant-selection" class="tab-content active">
+            <!-- 模式选择 -->
+            <div style="background: var(--surface); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-md);">
+                <h3 style="margin-bottom: 16px; font-weight: 700;">对抗模式选择</h3>
+                <div style="display: flex; gap: 16px;">
+                    <button class="mode-btn active" onclick="switchMode('auto')" id="autoModeBtn">
+                        <i class="fas fa-users-cog"></i>
+                        <div>
+                            <div class="mode-title">多队自动分组</div>
+                            <div class="mode-desc">选择所有参与者，自动按规则分配队伍</div>
+                        </div>
+                    </button>
+                    <button class="mode-btn" onclick="switchMode('manual')" id="manualModeBtn">
+                        <i class="fas fa-hand-pointer"></i>
+                        <div>
+                            <div class="mode-title">手动选择阵容</div>
+                            <div class="mode-desc">在阵型图中手动选择两队阵容</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 自动分组模式 -->
+            <div id="auto-mode" class="mode-content active">
+                <div class="participant-container">
+                    <!-- 左侧：球员搜索和列表 -->
+                    <div class="player-search">
+                        <h3 style="margin-bottom: 16px; font-weight: 700;">球员列表</h3>
+                        <div class="search-box">
+                            <input type="text" class="search-input" id="playerSearch" placeholder="搜索球员姓名或位置...">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <div class="player-list" id="playerList">
+                            <!-- 球员列表将由JavaScript生成 -->
+                        </div>
+                        <div class="selected-count" id="selectedCount">
+                            已选择: 0 人
+                        </div>
+                    </div>
+
+                    <!-- 右侧：比赛设置和分组规则 -->
+                    <div class="field-container">
+                        <h3 class="field-title">比赛设置</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">比赛制式</label>
+                            <select id="gameFormat" class="formation-select" onchange="updateTeamCalculation()">
+                                <option value="7">7人制足球</option>
+                                <option value="8">8人制足球</option>
+                                <option value="9">9人制足球</option>
+                                <option value="11" selected>11人制足球</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 12px; font-weight: 600;">分组规则</label>
+                            <div class="grouping-rules">
+                                <div class="rule-item selected" onclick="toggleRule('balanceSkill')">
+                                    <input type="checkbox" id="balanceSkill" class="rule-checkbox" checked>
+                                    <div class="rule-info">
+                                        <div class="rule-title">技能水平平衡</div>
+                                        <div class="rule-description">确保各队平均评分相近</div>
+                                    </div>
+                                </div>
+                                <div class="rule-item" onclick="toggleRule('balancePosition')">
+                                    <input type="checkbox" id="balancePosition" class="rule-checkbox">
+                                    <div class="rule-info">
+                                        <div class="rule-title">位置分布平衡</div>
+                                        <div class="rule-description">每队都有合理的位置配置</div>
+                                    </div>
+                                </div>
+                                <div class="rule-item" onclick="toggleRule('separateGroups')">
+                                    <input type="checkbox" id="separateGroups" class="rule-checkbox">
+                                    <div class="rule-info">
+                                        <div class="rule-title">竞技组/兴趣组分离</div>
+                                        <div class="rule-description">尽量避免混合组别</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="teamCalculation" style="background: var(--tertiary-blue); border-radius: 8px; padding: 16px; margin-bottom: 20px; font-size: 14px;">
+                            <strong>分队预览：</strong><br>
+                            <span id="teamInfo">请选择参与球员</span>
+                        </div>
+
+                        <button class="group-button" onclick="performAutoGrouping()" id="autoGroupButton" disabled>
+                            开始自动分组
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 手动选择模式 -->
+            <div id="manual-mode" class="mode-content">
+                <div class="manual-container">
+                    <!-- 队伍A选择 -->
+                    <div class="team-selection">
+                        <h3 style="color: var(--danger-red); margin-bottom: 16px;">红队阵容</h3>
+                        <div class="formation-selector" style="margin-bottom: 16px;">
+                            <select id="formationSelectA" class="formation-select" onchange="updateFormation('A')">
+                                <option value="433">4-3-3 (11人)</option>
+                                <option value="442">4-4-2 (11人)</option>
+                                <option value="352">3-5-2 (11人)</option>
+                                <option value="343">3-4-3 (10人)</option>
+                                <option value="332">3-3-2 (9人)</option>
+                                <option value="322">3-2-2 (8人)</option>
+                                <option value="222">2-2-2 (7人)</option>
+                            </select>
+                        </div>
+                        <div class="football-field team-a-field">
+                            <div class="field-lines">
+                                <div class="center-line"></div>
+                                <div class="penalty-area left"></div>
+                            </div>
+                            <div class="formation-positions" id="formationPositionsA"></div>
+                        </div>
+                        <div class="team-stats" id="teamStatsA">
+                            <div>总评分: 0</div>
+                            <div>选中人数: 0</div>
+                        </div>
+                    </div>
+
+                    <!-- 队伍B选择 -->
+                    <div class="team-selection">
+                        <h3 style="color: var(--primary-blue); margin-bottom: 16px;">蓝队阵容</h3>
+                        <div class="formation-selector" style="margin-bottom: 16px;">
+                            <select id="formationSelectB" class="formation-select" onchange="updateFormation('B')">
+                                <option value="433">4-3-3 (11人)</option>
+                                <option value="442">4-4-2 (11人)</option>
+                                <option value="352">3-5-2 (11人)</option>
+                                <option value="343">3-4-3 (10人)</option>
+                                <option value="332">3-3-2 (9人)</option>
+                                <option value="322">3-2-2 (8人)</option>
+                                <option value="222">2-2-2 (7人)</option>
+                            </select>
+                        </div>
+                        <div class="football-field team-b-field">
+                            <div class="field-lines">
+                                <div class="center-line"></div>
+                                <div class="penalty-area right"></div>
+                            </div>
+                            <div class="formation-positions" id="formationPositionsB"></div>
+                        </div>
+                        <div class="team-stats" id="teamStatsB">
+                            <div>总评分: 0</div>
+                            <div>选中人数: 0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 位置选择弹窗 -->
+                <div id="positionModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modalTitle">选择球员</h3>
+                            <button class="modal-close" onclick="closePositionModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="margin-bottom: 16px;">
+                                <input type="text" id="modalSearch" placeholder="搜索球员..." style="width: 100%; padding: 8px; border: 1px solid var(--separator); border-radius: 8px;">
+                            </div>
+                            <div id="modalPlayerList" class="modal-player-list">
+                                <!-- 球员列表将由JavaScript生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 24px;">
+                    <button class="group-button" onclick="startManualMatch()" id="manualMatchButton" disabled>
+                        开始对抗比赛
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 智能分组标签页 -->
+        <div id="team-assignment" class="tab-content">
+            <div class="grouping-container">
+                <!-- 左侧：分组信息 -->
+                <div class="grouping-controls">
+                    <h3 style="margin-bottom: 16px; font-weight: 700;">分组信息</h3>
+                    <div id="groupingStatus" style="margin-bottom: 20px; padding: 12px; background: var(--tertiary-blue); border-radius: 8px; font-size: 14px;">
+                        <div id="currentGroupingConfig">请先在"参与人员选择"中完成球员选择和分组设置</div>
+                    </div>
+                    <div style="margin-bottom: 20px; padding: 12px; background: var(--surface); border: 1px solid var(--separator); border-radius: 8px; font-size: 14px;">
+                        <strong>分组规则说明：</strong><br>
+                        • <strong>技能水平平衡：</strong>确保各队平均评分相近<br>
+                        • <strong>位置分布平衡：</strong>每队都有合理的位置配置<br>
+                        • <strong>竞技组/兴趣组分离：</strong>尽量避免混合组别
+                    </div>
+                </div>
+
+                <!-- 右侧：队伍展示 -->
+                <div class="teams-display">
+                    <h3 style="margin-bottom: 20px; font-weight: 700; text-align: center;">队伍分配结果</h3>
+                    <div class="teams-grid" id="teamsGrid">
+                        <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                            暂无分组结果
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 比赛模拟标签页 -->
+        <div id="match-simulation" class="tab-content">
+            <div class="grouping-container">
+                <!-- 左侧：比赛设置 -->
+                <div class="grouping-controls">
+                    <h3 style="margin-bottom: 16px; font-weight: 700;">比赛设置</h3>
+                    <div id="matchModeInfo" style="margin-bottom: 20px; padding: 12px; background: var(--tertiary-blue); border-radius: 8px; font-size: 14px;">
+                        <div id="modeDescription">请先完成队伍分组</div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">比赛时长</label>
+                        <select id="matchDuration" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--separator);">
+                            <option value="30">30分钟</option>
+                            <option value="45" selected>45分钟</option>
+                            <option value="90">90分钟</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">比赛强度</label>
+                        <select id="matchIntensity" style="width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--separator);">
+                            <option value="friendly">友谊赛</option>
+                            <option value="training" selected>训练赛</option>
+                            <option value="competitive">正式比赛</option>
+                        </select>
+                    </div>
+                    <button class="group-button" onclick="startMatch()" id="matchButton" disabled>
+                        开始比赛模拟
+                    </button>
+                    <div style="margin-top: 16px; padding: 12px; background: var(--tertiary-blue); border-radius: 8px; font-size: 14px; color: var(--text-secondary);">
+                        <strong>提示：</strong>请先完成智能分组或手动选择阵容
+                    </div>
+                </div>
+
+                <!-- 右侧：比赛结果 -->
+                <div class="teams-display">
+                    <h3 style="margin-bottom: 20px; font-weight: 700; text-align: center;" id="resultTitle">比赛结果</h3>
+                    <div id="matchResult">
+                        <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                            暂无比赛结果
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allPlayers = [];
+        let selectedPlayers = [];
+        let positionSlots = [];
+        let currentMode = 'auto'; // 'auto' 或 'manual'
+        let manualTeams = { A: {}, B: {} }; // 手动选择的队伍
+        let currentSelectingTeam = '';
+        let currentSelectingPosition = '';
+        let teams = []; // 全局队伍数据，用于跨标签页传递
+        let currentGroupingResult = null; // 当前分组结果
+        
+        // 状态提示消息
+        const statusMessages = {
+            participantSelect: '请选择参与球员或在阵型图中手动配置队伍',
+            autoGroupSuccess: '自动分组完成！请在"智能分组"标签页查看结果，然后可进行比赛模拟',
+            manualSelectSuccess: '手动配置完成！可以直接开始比赛模拟',
+            teamAssignmentReady: '队伍分配完成！可以在"比赛模拟"标签页开始比赛',
+            matchReady: '准备就绪，可以开始比赛模拟',
+            tournamentReady: '准备就绪，可以开始循环赛'
+        };
+
+        // 显示状态提示
+        function showStatusMessage(message, type = 'success') {
+            // 创建状态提示元素
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-message ${type}`;
+            statusDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            // 添加到页面顶部
+            const container = document.querySelector('.container');
+            container.insertBefore(statusDiv, container.firstChild);
+            
+            // 3秒后自动消失
+            setTimeout(() => {
+                statusDiv.remove();
+            }, 3000);
+        }
+
+        // 更新全局状态
+        function updateGlobalStatus() {
+            // 更新所有标签页的按钮状态
+            updateMatchButton();
+            updateManualMatchButton();
+            
+            // 更新标签页状态指示
+            updateTabStatus();
+        }
+
+        // 更新标签页状态指示
+        function updateTabStatus() {
+            const tabs = document.querySelectorAll('.tab');
+            
+            // 参与人员选择状态
+            if (selectedPlayers.length > 0 || Object.keys(manualTeams.A).length > 0 || Object.keys(manualTeams.B).length > 0) {
+                tabs[0].classList.add('completed');
+            } else {
+                tabs[0].classList.remove('completed');
+            }
+            
+            // 智能分组状态
+            if (teams.length >= 2) {
+                tabs[1].classList.add('completed');
+            } else {
+                tabs[1].classList.remove('completed');
+            }
+            
+            // 比赛模拟状态
+            if (teams.length >= 2 && teams[0].length > 0 && teams[1].length > 0) {
+                tabs[2].classList.add('ready');
+            } else {
+                tabs[2].classList.remove('ready');
+            }
+        }
+
+        // 位置适应性权重配置 - 基于position.md的关键能力属性
+        const positionWeights = {
+            'GK': {
+                '反应': 0.30, '守门扑救': 0.25, '扑接出击': 0.20, '扑接高球': 0.15, '守门站位': 0.10
+            },
+            'CB': {
+                '抢断': 0.30, '头球': 0.25, '比赛阅读': 0.20, '强壮': 0.15, '传球': 0.10
+            },
+            'LB': {
+                '速度': 0.25, '抢断': 0.20, '传中': 0.20, '耐力': 0.15, '积极性': 0.10, '传球': 0.10
+            },
+            'RB': {
+                '速度': 0.25, '抢断': 0.20, '传中': 0.20, '耐力': 0.15, '积极性': 0.10, '传球': 0.10
+            },
+            'CDM': {
+                '抢断': 0.30, '比赛阅读': 0.25, '积极性': 0.20, '传球': 0.15, '强壮': 0.10
+            },
+            'CM': {
+                '传球': 0.30, '停球': 0.20, '耐力': 0.20, '大局观': 0.15, '比赛阅读': 0.15
+            },
+            'LM': {
+                '速度': 0.25, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.15
+            },
+            'RM': {
+                '速度': 0.25, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.15
+            },
+            'LW': {
+                '速度': 0.30, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.10
+            },
+            'RW': {
+                '速度': 0.30, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.10
+            },
+            'ST': {
+                '射门': 0.35, '停球': 0.20, '冷静': 0.20, '比赛阅读': 0.15, '速度': 0.10
+            },
+            'CAM': {
+                '传球': 0.30, '技术': 0.25, '大局观': 0.20, '盘带': 0.15, '远射': 0.10
+            }
+        };
+        
+        // 阵型配置
+        const formations = {
+            '433': {
+                name: '4-3-3',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 10, y: 50, position: 'GK' },
+                    { id: 'lb', label: 'LB', x: 25, y: 20, position: 'LB' },
+                    { id: 'cb1', label: 'CB', x: 25, y: 40, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 25, y: 60, position: 'CB' },
+                    { id: 'rb', label: 'RB', x: 25, y: 80, position: 'RB' },
+                    { id: 'cdm', label: 'CDM', x: 45, y: 50, position: 'CDM' },
+                    { id: 'cm1', label: 'CM', x: 55, y: 35, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 55, y: 65, position: 'CM' },
+                    { id: 'lw', label: 'LW', x: 75, y: 25, position: 'LW' },
+                    { id: 'st', label: 'ST', x: 75, y: 50, position: 'ST' },
+                    { id: 'rw', label: 'RW', x: 75, y: 75, position: 'RW' }
+                ]
+            },
+            '442': {
+                name: '4-4-2',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 10, y: 50, position: 'GK' },
+                    { id: 'lb', label: 'LB', x: 25, y: 20, position: 'LB' },
+                    { id: 'cb1', label: 'CB', x: 25, y: 40, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 25, y: 60, position: 'CB' },
+                    { id: 'rb', label: 'RB', x: 25, y: 80, position: 'RB' },
+                    { id: 'lm', label: 'LM', x: 50, y: 25, position: 'LM' },
+                    { id: 'cm1', label: 'CM', x: 50, y: 45, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 50, y: 55, position: 'CM' },
+                    { id: 'rm', label: 'RM', x: 50, y: 75, position: 'RM' },
+                    { id: 'st1', label: 'ST', x: 75, y: 40, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 75, y: 60, position: 'ST' }
+                ]
+            },
+            '352': {
+                name: '3-5-2',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 10, y: 50, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 25, y: 30, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 25, y: 50, position: 'CB' },
+                    { id: 'cb3', label: 'CB', x: 25, y: 70, position: 'CB' },
+                    { id: 'lwb', label: 'LWB', x: 45, y: 15, position: 'LM' },
+                    { id: 'cm1', label: 'CM', x: 50, y: 35, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 50, y: 50, position: 'CM' },
+                    { id: 'cm3', label: 'CM', x: 50, y: 65, position: 'CM' },
+                    { id: 'rwb', label: 'RWB', x: 45, y: 85, position: 'RM' },
+                    { id: 'st1', label: 'ST', x: 75, y: 40, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 75, y: 60, position: 'ST' }
+                ]
+            },
+            '343': {
+                name: '3-4-3',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 10, y: 50, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 25, y: 30, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 25, y: 50, position: 'CB' },
+                    { id: 'cb3', label: 'CB', x: 25, y: 70, position: 'CB' },
+                    { id: 'lm', label: 'LM', x: 50, y: 25, position: 'LM' },
+                    { id: 'cm1', label: 'CM', x: 50, y: 45, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 50, y: 55, position: 'CM' },
+                    { id: 'rm', label: 'RM', x: 50, y: 75, position: 'RM' },
+                    { id: 'lw', label: 'LW', x: 75, y: 30, position: 'LW' },
+                    { id: 'rw', label: 'RW', x: 75, y: 70, position: 'RW' }
+                ]
+            },
+            '332': {
+                name: '3-3-2',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 10, y: 50, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 30, y: 30, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 30, y: 50, position: 'CB' },
+                    { id: 'cb3', label: 'CB', x: 30, y: 70, position: 'CB' },
+                    { id: 'cm1', label: 'CM', x: 55, y: 35, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 55, y: 50, position: 'CM' },
+                    { id: 'cm3', label: 'CM', x: 55, y: 65, position: 'CM' },
+                    { id: 'st1', label: 'ST', x: 80, y: 40, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 80, y: 60, position: 'ST' }
+                ]
+            },
+            '322': {
+                name: '3-2-2',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 15, y: 50, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 35, y: 30, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 35, y: 50, position: 'CB' },
+                    { id: 'cb3', label: 'CB', x: 35, y: 70, position: 'CB' },
+                    { id: 'cm1', label: 'CM', x: 60, y: 40, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 60, y: 60, position: 'CM' },
+                    { id: 'st1', label: 'ST', x: 85, y: 40, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 85, y: 60, position: 'ST' }
+                ]
+            },
+            '222': {
+                name: '2-2-2',
+                positions: [
+                    { id: 'gk', label: 'GK', x: 15, y: 50, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 40, y: 35, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 40, y: 65, position: 'CB' },
+                    { id: 'cm1', label: 'CM', x: 65, y: 35, position: 'CM' },
+                    { id: 'cm2', label: 'CM', x: 65, y: 65, position: 'CM' },
+                    { id: 'st1', label: 'ST', x: 85, y: 35, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 85, y: 65, position: 'ST' }
+                ]
+            }
+        };
+
+        // 计算球员位置适应性 (评分范围: 20-99)
+        function calculatePositionSuitability(player, position) {
+            if (!positionWeights[position] || !player._original) {
+                return 20; // 最低分
+            }
+
+            const weights = positionWeights[position];
+            let totalScore = 0;
+            let totalWeight = 0;
+
+            for (const [attribute, weight] of Object.entries(weights)) {
+                const value = parseInt(player._original[attribute]) || 50; // 默认50分
+                totalScore += value * weight;
+                totalWeight += weight;
+            }
+
+            // 计算基础适应性 (51-99范围)
+            let baseSuitability = totalWeight > 0 ? totalScore / totalWeight : 50;
+            
+            // 位置加成系统
+            if (player.position === position) {
+                // 主要位置：额外加成10分
+                baseSuitability = Math.min(99, baseSuitability + 10);
+            } else if (player._original.次要位置 === position) {
+                // 次要位置：额外加成5分
+                baseSuitability = Math.min(99, baseSuitability + 5);
+            } else {
+                // 非适应位置：减少15分
+                baseSuitability = Math.max(20, baseSuitability - 15);
+            }
+
+            // 确保在20-99范围内
+            return Math.max(20, Math.min(99, Math.round(baseSuitability)));
+        }
+
+        // 模式切换功能
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(mode + 'ModeBtn').classList.add('active');
+            
+            // 显示对应内容
+            document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(mode + '-mode').classList.add('active');
+            
+            // 初始化对应模式
+            if (mode === 'manual') {
+                initManualMode();
+            }
+        }
+
+        // 初始化手动模式
+        function initManualMode() {
+            updateFormation('A');
+            updateFormation('B');
+        }
+
+        function switchTab(tabId, event = null) {
+            // 隐藏所有标签页内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 移除所有标签的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 显示选中的标签页内容
+            document.getElementById(tabId).classList.add('active');
+            
+            // 找到对应的标签按钮并激活
+            const tabs = document.querySelectorAll('.tab');
+            const tabMap = {
+                'participant-selection': 0,
+                'team-assignment': 1, 
+                'match-simulation': 2,
+                'leaderboards': 3
+            };
+            
+            if (tabMap[tabId] !== undefined) {
+                tabs[tabMap[tabId]].classList.add('active');
+            }
+            
+            // 如果是点击事件，从事件目标获取标签
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+        }
+
+        // 加载球员数据
+        async function loadPlayers() {
+            try {
+                const response = await fetch('/api/players');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    // 转换API数据格式为前端需要的格式
+                    allPlayers = data.data.map(player => ({
+                        name: player.姓名,
+                        position: player.主要位置,
+                        rating: parseInt(player.综合能力) || parseInt(player.综合评分) || 70,
+                        group: player.组别,
+                        age: parseInt(player.年龄) || 25,
+                        // 保留完整的原始数据以备后续使用
+                        _original: player
+                    }));
+                } else {
+                    throw new Error('API数据格式错误');
+                }
+                
+                renderPlayerList();
+                console.log(`加载了 ${allPlayers.length} 名球员`);
+            } catch (error) {
+                console.error('加载球员数据失败:', error);
+                // 使用模拟数据
+                allPlayers = [
+                    { name: '刘学', position: 'GK', rating: 86, group: '竞技组' },
+                    { name: '庞博', position: 'GK', rating: 79, group: '竞技组' },
+                    { name: '张三', position: 'CB', rating: 82, group: '竞技组' },
+                    { name: '李四', position: 'LB', rating: 78, group: '兴趣组' },
+                    { name: '王五', position: 'CM', rating: 84, group: '竞技组' }
+                ];
+                renderPlayerList();
+            }
+        }
+
+        // 渲染球员列表
+        function renderPlayerList(searchTerm = '') {
+            if (currentMode !== 'auto') return; // 只在自动模式下渲染
+            
+            const playerList = document.getElementById('playerList');
+            const filteredPlayers = allPlayers.filter(player => 
+                player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                player.position.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            playerList.innerHTML = filteredPlayers.map(player => `
+                <div class="player-item ${selectedPlayers.includes(player) ? 'selected' : ''}" 
+                     onclick="togglePlayerSelection('${player.name}')">
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-position">${player.position} • ${player.group}</div>
+                    </div>
+                    <div class="player-rating">${player.rating}</div>
+                </div>
+            `).join('');
+        }
+
+        // 切换球员选择状态
+        function togglePlayerSelection(playerName) {
+            if (currentMode !== 'auto') return; // 只在自动模式下工作
+            
+            const player = allPlayers.find(p => p.name === playerName);
+            if (!player) return;
+
+            const index = selectedPlayers.findIndex(p => p.name === playerName);
+            if (index > -1) {
+                selectedPlayers.splice(index, 1);
+            } else {
+                selectedPlayers.push(player);
+            }
+
+            renderPlayerList(document.getElementById('playerSearch').value);
+            updateSelectedCount();
+            updateTeamCalculation();
+        }
+
+        // 更新选择计数
+        function updateSelectedCount() {
+            const selectedCount = document.getElementById('selectedCount');
+            if (selectedCount) {
+                selectedCount.textContent = `已选择: ${selectedPlayers.length} 人`;
+            }
+            
+            // 更新自动分组按钮状态  
+            updateAutoGroupButton();
+            
+            // 更新分组状态显示
+            updateGroupingStatus();
+            
+            // 更新全局状态
+            updateGlobalStatus();
+        }
+
+        // 更新队伍计算（修复实时更新）
+        function updateTeamCalculation() {
+            const gameFormat = parseInt(document.getElementById('gameFormat')?.value || 11);
+            const totalPlayers = selectedPlayers.length;
+            const teamInfo = document.getElementById('teamInfo');
+            
+            if (!teamInfo) return;
+            
+            if (totalPlayers === 0) {
+                teamInfo.innerHTML = '请选择参与球员';
+                return;
+            }
+            
+            const numTeams = Math.floor(totalPlayers / gameFormat);
+            const remainingPlayers = totalPlayers % gameFormat;
+            
+            if (numTeams < 2) {
+                teamInfo.innerHTML = `
+                    当前 ${totalPlayers} 人，${gameFormat} 人制<br>
+                    <span style="color: var(--danger-red);">人数不足，无法分队（至少需要 ${gameFormat * 2} 人）</span>
+                `;
+            } else {
+                let teamDisplay = '';
+                if (numTeams === 2) {
+                    teamDisplay = `可分成 <strong>2</strong> 队进行对抗`;
+                } else {
+                    teamDisplay = `可分成 <strong>${numTeams}</strong> 队进行循环赛`;
+                }
+                
+                teamInfo.innerHTML = `
+                    当前 ${totalPlayers} 人，${gameFormat} 人制<br>
+                    ${teamDisplay}，每队 ${gameFormat} 人<br>
+                    ${remainingPlayers > 0 ? `<span style="color: var(--warning-orange);">替补球员：${remainingPlayers} 人</span>` : ''}
+                `;
+            }
+            
+            // 更新按钮状态
+            updateAutoGroupButton();
+            
+            // 更新分组状态显示
+            updateGroupingStatus();
+        }
+
+        // 更新自动分组按钮状态
+        function updateAutoGroupButton() {
+            const autoGroupButton = document.getElementById('autoGroupButton');
+            const gameFormat = parseInt(document.getElementById('gameFormat')?.value || 11);
+            
+            if (!autoGroupButton) return;
+            
+            if (selectedPlayers.length >= gameFormat * 2) {
+                autoGroupButton.disabled = false;
+                const numTeams = Math.floor(selectedPlayers.length / gameFormat);
+                autoGroupButton.textContent = numTeams === 2 ? '开始分组对抗' : '开始分组循环赛';
+            } else {
+                autoGroupButton.disabled = true;
+                autoGroupButton.textContent = `至少需要${gameFormat * 2}名球员`;
+            }
+        }
+
+        // 执行自动分组
+        function performAutoGrouping() {
+            const gameFormat = parseInt(document.getElementById('gameFormat').value);
+            const balanceSkill = document.getElementById('balanceSkill').checked;
+            const balancePosition = document.getElementById('balancePosition').checked;
+            const separateGroups = document.getElementById('separateGroups').checked;
+            
+            if (selectedPlayers.length < gameFormat * 2) {
+                alert(`${gameFormat}人制比赛至少需要${gameFormat * 2}名球员`);
+                return;
+            }
+            
+            const groupedTeams = performAdvancedGrouping(selectedPlayers, gameFormat, {
+                balanceSkill,
+                balancePosition,
+                separateGroups
+            });
+            
+            // 设置全局teams变量
+            teams = groupedTeams;
+            currentGroupingResult = groupedTeams;
+            
+            displayAdvancedTeams(groupedTeams);
+            
+            // 显示成功提示并切换到智能分组标签页
+            showStatusMessage(statusMessages.autoGroupSuccess);
+            
+            // 自动切换到智能分组标签页
+            setTimeout(() => {
+                switchTab('team-assignment');
+            }, 1000);
+            
+            // 更新全局状态
+            updateGlobalStatus();
+        }
+
+        // 高级分组算法
+        function performAdvancedGrouping(players, teamSize, rules) {
+            const numTeams = Math.floor(players.length / teamSize);
+            const teams = Array(numTeams).fill().map(() => []);
+            const playersCopy = [...players];
+            
+            // 1. 按评分排序（如果启用技能平衡）
+            if (rules.balanceSkill) {
+                playersCopy.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            }
+            
+            // 2. 门将优先分配
+            const goalkeepers = playersCopy.filter(p => p.position === 'GK');
+            goalkeepers.forEach((gk, index) => {
+                if (index < numTeams) {
+                    teams[index].push(gk);
+                    playersCopy.splice(playersCopy.indexOf(gk), 1);
+                }
+            });
+            
+            // 3. 蛇形分配剩余球员
+            playersCopy.forEach(player => {
+                // 找到人数最少的队伍
+                const minSize = Math.min(...teams.map(team => team.length));
+                const availableTeams = teams.map((team, index) => ({ team, index }))
+                                          .filter(({team}) => team.length === minSize);
+                
+                if (availableTeams.length > 0) {
+                    // 如果有多个队伍人数相同，选择最平衡的
+                    let bestTeam = availableTeams[0];
+                    
+                    if (rules.balanceSkill) {
+                        bestTeam = availableTeams.reduce((best, current) => {
+                            const bestAvg = best.team.reduce((sum, p) => sum + p.rating, 0) / best.team.length;
+                            const currentAvg = current.team.reduce((sum, p) => sum + p.rating, 0) / current.team.length;
+                            return Math.abs(bestAvg - 80) < Math.abs(currentAvg - 80) ? best : current;
+                        });
+                    }
+                    
+                    bestTeam.team.push(player);
+                }
+            });
+            
+            // 4. 位置平衡调整
+            if (rules.balancePosition) {
+                optimizePositionBalance(teams);
+            }
+            
+            // 5. 组别分离调整
+            if (rules.separateGroups) {
+                optimizeGroupSeparation(teams);
+            }
+            
+            return teams;
+        }
+
+        // 位置平衡优化
+        function optimizePositionBalance(teams) {
+            const positions = ['GK', 'CB', 'LB', 'RB', 'CDM', 'CM', 'LM', 'RM', 'LW', 'RW', 'ST'];
+            
+            for (let i = 0; i < 3; i++) { // 最多3轮优化
+                positions.forEach(pos => {
+                    const teamCounts = teams.map(team => team.filter(p => p.position === pos).length);
+                    const maxCount = Math.max(...teamCounts);
+                    const minCount = Math.min(...teamCounts);
+                    
+                    if (maxCount - minCount > 1) {
+                        const maxTeamIndex = teamCounts.indexOf(maxCount);
+                        const minTeamIndex = teamCounts.indexOf(minCount);
+                        
+                        const playerToMove = teams[maxTeamIndex].find(p => p.position === pos);
+                        const playerToSwap = teams[minTeamIndex].find(p => p.position !== pos);
+                        
+                        if (playerToMove && playerToSwap) {
+                            const maxTeamPlayer = teams[maxTeamIndex].indexOf(playerToMove);
+                            const minTeamPlayer = teams[minTeamIndex].indexOf(playerToSwap);
+                            
+                            [teams[maxTeamIndex][maxTeamPlayer], teams[minTeamIndex][minTeamPlayer]] = 
+                            [teams[minTeamIndex][minTeamPlayer], teams[maxTeamIndex][maxTeamPlayer]];
+                        }
+                    }
+                });
+            }
+        }
+
+        // 组别分离优化
+        function optimizeGroupSeparation(teams) {
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const team1Competitive = teams[i].filter(p => p.group === '竞技组').length;
+                    const team2Competitive = teams[j].filter(p => p.group === '竞技组').length;
+                    
+                    if (Math.abs(team1Competitive - team2Competitive) > 2) {
+                        // 尝试交换球员以平衡组别
+                        const team1Player = teams[i].find(p => p.group === '竞技组');
+                        const team2Player = teams[j].find(p => p.group === '兴趣组');
+                        
+                        if (team1Player && team2Player && team1Competitive > team2Competitive) {
+                            const index1 = teams[i].indexOf(team1Player);
+                            const index2 = teams[j].indexOf(team2Player);
+                            [teams[i][index1], teams[j][index2]] = [teams[j][index2], teams[i][index1]];
+                        }
+                    }
+                }
+            }
+        }
+
+        // 显示高级分组结果
+        function displayAdvancedTeams(teams) {
+            const teamsGrid = document.getElementById('teamsGrid');
+            
+            teamsGrid.innerHTML = teams.map((team, index) => {
+                const avgRating = team.length > 0 ? (team.reduce((sum, p) => sum + (p.rating || 0), 0) / team.length).toFixed(1) : 0;
+                const competitiveCount = team.filter(p => p.group === '竞技组').length;
+                
+                // 分析队伍特点
+                const teamAnalysis = analyzeTeamCharacteristics(team);
+                const groupingReason = generateGroupingReason(team, teams, index);
+                
+                return `
+                    <div class="team-card ${['team-a', 'team-b', 'team-c', 'team-d'][index] || 'team-a'}">
+                        <div class="team-header">
+                            <div class="team-title">第${index + 1}队</div>
+                            <div class="team-stats">
+                                <span>${team.length}人</span>
+                                <span>平均${avgRating}</span>
+                                <span>竞技组${competitiveCount}人</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 分组原因 -->
+                        <div style="background: var(--tertiary-blue); padding: 12px; border-radius: 8px; margin-bottom: 16px;">
+                            <div style="font-weight: 600; margin-bottom: 4px; font-size: 12px;">分组原因：</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">${groupingReason}</div>
+                        </div>
+                        
+                        <!-- 队伍特点 -->
+                        <div style="background: rgba(48, 209, 88, 0.1); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                            <div style="font-weight: 600; margin-bottom: 12px; font-size: 14px; color: var(--primary-blue);">📊 队伍特点分析：</div>
+                            <div style="font-size: 12px; color: var(--text-primary); line-height: 1.6;">${teamAnalysis}</div>
+                        </div>
+                        
+                        <ul class="team-players">
+                            ${team.map(player => `
+                                <li class="team-player">
+                                    <div class="player-name-pos">
+                                        <span>${player.name}</span>
+                                        <span class="position-tag">${player.position}</span>
+                                    </div>
+                                    <span>${player.rating}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+
+            // 更新比赛按钮状态
+            updateMatchButton();
+        }
+
+        // 详细分析队伍特点（基于真实球员数据）
+        function analyzeTeamCharacteristics(team) {
+            if (team.length === 0) return '队伍为空';
+            
+            // 收集所有球员的能力数据
+            const teamStats = {
+                传球: [], 射门: [], 速度: [], 抢断: [], 技术: [], 耐力: [], 强壮: [],
+                头球: [], 盘带: [], 远射: [], 传中: [], 停球: [], 积极性: [], 比赛阅读: [],
+                冷静: [], 大局观: [], 领导力: [], 团队合作: [], 年龄: [], positions: {}
+            };
+            
+            // 提取每个球员的数据
+            team.forEach(player => {
+                if (player._original) {
+                    const data = player._original;
+                    teamStats.传球.push(parseInt(data.传球) || 70);
+                    teamStats.射门.push(parseInt(data.射门) || 70);
+                    teamStats.速度.push(parseInt(data.速度) || 70);
+                    teamStats.抢断.push(parseInt(data.抢断) || 70);
+                    teamStats.技术.push(parseInt(data.技术综合) || 70);
+                    teamStats.耐力.push(parseInt(data.耐力) || 70);
+                    teamStats.强壮.push(parseInt(data.强壮) || 70);
+                    teamStats.头球.push(parseInt(data.头球) || 70);
+                    teamStats.盘带.push(parseInt(data.盘带) || 70);
+                    teamStats.远射.push(parseInt(data.远射) || 70);
+                    teamStats.传中.push(parseInt(data.传中) || 70);
+                    teamStats.停球.push(parseInt(data.停球) || 70);
+                    teamStats.积极性.push(parseInt(data.积极性) || 70);
+                    teamStats.比赛阅读.push(parseInt(data.比赛阅读) || 70);
+                    teamStats.冷静.push(parseInt(data.冷静) || 70);
+                    teamStats.大局观.push(parseInt(data.大局观) || 70);
+                    teamStats.领导力.push(parseInt(data.领导力) || 70);
+                    teamStats.团队合作.push(parseInt(data.团队合作) || 70);
+                    teamStats.年龄.push(parseInt(data.年龄) || 30);
+                    
+                    // 统计位置分布
+                    const mainPos = data.主要位置 || 'Unknown';
+                    teamStats.positions[mainPos] = (teamStats.positions[mainPos] || 0) + 1;
+                }
+            });
+            
+            // 计算平均值和标准差
+            const averages = {};
+            const stdDevs = {};
+            Object.keys(teamStats).forEach(key => {
+                if (key !== 'positions' && teamStats[key].length > 0) {
+                    const values = teamStats[key];
+                    const avg = values.reduce((a, b) => a + b, 0) / values.length;
+                    averages[key] = Math.round(avg);
+                    
+                    // 计算标准差，用于判断队伍的一致性
+                    const variance = values.reduce((acc, val) => acc + Math.pow(val - avg, 2), 0) / values.length;
+                    stdDevs[key] = Math.sqrt(variance);
+                }
+            });
+            
+            // 生成个性化分析
+            const analysis = [];
+            
+            // 1. 核心球员特色分析
+            const topPlayers = team.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
+            if (topPlayers.length > 0) {
+                const corePlayerAnalysis = topPlayers.map(player => {
+                    const data = player._original;
+                    if (!data) return `${player.name}（评分${player.rating}）`;
+                    
+                    // 找出该球员最突出的能力
+                    const playerStrengths = [];
+                    const attrs = ['传球', '射门', '速度', '抢断', '技术综合', '盘带'];
+                    attrs.forEach(attr => {
+                        const value = parseInt(data[attr]) || 70;
+                        if (value >= 85) playerStrengths.push(attr);
+                    });
+                    
+                    return `${player.name}（${playerStrengths.length > 0 ? `擅长${playerStrengths.slice(0,2).join('、')}` : '全能型'}）`;
+                }).join('、');
+                
+                analysis.push(`🌟 <strong>核心框架：</strong>${corePlayerAnalysis}构成队伍的战术支柱`);
+            }
+            
+            // 2. 战术风格识别
+            let tacticalStyle = '';
+            if (averages.传球 >= 82 && averages.停球 >= 80) {
+                tacticalStyle = `⚽ <strong>战术风格：</strong>控球派大师！传球平均${averages.传球}分，停球${averages.停球}分。这支队伍崇尚巴萨式的tiki-taka，通过精妙传递撕裂对手防线`;
+            } else if (averages.速度 >= 82 && averages.盘带 >= 80) {
+                tacticalStyle = `⚡ <strong>战术风格：</strong>速度狂魔！平均速度${averages.速度}分，盘带${averages.盘带}分。典型的反击流球队，一旦获得球权立即发起闪电战`;
+            } else if (averages.强壮 >= 82 && averages.头球 >= 80) {
+                tacticalStyle = `💪 <strong>战术风格：</strong>英式硬汉！强壮度${averages.强壮}分，头球${averages.头球}分。信奉身体对抗的足球哲学，定位球就是大杀器`;
+            } else if (averages.技术 >= 82 && averages.盘带 >= 80) {
+                tacticalStyle = `🎨 <strong>战术风格：</strong>技术流艺术家！技术${averages.技术}分，盘带${averages.盘带}分。追求足球的美感，每一次触球都是艺术表演`;
+            } else {
+                tacticalStyle = `⚖️ <strong>战术风格：</strong>实用主义者！没有明显短板的均衡型球队，适应能力强，能根据对手调整打法`;
+            }
+            analysis.push(tacticalStyle);
+            
+            // 3. 进攻火力评估
+            const firepower = Math.round((averages.射门 + averages.盘带 + averages.远射) / 3);
+            if (firepower >= 85) {
+                analysis.push(`🔥 <strong>进攻火力：</strong>攻击群火力全开！射门${averages.射门}分，盘带${averages.盘带}分。这支球队的进攻就像机关枪扫射，让对手门将胆战心惊`);
+            } else if (firepower >= 75) {
+                analysis.push(`⚽ <strong>进攻火力：</strong>进攻有板有眼，虽然缺乏爆炸性，但通过团队配合总能制造威胁，属于细水长流型`);
+            } else {
+                analysis.push(`🎯 <strong>进攻火力：</strong>进攻相对保守，更多依靠抓住对方失误，需要耐心等待机会，一击必杀`);
+            }
+            
+            // 4. 防守体系评估
+            const defense = Math.round((averages.抢断 + averages.头球 + averages.比赛阅读) / 3);
+            if (defense >= 85) {
+                analysis.push(`🛡️ <strong>防守体系：</strong>铁桶阵2.0！抢断${averages.抢断}分，头球${averages.头球}分。这道防线固若金汤，对手想要破门比登天还难`);
+            } else if (defense >= 75) {
+                analysis.push(`🔐 <strong>防守体系：</strong>防守中规中矩，虽然不是铜墙铁壁，但组织有序，很少出现低级失误`);
+            } else {
+                analysis.push(`⚠️ <strong>防守体系：</strong>防守存在漏洞，需要加强协防意识，往往是"进攻就是最好的防守"的代表`);
+            }
+            
+            // 5. 心理韧性分析
+            const mental = Math.round((averages.冷静 + averages.大局观 + averages.领导力) / 3);
+            if (mental >= 85) {
+                analysis.push(`🧠 <strong>心理韧性：</strong>大心脏战士！平均心理素质${mental}分。这支队伍在关键时刻反而越战越勇，是天生的大场面球员`);
+            } else if (mental >= 75) {
+                analysis.push(`😌 <strong>心理韧性：</strong>心态平稳如水，不会轻易被场面情况影响，是可靠的中坚力量`);
+            } else {
+                analysis.push(`😰 <strong>心理韧性：</strong>容易受到压力影响，在关键时刻可能会出现技术变形，需要队友的鼓励支持`);
+            }
+            
+            // 6. 年龄结构特色
+            const avgAge = averages.年龄;
+            const youngest = Math.min(...teamStats.年龄);
+            const oldest = Math.max(...teamStats.年龄);
+            
+            if (avgAge <= 27) {
+                analysis.push(`🌟 <strong>年龄结构：</strong>青春风暴席卷而来！平均年龄${avgAge}岁（${youngest}-${oldest}岁）。这群小老虎体能爆表，敢打敢拼，就是容易头脑发热`);
+            } else if (avgAge <= 33) {
+                analysis.push(`⭐ <strong>年龄结构：</strong>黄金一代正当时！平均年龄${avgAge}岁。技术、体能、经验的完美三合一，正是出成绩的最佳时机`);
+            } else {
+                analysis.push(`🎖️ <strong>年龄结构：</strong>老将传奇永不落幕！平均年龄${avgAge}岁。虽然双腿不复当年，但一颗冠军心依然炽热`);
+            }
+            
+            // 7. 体能储备分析
+            if (averages.耐力 >= 85) {
+                analysis.push(`🏃 <strong>体能储备：</strong>马拉松战士！耐力${averages.耐力}分。这支队伍可以从第1分钟拼到第90分钟，体能就是最大的武器`);
+            } else if (averages.耐力 >= 75) {
+                analysis.push(`🔋 <strong>体能储备：</strong>体能合格，能够支撑正常比赛强度，但需要合理分配体力`);
+            } else {
+                analysis.push(`😮‍💨 <strong>体能储备：</strong>体能是短板，下半场可能出现体力危机，需要及时轮换调整`);
+            }
+            
+            // 8. 团队配合度
+            if (averages.团队合作 >= 85) {
+                analysis.push(`🤝 <strong>团队化学：</strong>完美组合！团队合作${averages.团队合作}分。这11个人就像一台精密仪器，每个零件都完美配合`);
+            } else if (averages.团队合作 >= 75) {
+                analysis.push(`🤝 <strong>团队化学：</strong>合作意识良好，大部分时候能够统一思想，配合默契`);
+            } else {
+                analysis.push(`🙄 <strong>团队化学：</strong>各自为战倾向明显，需要加强团队意识培养，有时候1+1<2`);
+            }
+            
+            return analysis.join('<br><br>');
+        }
+
+        // 切换循环赛比赛详情显示
+        function toggleTournamentMatchDetails(matchIndex) {
+            const detailsDiv = document.getElementById(`tournament-match-details-${matchIndex}`);
+            const toggleIcon = document.getElementById(`tournament-toggle-${matchIndex}`);
+            
+            if (detailsDiv.style.display === 'none') {
+                detailsDiv.style.display = 'block';
+                toggleIcon.style.transform = 'rotate(180deg)';
+            } else {
+                detailsDiv.style.display = 'none';
+                toggleIcon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 能力描述数据（从 football_attributes.csv 提取）
+        const attributeDescriptions = {
+            '传球': {
+                '60-68': '传球非常随意，经常失误，缺乏准度和力量概念。',
+                '69-76': '能完成近距离简单传球，但长传或有压迫下的传球质量不高，失误较多。',
+                '77-84': '具备一定的传球准度，能完成大部分中短距离传球，偶尔有不错的直塞或转移。',
+                '85-92': '传球准确，思路清晰，能送出有威胁的传球，是球队组织核心的潜力。',
+                '93-99': '传球大师级别（业余），精准度和创造力俱佳，能用传球撕开对方防线。'
+            },
+            '射门': {
+                '60-68': '射门毫无准星，经常打飞或软弱无力，把握不住机会。',
+                '69-76': '偶尔能射正，但多数射门质量不高，缺乏力量和角度。',
+                '77-84': '在熟悉的位置能完成有威胁的射门，具备一定的进球能力。',
+                '85-92': '射术精湛（业余），冷静且果断，把握机会能力强，是球队的稳定得分点。',
+                '93-99': '天生射手（业余），各种机会都能转化为进球，射门方式多样且高效。'
+            },
+            '速度': {
+                '60-68': '启动慢，绝对速度也慢，很容易被对手在速度上压制。',
+                '69-76': '速度平平，爆发力一般，在业余层面没有明显的速度优势。',
+                '77-84': '具备平均水准的速度和爆发力，能跟上业余比赛的节奏。',
+                '85-92': '速度较快（业余），爆发力好，能利用速度摆脱或追赶对手。',
+                '93-99': '快如闪电（业余），无论是启动还是最高速度都远超常人，是巨大的战术优势。'
+            },
+            '抢断': {
+                '60-68': '防守意识差，出脚鲁莽，容易犯规或被轻易晃过。',
+                '69-76': '能尝试抢断，但时机和方式掌握不佳，成功率低，容易失位。',
+                '77-84': '具备一定的抢断能力，能在一对一防守中完成抢断，但不够干净利落。',
+                '85-92': '抢断凶狠且有效（业余），判断准确，下脚干净，是可靠的防守屏障。',
+                '93-99': '抢断大师（业余），防守滴水不漏，预判和技术俱佳，让对方前锋头疼。'
+            },
+            '技术': {
+                '60-68': '球感生疏，动作僵硬，基本功非常薄弱。',
+                '69-76': '具备一些基础技术动作，但不够协调流畅，处理复杂球能力差。',
+                '77-84': '技术动作规范，球感尚可，能完成大部分业余比赛所需的技术动作。',
+                '85-92': '技术功底扎实（业余），球感出色，动作协调舒展，能做出一些有难度的技术动作。',
+                '93-99': '技术细腻华丽（业余），人球结合好，观赏性和实用性兼备，天赋异禀。'
+            },
+            '耐力': {
+                '60-68': '体力差，跑几步就喘，难以支撑全场比赛。',
+                '69-76': '体力一般，比赛后半段容易出现体能瓶颈，影响发挥。',
+                '77-84': '具备支撑一场业余比赛所需的基本耐力，但高强度对抗下消耗快。',
+                '85-92': '耐力充沛（业余），能保持较高强度的跑动和拼抢，覆盖范围大。',
+                '93-99': '跑不死（业余），体能储备惊人，全场飞奔不知疲倦。'
+            },
+            '强壮': {
+                '60-68': '身体单薄，对抗中一碰就倒，完全无法与对手抗衡。',
+                '69-76': '身体对抗能力一般，在激烈拼抢中容易吃亏。',
+                '77-84': '具备一定的身体强壮度，能进行正常的身体对抗，不落下风。',
+                '85-92': '身体强壮（业余），对抗能力出色，能利用身体护球或在拼抢中占据优势。',
+                '93-99': '人形野兽（业余），力量惊人，身体对抗中优势巨大，对方难以撼动。'
+            }
+        };
+
+        // 获取能力描述
+        function getAttributeDescription(attribute, value) {
+            if (!attributeDescriptions[attribute]) return '';
+            
+            const ranges = Object.keys(attributeDescriptions[attribute]);
+            for (const range of ranges) {
+                const [min, max] = range.split('-').map(Number);
+                if (value >= min && value <= max) {
+                    return attributeDescriptions[attribute][range];
+                }
+            }
+            return '';
+        }
+
+        // 获取能力等级
+        function getAttributeLevel(value) {
+            if (value >= 93) return '顶尖';
+            if (value >= 85) return '优秀';
+            if (value >= 77) return '平均';
+            if (value >= 69) return '入门';
+            return '初学';
+        }
+
+        // 切换分组规则
+        function toggleRule(ruleId) {
+            const checkbox = document.getElementById(ruleId);
+            const ruleItem = checkbox.closest('.rule-item');
+            
+            if (!checkbox || !ruleItem) return;
+            
+            // 切换复选框状态
+            checkbox.checked = !checkbox.checked;
+            
+            // 切换高亮样式
+            if (checkbox.checked) {
+                ruleItem.classList.add('selected');
+            } else {
+                ruleItem.classList.remove('selected');
+            }
+            
+            // 阻止事件冒泡，避免重复触发
+            event.stopPropagation();
+        }
+
+        // 更新阵型显示
+        function updateFormation(team) {
+            const formationSelect = document.getElementById(`formationSelect${team}`);
+            const formationContainer = document.getElementById(`formationPositions${team}`);
+            
+            if (!formationSelect || !formationContainer) {
+                console.error(`找不到${team}队的阵型元素`);
+                return;
+            }
+            
+            const selectedFormation = formationSelect.value;
+            const formation = formations[selectedFormation];
+            
+            if (!formation) {
+                console.error(`找不到阵型配置: ${selectedFormation}`);
+                return;
+            }
+            
+            // 清空现有位置
+            formationContainer.innerHTML = '';
+            
+            // 渲染新阵型的位置点
+            formation.positions.forEach(pos => {
+                const positionSlot = document.createElement('div');
+                positionSlot.className = `position-slot team-${team.toLowerCase()}`;
+                positionSlot.id = `${team}-${pos.id}`;
+                positionSlot.style.left = `${pos.x}%`;
+                positionSlot.style.top = `${pos.y}%`;
+                
+                // 检查是否已有球员
+                const currentPlayer = manualTeams[team][pos.id];
+                if (currentPlayer) {
+                    positionSlot.classList.add('occupied');
+                    positionSlot.innerHTML = `
+                        <div class="player-avatar">${currentPlayer.name.charAt(0)}</div>
+                        <div class="position-label">${currentPlayer.name}</div>
+                    `;
+                } else {
+                    positionSlot.innerHTML = `
+                        <div style="color: rgba(255,255,255,0.8); font-size: 10px; font-weight: 600;">${pos.label}</div>
+                        <div class="position-label">${pos.label}</div>
+                    `;
+                }
+                
+                // 添加点击事件
+                positionSlot.addEventListener('click', () => {
+                    openPositionModal(team, pos.id, pos.position, pos.label);
+                });
+                
+                formationContainer.appendChild(positionSlot);
+            });
+            
+            // 更新队伍统计
+            updateTeamStats(team);
+        }
+
+        // 打开位置选择弹窗
+        function openPositionModal(team, positionId, position, positionLabel) {
+            currentSelectingTeam = team;
+            currentSelectingPosition = positionId;
+            
+            const modal = document.getElementById('positionModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalPlayerList = document.getElementById('modalPlayerList');
+            const modalSearch = document.getElementById('modalSearch');
+            
+            modalTitle.textContent = `选择${positionLabel}球员 (${team === 'A' ? '红队' : '蓝队'})`;
+            
+            // 清空搜索框
+            modalSearch.value = '';
+            
+            // 渲染可选球员列表
+            renderModalPlayerList('');
+            
+            // 添加搜索事件
+            modalSearch.onkeyup = (e) => {
+                renderModalPlayerList(e.target.value);
+            };
+            
+            // 显示弹窗
+            modal.classList.add('active');
+        }
+
+        // 渲染弹窗中的球员列表
+        function renderModalPlayerList(searchTerm = '') {
+            const modalPlayerList = document.getElementById('modalPlayerList');
+            const position = getPositionFromSlot(currentSelectingPosition);
+            
+            // 过滤可用球员
+            const filteredPlayers = allPlayers.filter(player => {
+                // 搜索过滤
+                const matchSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  player.position.toLowerCase().includes(searchTerm.toLowerCase());
+                
+                // 检查是否已被其他位置使用
+                const isAlreadyUsed = Object.values(manualTeams.A).some(p => p && p.name === player.name) ||
+                                    Object.values(manualTeams.B).some(p => p && p.name === player.name);
+                
+                return matchSearch && !isAlreadyUsed;
+            });
+            
+            // 按位置适应性排序
+            const sortedPlayers = filteredPlayers.map(player => {
+                const suitability = calculatePositionSuitability(player, position);
+                return { ...player, suitability };
+            }).sort((a, b) => b.suitability - a.suitability);
+            
+            modalPlayerList.innerHTML = sortedPlayers.map(player => {
+                const suitabilityClass = getSuitabilityClass(player.suitability);
+                const suitabilityText = getSuitabilityText(player.suitability);
+                
+                return `
+                    <div class="modal-player-item" onclick="selectPlayerForPosition('${player.name}')">
+                        <div class="player-info">
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-position">${player.position} • ${player.group} • 评分${player.rating}</div>
+                        </div>
+                        <div class="player-suitability">
+                            <div style="font-size: 12px; margin-bottom: 4px;">${suitabilityText}</div>
+                            <div class="suitability-bar">
+                                <div class="suitability-fill ${suitabilityClass}" style="width: ${player.suitability}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (sortedPlayers.length === 0) {
+                modalPlayerList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        ${searchTerm ? '没有找到匹配的球员' : '没有可用球员'}
+                    </div>
+                `;
+            }
+        }
+
+        // 获取位置槽对应的位置
+        function getPositionFromSlot(slotId) {
+            // 从阵型配置中查找对应位置
+            for (const formationKey in formations) {
+                const formation = formations[formationKey];
+                const position = formation.positions.find(pos => pos.id === slotId);
+                if (position) {
+                    return position.position;
+                }
+            }
+            return 'CM'; // 默认位置
+        }
+
+        // 为位置选择球员
+        function selectPlayerForPosition(playerName) {
+            const player = allPlayers.find(p => p.name === playerName);
+            if (!player) return;
+            
+            // 移除球员在其他位置的配置
+            Object.keys(manualTeams.A).forEach(key => {
+                if (manualTeams.A[key] && manualTeams.A[key].name === playerName) {
+                    delete manualTeams.A[key];
+                }
+            });
+            Object.keys(manualTeams.B).forEach(key => {
+                if (manualTeams.B[key] && manualTeams.B[key].name === playerName) {
+                    delete manualTeams.B[key];
+                }
+            });
+            
+            // 设置新位置
+            manualTeams[currentSelectingTeam][currentSelectingPosition] = player;
+            
+            // 更新阵型显示
+            updateFormation(currentSelectingTeam);
+            updateFormation(currentSelectingTeam === 'A' ? 'B' : 'A'); // 更新另一队以移除重复球员
+            
+            // 关闭弹窗
+            closePositionModal();
+            
+            // 更新全局状态
+            updateGlobalStatus();
+            
+            showStatusMessage(`${player.name} 已加入${currentSelectingTeam === 'A' ? '红队' : '蓝队'}`, 'success');
+        }
+
+        // 更新队伍统计
+        function updateTeamStats(team) {
+            const teamStatsDiv = document.getElementById(`teamStats${team}`);
+            if (!teamStatsDiv) return;
+            
+            const players = Object.values(manualTeams[team]).filter(p => p);
+            const totalRating = players.reduce((sum, player) => sum + (player.rating || 70), 0);
+            const averageRating = players.length > 0 ? (totalRating / players.length).toFixed(1) : 0;
+            
+            teamStatsDiv.innerHTML = `
+                <div>总评分: ${totalRating}</div>
+                <div>平均评分: ${averageRating}</div>
+                <div>选中人数: ${players.length}</div>
+            `;
+        }
+
+        // 获取适应性等级样式
+        function getSuitabilityClass(suitability) {
+            if (suitability >= 85) return 'suitability-excellent';
+            if (suitability >= 75) return 'suitability-good';
+            if (suitability >= 60) return 'suitability-average';
+            return 'suitability-poor';
+        }
+
+        // 获取适应性文本
+        function getSuitabilityText(suitability) {
+            if (suitability >= 85) return '非常适合';
+            if (suitability >= 75) return '比较适合';
+            if (suitability >= 60) return '一般适合';
+            return '不太适合';
+        }
+
+        // 关闭位置选择弹窗
+        function closePositionModal() {
+            const modal = document.getElementById('positionModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // 开始手动对抗比赛
+        function startManualMatch() {
+            const teamAPlayers = Object.values(manualTeams.A).filter(p => p);
+            const teamBPlayers = Object.values(manualTeams.B).filter(p => p);
+            
+            if (teamAPlayers.length === 0 || teamBPlayers.length === 0) {
+                showStatusMessage('请先配置两队阵容', 'warning');
+                return;
+            }
+            
+            // 将手动配置的队伍设置为全局teams，用于比赛模拟
+            teams = [teamAPlayers, teamBPlayers];
+            
+            // 切换到比赛模拟标签页
+            switchTab('match-simulation');
+            
+            // 更新比赛按钮状态
+            updateMatchButton();
+            
+            showStatusMessage(`手动配置完成！红队${teamAPlayers.length}人 vs 蓝队${teamBPlayers.length}人`, 'success');
+        }
+
+        // 更新手动对抗按钮状态
+        function updateManualMatchButton() {
+            const button = document.getElementById('manualMatchButton');
+            if (!button) return;
+            
+            // 检查是否有足够的球员配置
+            const teamAPlayers = Object.keys(manualTeams.A).length;
+            const teamBPlayers = Object.keys(manualTeams.B).length;
+            
+            if (teamAPlayers > 0 && teamBPlayers > 0) {
+                button.disabled = false;
+                button.textContent = '开始对抗比赛';
+            } else {
+                button.disabled = true;
+                button.textContent = '请配置两队阵容';
+            }
+        }
+
+        // 开始比赛模拟
+        function startMatch() {
+            if (teams.length < 2) {
+                showStatusMessage('请先完成队伍分组', 'warning');
+                return;
+            }
+            
+            console.log('开始比赛模拟');
+            
+            const matchDuration = parseInt(document.getElementById('matchDuration').value);
+            const matchIntensity = document.getElementById('matchIntensity').value;
+            
+            // 显示加载状态
+            const resultDiv = document.getElementById('matchResult');
+            resultDiv.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <i class="fas fa-futbol fa-spin" style="font-size: 48px; color: var(--primary-blue); margin-bottom: 20px;"></i>
+                    <div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">比赛进行中...</div>
+                    <div style="color: var(--text-secondary);">正在模拟 ${matchDuration} 分钟${getIntensityText(matchIntensity)}</div>
+                </div>
+            `;
+            
+            // 模拟比赛延迟
+            setTimeout(() => {
+                const matchResult = simulateMatch(teams, matchDuration, matchIntensity);
+                displayMatchResult(matchResult);
+                showStatusMessage('比赛模拟完成！', 'success');
+            }, 2000);
+        }
+
+        // 获取强度文本
+        function getIntensityText(intensity) {
+            const intensityTexts = {
+                'friendly': '友谊赛',
+                'training': '训练赛', 
+                'competitive': '正式比赛'
+            };
+            return intensityTexts[intensity] || '训练赛';
+        }
+
+        // 模拟比赛
+        function simulateMatch(teams, duration, intensity) {
+            if (teams.length === 2) {
+                // 两队对抗
+                return simulateTwoTeamMatch(teams[0], teams[1], duration, intensity);
+            } else {
+                // 多队循环赛
+                return simulateTournament(teams, duration, intensity);
+            }
+        }
+
+        // 模拟两队对抗
+        function simulateTwoTeamMatch(team1, team2, duration, intensity) {
+            const teamA = { players: team1, name: '红队', color: 'var(--danger-red)' };
+            const teamB = { players: team2, name: '蓝队', color: 'var(--primary-blue)' };
+            
+            // 计算队伍实力
+            const strengthA = calculateTeamStrength(teamA.players, intensity);
+            const strengthB = calculateTeamStrength(teamB.players, intensity);
+            
+            // 模拟比赛事件
+            const events = simulateMatchEvents(teamA, teamB, strengthA, strengthB, duration, intensity);
+            
+            // 统计比分
+            const scoreA = events.filter(e => e.type === 'goal' && e.team === 'A').length;
+            const scoreB = events.filter(e => e.type === 'goal' && e.team === 'B').length;
+            
+            // 生成比赛统计
+            const stats = generateMatchStats(teamA, teamB, events, duration);
+            
+            return {
+                type: 'match',
+                teams: [teamA, teamB],
+                score: [scoreA, scoreB],
+                events,
+                stats,
+                duration,
+                intensity,
+                winner: scoreA > scoreB ? 'A' : scoreB > scoreA ? 'B' : 'draw'
+            };
+        }
+
+        // 计算队伍实力
+        function calculateTeamStrength(players, intensity) {
+            if (!players || players.length === 0) return 50;
+            
+            const baseStrength = players.reduce((sum, player) => sum + (player.rating || 70), 0) / players.length;
+            
+            // 根据比赛强度调整
+            const intensityModifiers = {
+                'friendly': 0.9, // 友谊赛状态较为轻松
+                'training': 1.0, // 训练赛正常状态
+                'competitive': 1.1 // 正式比赛更投入
+            };
+            
+            return Math.min(99, baseStrength * (intensityModifiers[intensity] || 1.0));
+        }
+
+        // 模拟比赛事件
+        function simulateMatchEvents(teamA, teamB, strengthA, strengthB, duration, intensity) {
+            const events = [];
+            
+            // 大幅增加进球概率和事件数量
+            const baseGoals = Math.floor(duration / 20) + 2; // 基础进球数
+            const totalPossibleGoals = baseGoals + Math.floor(Math.random() * 4);
+            
+            // 计算进球概率（大幅提高）
+            const baseGoalProbA = 0.6 + (strengthA - 70) / 100; // 基础60%概率
+            const baseGoalProbB = 0.6 + (strengthB - 70) / 100;
+            
+            // 生成进球事件
+            for (let i = 0; i < totalPossibleGoals; i++) {
+                const minute = Math.floor(Math.random() * duration) + 1;
+                
+                // 根据实力决定哪队更可能进球
+                const strengthRatio = strengthA / (strengthA + strengthB);
+                const randomFactor = Math.random() + 0.2; // 增加随机性
+                
+                let scoringTeam, scoringPlayers;
+                if (Math.random() < strengthRatio * randomFactor) {
+                    scoringTeam = 'A';
+                    scoringPlayers = teamA.players;
+                } else {
+                    scoringTeam = 'B';
+                    scoringPlayers = teamB.players;
+                }
+                
+                // 选择射手（优先选择前锋和中场）
+                const scorers = scoringPlayers.filter(p => 
+                    ['ST', 'CF', 'LW', 'RW', 'CAM', 'CM'].includes(p.position)
+                );
+                const shooter = scorers.length > 0 ? 
+                    scorers[Math.floor(Math.random() * scorers.length)] :
+                    scoringPlayers[Math.floor(Math.random() * scoringPlayers.length)];
+                
+                // 50%概率有助攻
+                let assister = null;
+                if (Math.random() < 0.5) {
+                    const assisters = scoringPlayers.filter(p => 
+                        p.name !== shooter.name && 
+                        ['CM', 'CAM', 'LM', 'RM', 'LW', 'RW'].includes(p.position)
+                    );
+                    if (assisters.length > 0) {
+                        assister = assisters[Math.floor(Math.random() * assisters.length)];
+                    }
+                }
+                
+                // 创建进球事件
+                const goalEvent = {
+                    type: 'goal',
+                    minute,
+                    team: scoringTeam,
+                    player: shooter.name,
+                    playerId: shooter.name,
+                    assister: assister ? assister.name : null,
+                    assisterId: assister ? assister.name : null,
+                    description: assister ? 
+                        `${shooter.name} 接 ${assister.name} 传球破门得分！` :
+                        `${shooter.name} 单刀破门得分！`
+                };
+                
+                events.push(goalEvent);
+                
+                // 如果有助攻，添加助攻事件
+                if (assister) {
+                    events.push({
+                        type: 'assist',
+                        minute,
+                        team: scoringTeam,
+                        player: assister.name,
+                        playerId: assister.name,
+                        assistedGoal: shooter.name,
+                        description: `${assister.name} 送出精彩助攻`
+                    });
+                }
+            }
+            
+            // 添加一些其他事件（射门机会等）
+            const chanceEvents = Math.floor(duration / 10);
+            for (let i = 0; i < chanceEvents; i++) {
+                const minute = Math.floor(Math.random() * duration) + 1;
+                const isTeamA = Math.random() < 0.5;
+                const team = isTeamA ? teamA : teamB;
+                const player = team.players[Math.floor(Math.random() * team.players.length)];
+                
+                events.push({
+                    type: 'chance',
+                    minute,
+                    team: isTeamA ? 'A' : 'B',
+                    player: player.name,
+                    description: `${player.name} 获得绝佳机会，但未能转化`
+                });
+            }
+            
+            // 按时间排序
+            events.sort((a, b) => a.minute - b.minute);
+            
+            return events;
+        }
+
+        // 生成比赛统计
+        function generateMatchStats(teamA, teamB, events, duration) {
+            const statsA = {
+                possession: 45 + Math.random() * 10, // 控球率 45-55%
+                shots: 8 + Math.floor(Math.random() * 8), // 射门 8-15次
+                shotsOnTarget: 0,
+                corners: Math.floor(Math.random() * 8), // 角球 0-7次
+                fouls: Math.floor(Math.random() * 12) + 3 // 犯规 3-14次
+            };
+            
+            const statsB = {
+                possession: 100 - statsA.possession,
+                shots: 8 + Math.floor(Math.random() * 8),
+                shotsOnTarget: 0,
+                corners: Math.floor(Math.random() * 8),
+                fouls: Math.floor(Math.random() * 12) + 3
+            };
+            
+            // 射正统计（进球数 + 额外射正）
+            const goalsA = events.filter(e => e.type === 'goal' && e.team === 'A').length;
+            const goalsB = events.filter(e => e.type === 'goal' && e.team === 'B').length;
+            
+            statsA.shotsOnTarget = goalsA + Math.floor(Math.random() * 4);
+            statsB.shotsOnTarget = goalsB + Math.floor(Math.random() * 4);
+            
+            return { teamA: statsA, teamB: statsB };
+        }
+
+        // 显示比赛结果
+        function displayMatchResult(result) {
+            const resultDiv = document.getElementById('matchResult');
+            
+            if (result.type === 'match') {
+                displayTwoTeamResult(result, resultDiv);
+            } else {
+                displayTournamentResult(result, resultDiv);
+            }
+        }
+
+        // 显示两队对抗结果
+        function displayTwoTeamResult(result, container) {
+            const { teams, score, events, stats, duration, intensity, winner } = result;
+            
+            container.innerHTML = `
+                <!-- 比赛结果头部 -->
+                <div style="background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue)); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px; text-align: center;">
+                    <div style="font-size: 14px; margin-bottom: 8px; opacity: 0.9;">${duration}分钟${getIntensityText(intensity)} · 比赛结束</div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 24px; margin-bottom: 16px;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: 700; font-size: 18px;">${teams[0].name}</div>
+                            <div style="font-size: 48px; font-weight: 900; margin: 8px 0;">${score[0]}</div>
+                        </div>
+                        <div style="font-size: 32px; font-weight: 300;">:</div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: 700; font-size: 18px;">${teams[1].name}</div>
+                            <div style="font-size: 48px; font-weight: 900; margin: 8px 0;">${score[1]}</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 16px; font-weight: 600;">
+                        ${winner === 'draw' ? '双方握手言和' : 
+                          winner === 'A' ? `${teams[0].name}获胜！` : `${teams[1].name}获胜！`}
+                    </div>
+                </div>
+
+                <!-- 比赛统计 -->
+                <div style="background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-md);">
+                    <h4 style="margin-bottom: 16px; text-align: center; color: var(--text-primary);">📊 比赛数据统计</h4>
+                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: center;">
+                        <div style="text-align: right;">
+                            <div style="margin-bottom: 8px;"><strong>${Math.round(stats.teamA.possession)}%</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamA.shots}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamA.shotsOnTarget}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamA.corners}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamA.fouls}</strong></div>
+                        </div>
+                        <div style="text-align: center; color: var(--text-secondary); font-weight: 600;">
+                            <div style="margin-bottom: 8px;">控球率</div>
+                            <div style="margin-bottom: 8px;">射门</div>
+                            <div style="margin-bottom: 8px;">射正</div>
+                            <div style="margin-bottom: 8px;">角球</div>
+                            <div style="margin-bottom: 8px;">犯规</div>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="margin-bottom: 8px;"><strong>${Math.round(stats.teamB.possession)}%</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamB.shots}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamB.shotsOnTarget}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamB.corners}</strong></div>
+                            <div style="margin-bottom: 8px;"><strong>${stats.teamB.fouls}</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 比赛事件 -->
+                ${events.length > 0 ? `
+                <div style="background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md);">
+                    <h4 style="margin-bottom: 16px; text-align: center; color: var(--text-primary);">⚽ 比赛精彩时刻</h4>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${events.map(event => `
+                            <div style="display: flex; align-items: center; padding: 12px; margin-bottom: 8px; border-radius: 8px; 
+                                        background: ${event.type === 'goal' ? 'rgba(48, 209, 88, 0.1)' : 'var(--tertiary-blue)'};">
+                                <div style="background: ${event.team === 'A' ? teams[0].color : teams[1].color}; 
+                                            color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px; margin-right: 12px; min-width: 40px; text-align: center;">
+                                    ${event.minute}'
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">
+                                        ${event.type === 'goal' ? '⚽' : event.type === 'chance' ? '🎯' : '📝'} 
+                                        ${event.description}
+                                    </div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                                        ${event.team === 'A' ? teams[0].name : teams[1].name}
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- 操作按钮 -->
+                <div style="text-align: center; margin-top: 24px;">
+                    <button onclick="startMatch()" style="padding: 12px 24px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 12px;">
+                        重新比赛
+                    </button>
+                    <button onclick="switchTab('team-assignment')" style="padding: 12px 24px; background: var(--separator); color: var(--text-primary); border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        重新分组
+                    </button>
+                </div>
+            `;
+        }
+
+        // 更新分组状态显示
+        function updateGroupingStatus() {
+            const statusDiv = document.getElementById('currentGroupingConfig');
+            if (!statusDiv) return;
+            
+            if (currentMode === 'auto') {
+                const gameFormat = parseInt(document.getElementById('gameFormat')?.value || 11);
+                const balanceSkill = document.getElementById('balanceSkill')?.checked || false;
+                const balancePosition = document.getElementById('balancePosition')?.checked || false;
+                const separateGroups = document.getElementById('separateGroups')?.checked || false;
+                
+                const rules = [];
+                if (balanceSkill) rules.push('技能平衡');
+                if (balancePosition) rules.push('位置平衡');
+                if (separateGroups) rules.push('组别分离');
+                
+                statusDiv.innerHTML = `
+                    <strong>当前配置：</strong><br>
+                    比赛制式：${gameFormat}人制<br>
+                    已选球员：${selectedPlayers.length}人<br>
+                    分组规则：${rules.length > 0 ? rules.join('、') : '无特殊规则'}
+                `;
+            } else {
+                const teamACount = Object.keys(manualTeams.A).length;
+                const teamBCount = Object.keys(manualTeams.B).length;
+                statusDiv.innerHTML = `
+                    <strong>手动配置：</strong><br>
+                    红队：${teamACount}人<br>
+                    蓝队：${teamBCount}人
+                `;
+            }
+        }
+
+        // 生成分组原因说明
+        function generateGroupingReason(team, allTeams, index) {
+            const reasons = [];
+            
+            // 基于队伍的技能水平
+            const avgRating = team.length > 0 ? (team.reduce((sum, p) => sum + (p.rating || 0), 0) / team.length).toFixed(1) : 0;
+            const allAvgRatings = allTeams.map(t => 
+                t.length > 0 ? (t.reduce((sum, p) => sum + (p.rating || 0), 0) / t.length).toFixed(1) : 0
+            );
+            const maxAvg = Math.max(...allAvgRatings);
+            const minAvg = Math.min(...allAvgRatings);
+            
+            if (parseFloat(avgRating) === parseFloat(maxAvg) && maxAvg !== minAvg) {
+                reasons.push('技能水平最高，承担核心输出责任');
+            } else if (parseFloat(avgRating) === parseFloat(minAvg) && maxAvg !== minAvg) {
+                reasons.push('技能平衡考虑，配置了更多潜力球员');
+            } else {
+                reasons.push('技能水平均衡，适合稳定发挥');
+            }
+            
+            // 基于位置分布
+            const positions = {};
+            team.forEach(player => {
+                positions[player.position] = (positions[player.position] || 0) + 1;
+            });
+            
+            const positionCount = Object.keys(positions).length;
+            if (positionCount >= 6) {
+                reasons.push('位置配置全面');
+            } else if (positionCount >= 4) {
+                reasons.push('核心位置齐备');
+            } else {
+                reasons.push('专业化配置');
+            }
+            
+            // 基于组别
+            const competitiveCount = team.filter(p => p.group === '竞技组').length;
+            const interestCount = team.filter(p => p.group === '兴趣组').length;
+            
+            if (competitiveCount > interestCount * 1.5) {
+                reasons.push('以竞技组为主力');
+            } else if (interestCount > competitiveCount * 1.5) {
+                reasons.push('以兴趣组为核心');
+            } else {
+                reasons.push('竞技组与兴趣组平衡搭配');
+            }
+            
+            return reasons.join('，');
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载球员数据
+            loadPlayers();
+            
+            // 设置默认比赛制式
+            const gameFormatSelect = document.getElementById('gameFormat');
+            if (gameFormatSelect) {
+                gameFormatSelect.addEventListener('change', updateTeamCalculation);
+            }
+            
+            // 设置搜索框事件
+            const playerSearchInput = document.getElementById('playerSearch');
+            if (playerSearchInput) {
+                playerSearchInput.addEventListener('input', (e) => {
+                    renderPlayerList(e.target.value);
+                });
+            }
+            
+            // 初始化手动模式
+            setTimeout(() => {
+                if (typeof updateFormation === 'function') {
+                    updateFormation('A');
+                    updateFormation('B');
+                }
+            }, 100);
+            
+            console.log('队内对抗模拟页面初始化完成');
+        });
+
+        // 更新比赛按钮状态
+        function updateMatchButton() {
+            const button = document.getElementById('matchButton');
+            if (!button) return;
+            
+            if (teams.length >= 2 && teams[0].length > 0 && teams[1].length > 0) {
+                button.disabled = false;
+                const numTeams = teams.length;
+                button.textContent = numTeams === 2 ? '开始对抗比赛' : '开始循环赛';
+                
+                // 更新模式描述
+                const modeDesc = document.getElementById('modeDescription');
+                if (modeDesc) {
+                    if (numTeams === 2) {
+                        modeDesc.innerHTML = `✅ 两队对抗模式：${teams[0].length} vs ${teams[1].length}`;
+                    } else {
+                        modeDesc.innerHTML = `✅ ${numTeams}队循环赛模式：每队${teams[0].length}人`;
+                    }
+                }
+            } else {
+                button.disabled = true;
+                button.textContent = '请先完成队伍分组';
+                
+                const modeDesc = document.getElementById('modeDescription');
+                if (modeDesc) {
+                    modeDesc.innerHTML = '请先完成队伍分组';
+                }
+            }
+        }
+
+        // 模拟循环赛
+        function simulateTournament(teams, duration, intensity) {
+            const matches = [];
+            const standings = teams.map((team, index) => ({
+                team: `第${index + 1}队`,
+                players: team,
+                played: 0,
+                won: 0,
+                drawn: 0,
+                lost: 0,
+                goalsFor: 0,
+                goalsAgainst: 0,
+                points: 0,
+                goalDifference: 0
+            }));
+            
+            // 生成所有比赛组合
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const match = simulateTwoTeamMatch(teams[i], teams[j], duration, intensity);
+                    match.teamAIndex = i;
+                    match.teamBIndex = j;
+                    matches.push(match);
+                    
+                    // 更新积分榜
+                    const teamA = standings[i];
+                    const teamB = standings[j];
+                    
+                    teamA.played++;
+                    teamB.played++;
+                    teamA.goalsFor += match.score[0];
+                    teamA.goalsAgainst += match.score[1];
+                    teamB.goalsFor += match.score[1];
+                    teamB.goalsAgainst += match.score[0];
+                    
+                    if (match.winner === 'A') {
+                        teamA.won++;
+                        teamB.lost++;
+                        teamA.points += 3;
+                    } else if (match.winner === 'B') {
+                        teamB.won++;
+                        teamA.lost++;
+                        teamB.points += 3;
+                    } else {
+                        teamA.drawn++;
+                        teamB.drawn++;
+                        teamA.points += 1;
+                        teamB.points += 1;
+                    }
+                    
+                    teamA.goalDifference = teamA.goalsFor - teamA.goalsAgainst;
+                    teamB.goalDifference = teamB.goalsFor - teamB.goalsAgainst;
+                }
+            }
+            
+            // 按积分排序
+            standings.sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+                return b.goalsFor - a.goalsFor;
+            });
+            
+            return {
+                type: 'tournament',
+                matches,
+                standings,
+                duration,
+                intensity
+            };
+        }
+
+        // 显示循环赛结果
+        function displayTournamentResult(result, container) {
+            const { matches, standings, duration, intensity } = result;
+            
+            container.innerHTML = `
+                <!-- 循环赛结果头部 -->
+                <div style="background: linear-gradient(135deg, var(--success-green), var(--secondary-blue)); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px; text-align: center;">
+                    <div style="font-size: 14px; margin-bottom: 8px; opacity: 0.9;">${duration}分钟${getIntensityText(intensity)} · 循环赛结束</div>
+                    <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">🏆 循环赛完赛</div>
+                    <div style="font-size: 16px; font-weight: 600;">
+                        冠军：${standings[0].team} (${standings[0].points}分)
+                    </div>
+                </div>
+
+                <!-- 积分榜 -->
+                <div style="background: var(--surface); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow-md);">
+                    <h4 style="margin-bottom: 16px; text-align: center; color: var(--text-primary);">📊 最终积分榜</h4>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--tertiary-blue); font-weight: 600; font-size: 14px;">
+                                    <th style="padding: 12px 8px; text-align: left; border-radius: 8px 0 0 8px;">排名</th>
+                                    <th style="padding: 12px 8px; text-align: left;">队伍</th>
+                                    <th style="padding: 12px 8px; text-align: center;">场次</th>
+                                    <th style="padding: 12px 8px; text-align: center;">胜</th>
+                                    <th style="padding: 12px 8px; text-align: center;">平</th>
+                                    <th style="padding: 12px 8px; text-align: center;">负</th>
+                                    <th style="padding: 12px 8px; text-align: center;">进球</th>
+                                    <th style="padding: 12px 8px; text-align: center;">失球</th>
+                                    <th style="padding: 12px 8px; text-align: center; color: ${team.goalDifference > 0 ? 'var(--success-green)' : team.goalDifference < 0 ? 'var(--danger-red)' : 'var(--text-secondary)'};">
+                                            ${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}
+                                        </td>
+                                    <th style="padding: 12px 8px; text-align: center; font-weight: 700; color: var(--primary-blue);">
+                                            ${team.points}
+                                        </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${standings.map((team, index) => `
+                                    <tr style="border-bottom: 1px solid var(--separator); ${index === 0 ? 'background: rgba(48, 209, 88, 0.1);' : ''}">
+                                        <td style="padding: 12px 8px; font-weight: 600;">
+                                            ${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
+                                        </td>
+                                        <td style="padding: 12px 8px; font-weight: 600;">${team.team}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.played}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.won}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.drawn}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.lost}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.goalsFor}</td>
+                                        <td style="padding: 12px 8px; text-align: center;">${team.goalsAgainst}</td>
+                                        <td style="padding: 12px 8px; text-align: center; color: ${team.goalDifference > 0 ? 'var(--success-green)' : team.goalDifference < 0 ? 'var(--danger-red)' : 'var(--text-secondary)'};">
+                                            ${team.goalDifference > 0 ? '+' : ''}${team.goalDifference}
+                                        </td>
+                                        <td style="padding: 12px 8px; text-align: center; font-weight: 700; color: var(--primary-blue);">
+                                            ${team.points}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 比赛结果 -->
+                <div style="background: var(--surface); border-radius: 16px; padding: 20px; box-shadow: var(--shadow-md);">
+                    <h4 style="margin-bottom: 16px; text-align: center; color: var(--text-primary);">⚽ 所有比赛结果</h4>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        ${matches.map((match, index) => `
+                            <div style="border: 1px solid var(--separator); border-radius: 8px; padding: 16px; margin-bottom: 12px; background: var(--background);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <div style="font-weight: 600; color: var(--text-primary);">
+                                        第${index + 1}场：第${match.teamAIndex + 1}队 vs 第${match.teamBIndex + 1}队
+                                    </div>
+                                    <div style="font-size: 18px; font-weight: 700; color: var(--primary-blue);">
+                                        ${match.score[0]} : ${match.score[1]}
+                                    </div>
+                                </div>
+                                ${match.events.filter(e => e.type === 'goal').length > 0 ? `
+                                <div style="font-size: 12px; color: var(--text-secondary);">
+                                    进球者：${match.events.filter(e => e.type === 'goal').map(e => `${e.player} ${e.minute}'`).join(', ')}
+                                </div>
+                                ` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div style="text-align: center; margin-top: 24px;">
+                    <button onclick="startMatch()" style="padding: 12px 24px; background: var(--primary-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-right: 12px;">
+                        重新循环赛
+                    </button>
+                    <button onclick="switchTab('team-assignment')" style="padding: 12px 24px; background: var(--separator); color: var(--text-primary); border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        重新分组
+                    </button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 

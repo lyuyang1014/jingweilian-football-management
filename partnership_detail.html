@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搭档详情 - 2025京蔚联足球队</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --secondary-blue: #5AC8FA;
+            --tertiary-blue: #E8F2FF;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --text-tertiary: #8E8E93;
+            --separator: rgba(60, 60, 67, 0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--separator);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* 搭档信息头部 */
+        .partnership-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .players-avatars {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .partnership-connector {
+            font-size: 32px;
+            font-weight: 700;
+            opacity: 0.8;
+        }
+
+        .partnership-info {
+            flex: 1;
+        }
+
+        .partnership-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .partnership-meta {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+
+        .partnership-stats {
+            display: flex;
+            gap: 32px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* 配合记录列表 */
+        .cooperations-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .cooperations-header {
+            padding: 20px;
+            background: var(--tertiary-blue);
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .cooperations-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .cooperation-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--separator);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .cooperation-item:hover {
+            background-color: var(--tertiary-blue);
+        }
+
+        .cooperation-item:last-child {
+            border-bottom: none;
+        }
+
+        .cooperation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .cooperation-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .cooperation-date {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .cooperation-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cooperation-match {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .cooperation-minute {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtitle {
+            font-size: 14px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--separator);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .partnership-header {
+                padding: 24px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .partnership-stats {
+                gap: 20px;
+            }
+
+            .players-avatars {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .partnership-connector {
+                transform: rotate(90deg);
+                font-size: 24px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <img src="logo.png" alt="队徽" class="logo">
+                <span>搭档详情</span>
+            </div>
+            <div class="nav-menu">
+                <a href="display.html" class="nav-link">👥 球员管理</a>
+                <a href="leaderboard.html" class="nav-link">🏆 排行榜</a>
+                <a href="match_history.html" class="nav-link">📋 历史赛事</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 搭档信息头部 -->
+        <div class="partnership-header" id="partnershipHeader">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+
+        <!-- 配合记录列表 -->
+        <div class="cooperations-section">
+            <div class="cooperations-header">
+                <div class="cooperations-title" id="cooperationsTitle">配合记录</div>
+            </div>
+            <div id="cooperationsContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let player1Name = '';
+        let player2Name = '';
+        let player1Data = {};
+        let player2Data = {};
+        let cooperationEvents = [];
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数获取球员姓名
+            const urlParams = new URLSearchParams(window.location.search);
+            player1Name = urlParams.get('p1');
+            player2Name = urlParams.get('p2');
+            
+            if (!player1Name || !player2Name) {
+                showError('未指定搭档球员');
+                return;
+            }
+
+            initializePage();
+        });
+
+        // 初始化页面
+        async function initializePage() {
+            try {
+                await loadPlayersData();
+                await loadCooperationEvents();
+                updatePartnershipHeader();
+                updateCooperationsDisplay();
+            } catch (error) {
+                console.error('初始化失败:', error);
+                showError('数据加载失败，请刷新页面重试');
+            }
+        }
+
+        // 加载球员基本信息
+        async function loadPlayersData() {
+            try {
+                const [response1, response2] = await Promise.all([
+                    fetch(`/api/player/${encodeURIComponent(player1Name)}`),
+                    fetch(`/api/player/${encodeURIComponent(player2Name)}`)
+                ]);
+                
+                const result1 = await response1.json();
+                const result2 = await response2.json();
+                
+                if (result1.success && result2.success) {
+                    player1Data = result1.data;
+                    player2Data = result2.data;
+                } else {
+                    throw new Error('获取球员信息失败');
+                }
+            } catch (error) {
+                console.error('加载球员信息失败:', error);
+                throw error;
+            }
+        }
+
+        // 加载配合事件数据
+        async function loadCooperationEvents() {
+            try {
+                const response = await fetch('/api/match-events');
+                const allEvents = await response.json();
+                
+                // 筛选两名球员的配合事件
+                cooperationEvents = allEvents.filter(event => 
+                    event.eventType === '进球' && 
+                    event.assister &&
+                    ((event.scorer === player1Name && event.assister === player2Name) ||
+                     (event.scorer === player2Name && event.assister === player1Name))
+                );
+
+                // 按日期排序（最新的在前）
+                cooperationEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+            } catch (error) {
+                console.error('加载配合事件失败:', error);
+                throw error;
+            }
+        }
+
+        // 更新搭档头部信息
+        function updatePartnershipHeader() {
+            const headerContainer = document.getElementById('partnershipHeader');
+            const initial1 = player1Data.姓名 ? player1Data.姓名.charAt(0) : '?';
+            const initial2 = player2Data.姓名 ? player2Data.姓名.charAt(0) : '?';
+            
+            // 计算统计数据
+            const totalCooperations = cooperationEvents.length;
+            const player1Goals = cooperationEvents.filter(e => e.scorer === player1Name).length;
+            const player2Goals = cooperationEvents.filter(e => e.scorer === player2Name).length;
+            const player1Assists = cooperationEvents.filter(e => e.assister === player1Name).length;
+            const player2Assists = cooperationEvents.filter(e => e.assister === player2Name).length;
+            
+            headerContainer.innerHTML = `
+                <div class="players-avatars">
+                    <div class="player-avatar">${initial1}</div>
+                    <div class="partnership-connector">🤝</div>
+                    <div class="player-avatar">${initial2}</div>
+                </div>
+                <div class="partnership-info">
+                    <div class="partnership-title">${player1Data.姓名} & ${player2Data.姓名}</div>
+                    <div class="partnership-meta">${player1Data.主要位置} & ${player2Data.主要位置} • ${player1Data.组别} & ${player2Data.组别}</div>
+                    <div class="partnership-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${totalCooperations}</div>
+                            <div class="stat-label">总配合</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${player1Goals}/${player1Assists}</div>
+                            <div class="stat-label">${player1Data.姓名} 进球/助攻</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${player2Goals}/${player2Assists}</div>
+                            <div class="stat-label">${player2Data.姓名} 进球/助攻</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 更新配合记录显示
+        function updateCooperationsDisplay() {
+            document.getElementById('cooperationsTitle').textContent = `配合记录 (${cooperationEvents.length})`;
+            
+            const container = document.getElementById('cooperationsContainer');
+            
+            if (cooperationEvents.length === 0) {
+                container.innerHTML = createEmptyState('暂无配合记录', '这两名球员尚无配合进球记录');
+                return;
+            }
+
+            const cooperationsHtml = cooperationEvents.map(event => createCooperationItem(event)).join('');
+            container.innerHTML = cooperationsHtml;
+            container.classList.add('fade-in');
+        }
+
+        // 创建配合项目
+        function createCooperationItem(event) {
+            return `
+                <div class="cooperation-item" onclick="showMatchDetail('${event.activityId}')">
+                    <div class="cooperation-header">
+                        <div class="cooperation-type">
+                            ⚽ 配合进球
+                        </div>
+                        <div class="cooperation-date">${event.date}</div>
+                    </div>
+                    <div class="cooperation-details">
+                        <div class="cooperation-match">
+                            进球者：${event.scorer} • 助攻者：${event.assister} • ${event.group}
+                        </div>
+                        <div class="cooperation-minute">${event.minute}'</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 创建空状态
+        function createEmptyState(title, subtitle) {
+            return `
+                <div class="empty-state">
+                    <div class="empty-icon">🤝</div>
+                    <div class="empty-title">${title}</div>
+                    <div class="empty-subtitle">${subtitle}</div>
+                </div>
+            `;
+        }
+
+        // 显示比赛详情
+        function showMatchDetail(activityId) {
+            window.open(`match_detail.html?id=${activityId}`, '_blank');
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            document.getElementById('partnershipHeader').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('cooperationsContainer').innerHTML = createEmptyState('加载失败', message);
+        }
+    </script>
+</body>
+</html> 

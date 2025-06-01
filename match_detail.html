@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比赛详情 - 2025京蔚联足球队</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #007AFF;
+            --secondary-blue: #5AC8FA;
+            --tertiary-blue: #E8F2FF;
+            --background: #F2F2F7;
+            --surface: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #3C3C43;
+            --text-tertiary: #8E8E93;
+            --separator: rgba(60, 60, 67, 0.12);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--separator);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* 比赛头部信息 */
+        .match-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 32px;
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 16px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .team-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .match-score {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0 24px;
+        }
+
+        .match-info {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* 内容区域 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .content-section {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 20px;
+            background: var(--tertiary-blue);
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        /* 阵容列表 */
+        .lineup-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .player-item:hover {
+            background-color: var(--tertiary-blue);
+        }
+
+        .player-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .player-position {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        .player-status {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-starter {
+            background: var(--success);
+            color: white;
+        }
+
+        .status-substitute {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* 事件列表 */
+        .events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--success);
+        }
+
+        .event-minute {
+            background: var(--primary-blue);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-description {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .event-players {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        /* 比赛统计 */
+        .match-stats {
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--tertiary-blue);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtitle {
+            font-size: 14px;
+        }
+
+        /* 加载状态 */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--separator);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .match-teams {
+                gap: 16px;
+            }
+
+            .team-name {
+                font-size: 18px;
+            }
+
+            .match-score {
+                font-size: 36px;
+                margin: 0 16px;
+            }
+        }
+
+        /* 动画效果 */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <img src="logo.png" alt="队徽" class="logo">
+                <span>比赛详情</span>
+            </div>
+            <div class="nav-menu">
+                <a href="display.html" class="nav-link">👥 球员管理</a>
+                <a href="leaderboard.html" class="nav-link">🏆 排行榜</a>
+                <a href="match_history.html" class="nav-link">📋 历史赛事</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 比赛头部信息 -->
+        <div class="match-header" id="matchHeader">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>加载中...</p>
+            </div>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="content-grid">
+            <!-- 首发阵容 -->
+            <div class="content-section">
+                <div class="section-header">
+                    <div class="section-title">首发阵容</div>
+                </div>
+                <div class="section-content" id="startersContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 替补阵容 -->
+            <div class="content-section">
+                <div class="section-header">
+                    <div class="section-title">替补阵容</div>
+                </div>
+                <div class="section-content" id="substitutesContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 比赛事件 -->
+            <div class="content-section">
+                <div class="section-header">
+                    <div class="section-title">比赛事件</div>
+                </div>
+                <div class="section-content" id="eventsContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 换人记录 -->
+            <div class="content-section">
+                <div class="section-header">
+                    <div class="section-title">换人记录</div>
+                </div>
+                <div class="section-content" id="substitutionsContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>加载中...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 比赛统计 -->
+        <div class="content-section match-stats">
+            <div class="section-header">
+                <div class="section-title">比赛统计</div>
+            </div>
+            <div class="section-content" id="statsContent">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let matchId = '';
+        let matchData = {};
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从URL参数获取比赛ID
+            const urlParams = new URLSearchParams(window.location.search);
+            matchId = urlParams.get('id');
+            
+            if (!matchId) {
+                showError('未指定比赛ID');
+                return;
+            }
+
+            initializePage();
+        });
+
+        // 初始化页面
+        async function initializePage() {
+            try {
+                await loadMatchData();
+                updateMatchHeader();
+                updateMatchContent();
+            } catch (error) {
+                console.error('初始化失败:', error);
+                showError('数据加载失败，请刷新页面重试');
+            }
+        }
+
+        // 加载比赛数据
+        async function loadMatchData() {
+            try {
+                const response = await fetch(`/api/match/${matchId}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    matchData = result.data;
+                } else {
+                    throw new Error(result.message || '获取比赛信息失败');
+                }
+            } catch (error) {
+                console.error('加载比赛信息失败:', error);
+                throw error;
+            }
+        }
+
+        // 更新比赛头部信息
+        function updateMatchHeader() {
+            const headerContainer = document.getElementById('matchHeader');
+            
+            const resultText = matchData.result === '胜' ? '胜利' : 
+                              matchData.result === '平' ? '平局' : '失利';
+            const resultColor = matchData.result === '胜' ? '#34C759' : 
+                               matchData.result === '平' ? '#FF9500' : '#FF3B30';
+            
+            headerContainer.innerHTML = `
+                <div class="match-teams">
+                    <div class="team">
+                        <div class="team-logo">🏠</div>
+                        <div class="team-name">京蔚联</div>
+                    </div>
+                    <div class="match-score" style="color: ${resultColor}">
+                        ${matchData.ourScore} : ${matchData.opponentScore}
+                    </div>
+                    <div class="team">
+                        <div class="team-logo">⚽</div>
+                        <div class="team-name">${matchData.opponent}</div>
+                    </div>
+                </div>
+                <div class="match-info">
+                    ${matchData.date} • ${matchData.group} • ${resultText}
+                </div>
+            `;
+        }
+
+        // 更新比赛内容
+        function updateMatchContent() {
+            updateStarters();
+            updateSubstitutes();
+            updateEvents();
+            updateSubstitutions();
+            updateStats();
+        }
+
+        // 更新首发阵容
+        function updateStarters() {
+            const container = document.getElementById('startersContent');
+            
+            if (!matchData.formation || !matchData.formation.players) {
+                container.innerHTML = createEmptyState('暂无阵容数据', '未找到首发阵容信息');
+                return;
+            }
+
+            const startersHtml = matchData.formation.players.map(player => `
+                <div class="player-item">
+                    <div class="player-number">${player.number || '0'}</div>
+                    <div class="player-info">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-position">${player.formationPos} • 评分: ${player.rating}</div>
+                    </div>
+                    <div class="player-status status-starter">首发</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="lineup-list">${startersHtml}</div>`;
+        }
+
+        // 更新替补阵容
+        function updateSubstitutes() {
+            const container = document.getElementById('substitutesContent');
+            
+            if (!matchData.lineup || !matchData.lineup.substitutes || matchData.lineup.substitutes.length === 0) {
+                container.innerHTML = createEmptyState('暂无替补', '本场比赛无替补球员');
+                return;
+            }
+
+            const substitutesHtml = matchData.lineup.substitutes.map(playerName => `
+                <div class="player-item">
+                    <div class="player-number">?</div>
+                    <div class="player-info">
+                        <div class="player-name">${playerName}</div>
+                        <div class="player-position">替补球员</div>
+                    </div>
+                    <div class="player-status status-substitute">替补</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="lineup-list">${substitutesHtml}</div>`;
+        }
+
+        // 更新比赛事件
+        function updateEvents() {
+            const container = document.getElementById('eventsContent');
+            
+            if (!matchData.events || matchData.events.length === 0) {
+                container.innerHTML = createEmptyState('暂无事件', '本场比赛无进球记录');
+                return;
+            }
+
+            const eventsHtml = matchData.events.map(event => `
+                <div class="event-item">
+                    <div class="event-minute">${event.minute}'</div>
+                    <div class="event-details">
+                        <div class="event-description">⚽ ${event.goalDetail.description}</div>
+                        <div class="event-players">
+                            进球者: ${event.scorer}${event.assister ? ` • 助攻: ${event.assister}` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="events-list">${eventsHtml}</div>`;
+        }
+
+        // 更新换人记录
+        function updateSubstitutions() {
+            const container = document.getElementById('substitutionsContent');
+            
+            if (!matchData.substitutions || matchData.substitutions.length === 0) {
+                container.innerHTML = createEmptyState('暂无换人', '本场比赛无换人记录');
+                return;
+            }
+
+            const substitutionsHtml = matchData.substitutions.map(sub => `
+                <div class="event-item">
+                    <div class="event-minute">${sub.minute}'</div>
+                    <div class="event-details">
+                        <div class="event-description">🔄 换人</div>
+                        <div class="event-players">
+                            上场: ${sub.playerIn} • 下场: ${sub.playerOut}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="events-list">${substitutionsHtml}</div>`;
+        }
+
+        // 更新比赛统计
+        function updateStats() {
+            const container = document.getElementById('statsContent');
+            
+            const totalGoals = matchData.events ? matchData.events.length : 0;
+            const totalPlayers = (matchData.lineup?.starters?.length || 0) + (matchData.lineup?.substitutes?.length || 0);
+            const totalSubstitutions = matchData.substitutions ? matchData.substitutions.length : 0;
+            
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${totalGoals}</div>
+                        <div class="stat-label">我方进球</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalPlayers}</div>
+                        <div class="stat-label">参与球员</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${totalSubstitutions}</div>
+                        <div class="stat-label">换人次数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${matchData.formation?.formation || '未知'}</div>
+                        <div class="stat-label">阵型</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 创建空状态
+        function createEmptyState(title, subtitle) {
+            return `
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <div class="empty-title">${title}</div>
+                    <div class="empty-subtitle">${subtitle}</div>
+                </div>
+            `;
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            document.getElementById('matchHeader').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('startersContent').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('substitutesContent').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('eventsContent').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('substitutionsContent').innerHTML = createEmptyState('加载失败', message);
+            document.getElementById('statsContent').innerHTML = createEmptyState('加载失败', message);
+        }
+    </script>
+</body>
+</html> 
