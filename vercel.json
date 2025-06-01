@@ -16,22 +16,6 @@
       "dest": "/server.js"
     },
     {
-      "src": "/display.html",
-      "dest": "/display.html"
-    },
-    {
-      "src": "/formation_analyzer.html",
-      "dest": "/formation_analyzer.html"
-    },
-    {
-      "src": "/leaderboard.html", 
-      "dest": "/leaderboard.html"
-    },
-    {
-      "src": "/(.*\\.(css|js|png|jpg|jpeg|gif|svg|ico|json|csv))",
-      "dest": "/$1"
-    },
-    {
       "src": "/",
       "dest": "/server.js"
     }
