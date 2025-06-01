@@ -436,17 +436,103 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
+            /* 导航栏移动端优化 */
+            .nav-content {
+                flex-direction: column;
+                gap: 16px;
+                padding: 0 16px;
+            }
+
+            .nav-title {
+                font-size: 20px;
+            }
+
+            .nav-title span {
+                display: none; /* 移动端隐藏标题文字，只显示logo */
+            }
+
+            .nav-menu {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 10px 8px;
+                font-size: 13px;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* 统计卡片移动端优化 */
             .stats-section {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-bottom: 24px;
             }
-            
+
+            .stat-card {
+                padding: 16px 12px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            /* 过滤区域移动端优化 */
+            .filter-section {
+                margin-bottom: 20px;
+            }
+
+            .filter-title {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            .filter-tags {
+                gap: 8px;
+            }
+
+            .filter-tag {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            /* 球员列表移动端优化 */
             .players-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .player-card {
+                padding: 16px;
+                min-height: auto;
             }
 
             .player-content {
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
+            }
+
+            /* 球员信息移动端布局 */
+            .player-header {
+                margin-bottom: 12px;
+            }
+
+            .player-name {
+                font-size: 18px;
+                margin-bottom: 2px;
+            }
+
+            .player-nickname {
+                font-size: 13px;
             }
 
             .player-right {
@@ -454,11 +540,142 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                gap: 16px;
+            }
+
+            /* 球衣展示移动端优化 */
+            .jersey-container {
+                margin-bottom: 8px;
+            }
+
+            .jersey-display {
+                width: 70px;
+                height: 85px;
+            }
+
+            .jersey-pinyin-text {
+                font-size: 8px;
+            }
+
+            .jersey-number-text {
+                font-size: 16px;
+            }
+
+            .jersey-label {
+                font-size: 9px;
+            }
+
+            /* 球员详情移动端优化 */
+            .player-details {
+                gap: 6px;
+                margin-bottom: 12px;
+            }
+
+            .detail-item {
+                font-size: 13px;
+            }
+
+            /* 位置标签移动端优化 */
+            .player-positions {
+                margin-bottom: 12px;
+                gap: 6px;
+            }
+
+            .position-badge {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .overall-rating {
+                font-size: 14px;
+            }
+
+            .rating-number {
+                font-size: 16px;
+            }
+
+            /* 雷达图移动端优化 */
+            .radar-container {
+                width: 100px;
+                height: 80px;
+            }
+
+            /* 特征标签移动端优化 */
+            .player-features {
+                gap: 4px;
+                margin-bottom: 12px;
+            }
+
+            .feature-tag {
+                padding: 3px 6px;
+                font-size: 9px;
+            }
+
+            /* 组别标签移动端优化 */
+            .player-group {
+                margin-bottom: 10px;
+            }
+
+            .group-badge {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            /* 搜索框移动端优化 */
+            .search-input {
+                padding: 12px 40px 12px 16px;
+                font-size: 15px;
+            }
+
+            .search-icon {
+                right: 16px;
+            }
+        }
+
+        /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            .nav-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+
+            .nav-link {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+
+            .stats-section {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px 8px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .player-card {
+                padding: 12px;
+            }
+
+            .jersey-display {
+                width: 60px;
+                height: 75px;
+            }
+
+            .jersey-pinyin-text {
+                font-size: 7px;
+            }
+
+            .jersey-number-text {
+                font-size: 14px;
             }
 
             .radar-container {
-                width: 120px;
-                height: 100px;
+                width: 80px;
+                height: 65px;
             }
         }
 
