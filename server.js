@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// 静态文件服务
-app.use(express.static('.'));
+// 静态文件服务 - 从 public 目录提供服务
+app.use(express.static(path.join(__dirname, 'public')));
 
 // 根路径重定向到主页
 app.get('/', (req, res) => {
