@@ -14,6 +14,16 @@ app.use(express.json());
 // 静态文件服务
 app.use(express.static('.'));
 
+// 根路径重定向到主页
+app.get('/', (req, res) => {
+    res.redirect('/display.html');
+});
+
+// 健康检查端点
+app.get('/health', (req, res) => {
+    res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 // 存储数据
 let playersData = [];
 let activitiesData = [];
