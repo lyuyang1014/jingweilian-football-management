@@ -39,10 +39,23 @@ let playerPreferences = {};
 // 文件路径检查函数
 function getFilePath(filename) {
     const currentDir = process.cwd();
-    const filePath = path.join(currentDir, filename);
     
-    if (fs.existsSync(filePath)) {
-        return filePath;
+    // 首先尝试data目录（本地开发）
+    const dataPath = path.join(currentDir, 'data', filename);
+    if (fs.existsSync(dataPath)) {
+        return dataPath;
+    }
+    
+    // 然后尝试public/data目录（Vercel部署）
+    const publicDataPath = path.join(currentDir, 'public', 'data', filename);
+    if (fs.existsSync(publicDataPath)) {
+        return publicDataPath;
+    }
+    
+    // 尝试当前目录（向后兼容）
+    const currentPath = path.join(currentDir, filename);
+    if (fs.existsSync(currentPath)) {
+        return currentPath;
     }
     
     // 尝试相对路径

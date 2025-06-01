@@ -8,10 +8,6 @@
     {
       "src": "public/**",
       "use": "@vercel/static"
-    },
-    {
-      "src": "data/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -22,10 +18,6 @@
     {
       "src": "/health",
       "dest": "/server.js"
-    },
-    {
-      "src": "/data/(.*)",
-      "dest": "/data/$1"
     },
     {
       "src": "/display.html",
