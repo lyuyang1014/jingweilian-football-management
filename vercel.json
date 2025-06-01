@@ -4,6 +4,10 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -16,8 +20,24 @@
       "dest": "/server.js"
     },
     {
+      "src": "/display.html",
+      "dest": "/public/display.html"
+    },
+    {
+      "src": "/formation_analyzer.html",
+      "dest": "/public/formation_analyzer.html"
+    },
+    {
+      "src": "/leaderboard.html",
+      "dest": "/public/leaderboard.html"
+    },
+    {
+      "src": "/logo.png",
+      "dest": "/public/logo.png"
+    },
+    {
       "src": "/",
-      "dest": "/server.js"
+      "dest": "/public/display.html"
     }
   ]
 } 
