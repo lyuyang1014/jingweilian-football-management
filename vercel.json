@@ -8,8 +8,20 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "/server.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/(.*\\.(?:html|css|js|png|jpg|jpeg|gif|svg|ico|json|csv))",
+      "dest": "/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/display.html"
     }
   ]
 } 
