@@ -39,14 +39,10 @@ let playerPreferences = {};
 // 文件路径处理函数 - 确保本地和 Vercel 环境兼容
 function getFilePath(filename) {
     const possiblePaths = [
-        path.join(process.cwd(), filename),              // 根目录
-        path.join(process.cwd(), 'data', filename),      // data 目录
-        path.join(process.cwd(), 'public', filename),    // public 目录
-        path.join(process.cwd(), 'public', 'data', filename), // public/data 目录
-        path.join(__dirname, filename),                  // 当前脚本目录
+        path.join(process.cwd(), 'data', filename),      // data 目录（优先）
         path.join(__dirname, 'data', filename),          // 当前脚本目录的 data 子目录
-        path.join(__dirname, 'public', filename),        // 当前脚本目录的 public 子目录
-        path.join(__dirname, 'public', 'data', filename) // 当前脚本目录的 public/data 子目录
+        path.join(process.cwd(), filename),              // 根目录（备用）
+        path.join(__dirname, filename)                   // 当前脚本目录（备用）
     ];
     
     // 检查文件是否存在，返回第一个存在的路径
@@ -549,6 +545,6 @@ app.use(function(err, req, res, next) {
 
 // 启动服务器
 app.listen(PORT, function() {
-    console.log('简化服务器运行在 http://localhost:' + PORT);
+    console.log('京蔚联足球队管理系统服务器运行在 http://localhost:' + PORT);
     console.log('主页地址: http://localhost:' + PORT + '/display.html');
 }); 

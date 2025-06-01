@@ -40,6 +40,34 @@
       "dest": "/public/leaderboard.html"
     },
     {
+      "src": "/match_history.html",
+      "dest": "/public/match_history.html"
+    },
+    {
+      "src": "/player_detail.html",
+      "dest": "/public/player_detail.html"
+    },
+    {
+      "src": "/match_simulator.html",
+      "dest": "/public/match_simulator.html"
+    },
+    {
+      "src": "/match_simulator_v2.html",
+      "dest": "/public/match_simulator_v2.html"
+    },
+    {
+      "src": "/match_detail.html",
+      "dest": "/public/match_detail.html"
+    },
+    {
+      "src": "/player_stats.html",
+      "dest": "/public/player_stats.html"
+    },
+    {
+      "src": "/partnership_detail.html",
+      "dest": "/public/partnership_detail.html"
+    },
+    {
       "src": "/logo.png",
       "dest": "/public/logo.png"
     },
