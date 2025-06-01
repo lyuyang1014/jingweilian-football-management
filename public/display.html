@@ -240,6 +240,13 @@
             flex: 1;
         }
 
+        .player-top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
         .player-left {
             flex: 1;
             display: flex;
@@ -505,139 +512,186 @@
                 font-size: 14px;
             }
 
-            /* 球员列表移动端优化 - 更紧凑的设计 */
+            /* 球员列表移动端优化 - 苹果风格布局 */
             .players-grid {
                 grid-template-columns: 1fr;
-                gap: 12px; /* 减少卡片间距 */
+                gap: 16px;
             }
 
             .player-card {
-                padding: 12px; /* 大幅减少内边距 */
+                padding: 16px;
                 min-height: auto;
-                border-radius: 12px; /* 稍小的圆角 */
+                border-radius: 16px; /* 苹果风格的圆角 */
             }
 
             .player-content {
                 flex-direction: column;
-                gap: 8px; /* 减少内容间距 */
+                gap: 0; /* 重置，使用新的间距系统 */
             }
 
-            /* 球员信息移动端布局 - 紧凑化 */
-            .player-header {
-                margin-bottom: 6px; /* 减少底部间距 */
+            /* 上半部分：左右分布 */
+            .player-top-section {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 16px;
+                margin-bottom: 16px; /* 苹果风格的间距 */
             }
 
-            .player-name {
-                font-size: 17px; /* 稍小的字体 */
-                margin-bottom: 1px; /* 减少间距 */
-                line-height: 1.2; /* 更紧凑的行高 */
-            }
-
-            .player-nickname {
-                font-size: 12px; /* 更小的昵称字体 */
-                line-height: 1.2;
+            .player-left {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 12px; /* 信息块之间的间距 */
             }
 
             .player-right {
-                width: 100%;
-                flex-direction: row;
-                justify-content: space-between;
+                width: auto;
+                flex-shrink: 0;
+                display: flex;
+                flex-direction: column;
                 align-items: center;
-                gap: 12px; /* 减少间距 */
+                justify-content: flex-start;
             }
 
-            /* 球衣展示移动端优化 - 更紧凑 */
-            .jersey-container {
-                margin-bottom: 4px; /* 大幅减少间距 */
+            /* 球员基本信息 */
+            .player-header {
+                margin-bottom: 0;
             }
 
-            .jersey-display {
-                width: 60px; /* 减小尺寸 */
-                height: 75px;
+            .player-name {
+                font-size: 18px;
+                margin-bottom: 4px;
+                line-height: 1.3; /* 苹果推荐的行高 */
+                font-weight: 600;
             }
 
-            .jersey-pinyin-text {
-                font-size: 7px;
-            }
-
-            .jersey-number-text {
+            .player-nickname {
                 font-size: 14px;
+                line-height: 1.4;
+                opacity: 0.8; /* 次要信息的透明度 */
             }
 
-            .jersey-label {
-                font-size: 8px;
-                margin-top: 2px; /* 减少间距 */
-            }
-
-            /* 球员详情移动端优化 - 更紧凑 */
             .player-details {
-                gap: 4px; /* 减少间距 */
-                margin-bottom: 8px; /* 减少底部间距 */
+                gap: 8px; /* 详情项之间的间距 */
+                margin-bottom: 0;
             }
 
             .detail-item {
-                font-size: 12px; /* 更小字体 */
-                line-height: 1.2;
+                font-size: 14px;
+                line-height: 1.4;
             }
 
             .detail-icon {
-                font-size: 11px; /* 更小图标 */
-                width: 14px;
+                font-size: 12px;
+                width: 16px;
+                opacity: 0.6; /* 图标透明度 */
             }
 
             .zodiac-icon {
-                font-size: 14px;
+                font-size: 16px;
+                opacity: 1;
             }
 
-            /* 位置标签移动端优化 - 更紧凑 */
+            /* 位置和评分 */
             .player-positions {
-                margin-bottom: 8px; /* 减少间距 */
-                gap: 4px;
+                margin-bottom: 0;
+                gap: 8px;
                 align-items: center;
+                flex-wrap: wrap;
             }
 
             .position-badge {
-                padding: 2px 5px; /* 更小的padding */
-                font-size: 9px; /* 更小字体 */
-                border-radius: 4px;
+                padding: 4px 8px;
+                font-size: 11px;
+                border-radius: 6px;
+                font-weight: 600;
             }
 
             .overall-rating {
-                font-size: 13px;
+                font-size: 14px;
                 gap: 4px;
+                margin-left: auto;
             }
 
             .rating-number {
-                font-size: 15px;
+                font-size: 16px;
+                font-weight: 700;
             }
 
-            /* 雷达图移动端优化 - 更小更紧凑 */
-            .radar-container {
-                width: 85px; /* 更小的雷达图 */
-                height: 70px;
-            }
-
-            /* 特征标签移动端优化 - 更紧凑 */
-            .player-features {
-                gap: 3px; /* 减少间距 */
-                margin-bottom: 8px; /* 减少底部间距 */
-            }
-
-            .feature-tag {
-                padding: 2px 5px; /* 更小padding */
-                font-size: 8px; /* 更小字体 */
-                border-radius: 8px;
-            }
-
-            /* 组别标签移动端优化 - 更紧凑 */
+            /* 组别标签 */
             .player-group {
-                margin-bottom: 6px; /* 减少间距 */
+                margin-bottom: 0;
             }
 
             .group-badge {
-                padding: 3px 6px; /* 更小padding */
-                font-size: 10px; /* 更小字体 */
+                padding: 6px 12px;
+                font-size: 12px;
+                border-radius: 100px; /* 胶囊形状 */
+                font-weight: 600;
+            }
+
+            /* 特征标签 */
+            .player-features {
+                gap: 6px;
+                margin-bottom: 0;
+                flex-wrap: wrap;
+            }
+
+            .feature-tag {
+                padding: 4px 8px;
+                font-size: 10px;
+                border-radius: 100px;
+                font-weight: 500;
+            }
+
+            /* 球衣展示 - 右上角 */
+            .jersey-container {
+                margin-bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .jersey-display {
+                width: 70px;
+                height: 85px;
+                margin-bottom: 8px;
+            }
+
+            .jersey-pinyin-text {
+                font-size: 8px;
+            }
+
+            .jersey-number-text {
+                font-size: 16px;
+            }
+
+            .jersey-label {
+                font-size: 9px;
+                text-align: center;
+                font-weight: 500;
+                opacity: 0.8;
+                line-height: 1.2;
+            }
+
+            /* 雷达图 - 下方大图 */
+            .radar-container {
+                width: 100%;
+                height: 200px; /* 大雷达图 */
+                margin-top: 0;
+                background: rgba(0, 122, 255, 0.03); /* 轻微的背景色 */
                 border-radius: 12px;
+                padding: 16px;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .radar-canvas {
+                max-width: 100%;
+                max-height: 100%;
             }
 
             /* 搜索框移动端优化 */
@@ -651,7 +705,7 @@
             }
         }
 
-        /* 超小屏幕优化 - 更加紧凑 */
+        /* 超小屏幕优化 */
         @media (max-width: 480px) {
             .nav-menu {
                 grid-template-columns: repeat(2, 1fr);
@@ -675,105 +729,77 @@
                 font-size: 24px;
             }
 
-            /* 超紧凑球员卡片 */
+            /* 超小屏幕球员卡片 */
             .player-card {
-                padding: 10px; /* 极小内边距 */
-                border-radius: 10px;
+                padding: 14px;
+                border-radius: 14px;
             }
 
-            .player-content {
-                gap: 6px; /* 极小间距 */
+            .player-top-section {
+                gap: 12px;
+                margin-bottom: 14px;
+            }
+
+            .player-left {
+                gap: 10px;
             }
 
             .player-name {
-                font-size: 16px;
+                font-size: 17px;
             }
 
             .player-nickname {
-                font-size: 11px;
-            }
-
-            .jersey-display {
-                width: 50px; /* 更小球衣 */
-                height: 65px;
-            }
-
-            .jersey-pinyin-text {
-                font-size: 6px;
-            }
-
-            .jersey-number-text {
-                font-size: 12px;
-            }
-
-            .jersey-label {
-                font-size: 7px;
-                margin-top: 1px;
-            }
-
-            .radar-container {
-                width: 70px; /* 极小雷达图 */
-                height: 60px;
+                font-size: 13px;
             }
 
             .detail-item {
-                font-size: 11px;
+                font-size: 13px;
             }
 
-            .detail-icon {
-                font-size: 10px;
-                width: 12px;
+            .jersey-display {
+                width: 60px;
+                height: 75px;
+                margin-bottom: 6px;
             }
 
-            .position-badge {
-                padding: 1px 4px;
-                font-size: 8px;
-            }
-
-            .overall-rating {
-                font-size: 12px;
-            }
-
-            .rating-number {
-                font-size: 14px;
-            }
-
-            .feature-tag {
-                padding: 1px 4px;
+            .jersey-pinyin-text {
                 font-size: 7px;
             }
 
+            .jersey-number-text {
+                font-size: 14px;
+            }
+
+            .jersey-label {
+                font-size: 8px;
+            }
+
+            .radar-container {
+                height: 180px;
+                padding: 14px;
+            }
+
+            .position-badge {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .overall-rating {
+                font-size: 13px;
+            }
+
+            .rating-number {
+                font-size: 15px;
+            }
+
             .group-badge {
-                padding: 2px 5px;
+                padding: 5px 10px;
+                font-size: 11px;
+            }
+
+            .feature-tag {
+                padding: 3px 6px;
                 font-size: 9px;
-            }
-
-            /* 减少各个区块的间距 */
-            .player-header {
-                margin-bottom: 4px;
-            }
-
-            .player-details {
-                gap: 3px;
-                margin-bottom: 6px;
-            }
-
-            .player-positions {
-                margin-bottom: 6px;
-                gap: 3px;
-            }
-
-            .player-features {
-                gap: 2px;
-                margin-bottom: 6px;
-            }
-
-            .player-group {
-                margin-bottom: 4px;
-            }
-
-            .jersey-container {
-                margin-bottom: 2px;
             }
         }
 
@@ -1199,55 +1225,57 @@
                 return `
                 <a href="player_detail.html?name=${encodeURIComponent(player.姓名)}" class="player-card">
                     <div class="player-content">
-                        <div class="player-left">
-                            <div class="player-header">
-                                <div class="player-info">
-                                    <div class="player-name">${player.姓名}</div>
-                                    <div class="player-nickname">
-                                        <i class="fas fa-id-card detail-icon"></i>
-                                        <span>${player.蔚来app昵称 || '未设置'}</span>
+                        <div class="player-top-section">
+                            <div class="player-left">
+                                <div class="player-header">
+                                    <div class="player-info">
+                                        <div class="player-name">${player.姓名}</div>
+                                        <div class="player-nickname">
+                                            <i class="fas fa-id-card detail-icon"></i>
+                                            <span>${player.蔚来app昵称 || '未设置'}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="player-details">
-                                <div class="detail-item">
-                                    <i class="fas fa-birthday-cake detail-icon"></i>
-                                    <span>${player.年龄}岁</span>
+                                <div class="player-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-birthday-cake detail-icon"></i>
+                                        <span>${player.年龄}岁</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="zodiac-icon">${zodiacIcons[player.星座] || '⭐'}</span>
+                                        <span>${player.星座}</span>
+                                    </div>
                                 </div>
-                                <div class="detail-item">
-                                    <span class="zodiac-icon">${zodiacIcons[player.星座] || '⭐'}</span>
-                                    <span>${player.星座}</span>
+                                <div class="player-positions">
+                                    <i class="fas fa-map-marker-alt detail-icon"></i>
+                                    ${primaryPosition ? `<span class="position-badge">${primaryPosition}</span>` : ''}
+                                    ${secondaryPosition ? `<span class="position-badge secondary">${secondaryPosition}</span>` : ''}
+                                    <div class="overall-rating">
+                                        <span class="rating-number">${overallRating}</span>
+                                        <span>总评</span>
+                                    </div>
+                                </div>
+                                <div class="player-group">
+                                    <span class="group-badge">${player.组别}</span>
+                                </div>
+                                <div class="player-features">
+                                    <span class="feature-tag tag-1 ${!player.标签1 ? 'tag-empty' : ''}">${tag1}</span>
+                                    <span class="feature-tag tag-2 ${!player.标签2 ? 'tag-empty' : ''}">${tag2}</span>
+                                    <span class="feature-tag tag-3 ${!player.标签3 ? 'tag-empty' : ''}">${tag3}</span>
                                 </div>
                             </div>
-                            <div class="player-positions">
-                                <i class="fas fa-map-marker-alt detail-icon"></i>
-                                ${primaryPosition ? `<span class="position-badge">${primaryPosition}</span>` : ''}
-                                ${secondaryPosition ? `<span class="position-badge secondary">${secondaryPosition}</span>` : ''}
-                                <div class="overall-rating">
-                                    <span class="rating-number">${overallRating}</span>
-                                    <span>总评</span>
+                            <div class="player-right">
+                                <div class="jersey-container">
+                                    <div class="jersey-display">
+                                        <div class="jersey-number-text">${jerseyNumber}</div>
+                                        <div class="jersey-pinyin-text">${playerPinyin}</div>
+                                    </div>
+                                    <div class="jersey-label">${jerseyNumber === '?' ? '未选号码' : jerseyNumber + '号球衣'}</div>
                                 </div>
-                            </div>
-                            <div class="player-group">
-                                <span class="group-badge">${player.组别}</span>
-                            </div>
-                            <div class="player-features">
-                                <span class="feature-tag tag-1 ${!player.标签1 ? 'tag-empty' : ''}">${tag1}</span>
-                                <span class="feature-tag tag-2 ${!player.标签2 ? 'tag-empty' : ''}">${tag2}</span>
-                                <span class="feature-tag tag-3 ${!player.标签3 ? 'tag-empty' : ''}">${tag3}</span>
                             </div>
                         </div>
-                        <div class="player-right">
-                            <div class="jersey-container">
-                                <div class="jersey-display">
-                                    <div class="jersey-number-text">${jerseyNumber}</div>
-                                    <div class="jersey-pinyin-text">${playerPinyin}</div>
-                                </div>
-                                <div class="jersey-label">${jerseyNumber === '?' ? '未选号码' : jerseyNumber + '号球衣'}</div>
-                            </div>
-                            <div class="radar-container">
-                                <canvas id="${canvasId}" class="radar-canvas"></canvas>
-                            </div>
+                        <div class="radar-container">
+                            <canvas id="${canvasId}" class="radar-canvas"></canvas>
                         </div>
                     </div>
                 </a>
