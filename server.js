@@ -933,7 +933,7 @@ app.get('/api/match/:id', (req, res) => {
                 goalkeeper.isGoalkeeper = true; // 临时指定为门将
                 goalkeeper.formationPos = 'GK';
                 console.log(`安排 ${goalkeeper.name} (${goalkeeper.primaryPos}) 客串门将`);
-            } else {
+            } else if (availablePlayers.length > 0) {
                 goalkeeper = availablePlayers[0]; // 最后选择任意球员
                 goalkeeper.isGoalkeeper = true;
                 goalkeeper.formationPos = 'GK';
@@ -1108,8 +1108,8 @@ app.get('/api/match/:id', (req, res) => {
     }
     
     // 获取首发球员详细信息并生成阵容
-    const starterDetails = getPlayerDetails(starters.map(p => p.playerName));
-    const substituteDetails = getPlayerDetails(substitutes.map(p => p.playerName)); // 新增：获取替补球员详情
+    const starterDetails = getPlayerDetails(starters);
+    const substituteDetails = getPlayerDetails(substitutes);
     
     // 检查门将分配是否合理
     const starterGoalkeepers = starterDetails.filter(p => p.isGoalkeeper);
