@@ -274,16 +274,111 @@ function loadFamousPlayersData() {
     }
 }
 
+// 生成球员偏好数据
+function generatePlayerPreferences() {
+    if (playersData.length === 0) {
+        console.log('等待球员数据加载完成...');
+        return;
+    }
+
+    playersData.forEach(player => {
+        const playerName = player.姓名;
+        
+        // 从CSV文件中读取偏好数据
+        const favoriteClubs = [];
+        const favoritePlayers = [];
+        
+        // 处理喜爱球队
+        if (player.喜爱球队 && player.喜爱球队.trim() !== '') {
+            // 查找对应的知名俱乐部数据
+            const club = famousClubsData.find(c => c.name === player.喜爱球队);
+            if (club) {
+                favoriteClubs.push(club);
+            } else {
+                // 如果没找到对应的俱乐部，创建一个简单的对象
+                favoriteClubs.push({
+                    name: player.喜爱球队,
+                    country: '未知',
+                    league: '未知'
+                });
+            }
+        }
+        
+        // 处理喜爱球员
+        if (player.喜爱球员 && player.喜爱球员.trim() !== '') {
+            // 查找对应的知名球员数据
+            const famousPlayer = famousPlayersData.find(p => p.name === player.喜爱球员);
+            if (famousPlayer) {
+                favoritePlayers.push(famousPlayer);
+            } else {
+                // 如果没找到对应的球员，创建一个简单的对象
+                favoritePlayers.push({
+                    name: player.喜爱球员,
+                    position: '未知',
+                    club: '未知'
+                });
+            }
+        }
+        
+        playerPreferences[playerName] = {
+            favoriteClubs: favoriteClubs,
+            favoritePlayers: favoritePlayers
+        };
+    });
+    
+    console.log('球员偏好数据加载完成');
+}
+
+// 加载属性描述数据
+function loadAttributeDescriptions() {
+    attributeDescriptions = {};
+    const filePath = getFilePath('football_attributes.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('属性描述文件不存在:', filePath);
+        return;
+    }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            const attribute = row.Attribute;
+            const scoreRange = row.Score_Range;
+            const description = row.Description_CN;
+            
+            if (!attributeDescriptions[attribute]) {
+                attributeDescriptions[attribute] = [];
+            }
+            
+            attributeDescriptions[attribute].push({
+                range: scoreRange,
+                description: description
+            });
+        })
+        .on('end', function() {
+            console.log('属性描述文件加载完成');
+        })
+        .on('error', function(err) {
+            console.error('读取属性描述文件失败:', err);
+        });
+}
+
 // 初始化数据加载
 console.log('开始加载数据...');
+loadFamousClubsData();
+loadFamousPlayersData();
 loadPlayersData();
 loadActivitiesData();
 loadMatchEventsData();
 loadMatchParticipantsData();
 loadTrainingAttendanceData();
 loadGoalkeepersData();
-loadFamousClubsData();
-loadFamousPlayersData();
+loadAttributeDescriptions();
+
+// 延迟生成球员偏好数据，确保所有数据都已加载
+setTimeout(() => {
+    generatePlayerPreferences();
+}, 1000); // 缩短延迟时间，因为不需要等待知名俱乐部和球员数据
 
 // API: 获取所有球员列表
 app.get('/api/players', function(req, res) {
@@ -369,14 +464,15 @@ app.get('/api/match/:id', function(req, res) {
     try {
         const matchId = req.params.id;
         
+        // 查找活动，不限制类型，支持所有活动
         const match = activitiesData.find(function(activity) {
-            return activity.id === matchId && activity.type === '正式比赛';
+            return activity.id === matchId;
         });
         
         if (!match) {
             return res.status(404).json({
                 success: false,
-                message: '未找到该比赛'
+                message: '未找到该活动'
             });
         }
         
@@ -388,15 +484,37 @@ app.get('/api/match/:id', function(req, res) {
             return e.activityId === matchId;
         });
         
-        // 使用简化的验证函数
-        const validationResult = validateAndFixMatchData(participants, events);
-        const starters = validationResult.starters;
-        const substitutes = validationResult.substitutes;
+        // 处理阵容数据
+        const starters = [];
+        const substitutes = [];
+        
+        participants.forEach(participant => {
+            const playerName = participant.姓名 || participant.playerName;
+            const status = participant.状态 || participant.status || participant.角色;
+            
+            if (status === '首发' || status === '首发球员') {
+                starters.push(playerName);
+            } else if (status === '替补' || status === '替补球员') {
+                substitutes.push(playerName);
+            } else {
+                // 对于队内对抗赛等，根据状态判断
+                if (status && status.includes('队')) {
+                    starters.push(playerName);
+                } else {
+                    // 默认作为首发处理
+                    starters.push(playerName);
+                }
+            }
+        });
+        
+        // 去重
+        const uniqueStarters = [...new Set(starters)];
+        const uniqueSubstitutes = [...new Set(substitutes)];
         
         // 简化的阵容生成
         const formation = {
-            formation: starters.length >= 11 ? '4-3-3' : (starters.length >= 8 ? '3-3-2' : '2-3-2'),
-            players: starters.map(function(playerName, index) {
+            formation: uniqueStarters.length >= 11 ? '4-3-3' : (uniqueStarters.length >= 8 ? '3-3-2' : '2-3-2'),
+            players: uniqueStarters.map(function(playerName, index) {
                 const player = playersData.find(function(p) {
                     return p['姓名'] === playerName;
                 });
@@ -412,8 +530,21 @@ app.get('/api/match/:id', function(req, res) {
             })
         };
         
-        const ourGoals = events.length;
-        const opponentGoals = Math.floor(Math.random() * 4);
+        // 根据活动类型确定对手和比分
+        let opponent = match.opponent || '未知对手';
+        let ourGoals = events.length;
+        let opponentGoals = 0;
+        
+        // 处理不同类型的活动
+        if (match.type === '正式比赛') {
+            opponentGoals = Math.floor(Math.random() * 4);
+        } else if (match.type === '队内对抗赛' || match.type === '内部训练赛') {
+            opponent = '队内对抗赛';
+            opponentGoals = Math.floor(Math.random() * 3);
+        } else {
+            opponent = match.type || '友谊赛';
+            opponentGoals = Math.floor(Math.random() * 2);
+        }
         
         const detailedEvents = events.map(function(event) {
             return {
@@ -428,13 +559,14 @@ app.get('/api/match/:id', function(req, res) {
             id: match.id,
             date: match.date,
             group: match.group,
-            opponent: match.opponent || '未知对手',
+            type: match.type,
+            opponent: opponent,
             ourScore: ourGoals,
             opponentScore: opponentGoals,
             result: ourGoals > opponentGoals ? '胜' : (ourGoals === opponentGoals ? '平' : '负'),
             lineup: {
-                starters: starters,
-                substitutes: substitutes
+                starters: uniqueStarters,
+                substitutes: uniqueSubstitutes
             },
             formation: formation,
             events: detailedEvents,
@@ -455,52 +587,201 @@ app.get('/api/match/:id', function(req, res) {
     }
 });
 
-// API: 获取球员信息
+// API: 获取单个球员详细信息
 app.get('/api/player/:name', function(req, res) {
     try {
         const playerName = decodeURIComponent(req.params.name);
+        console.log('获取球员信息:', playerName);
         
         const player = playersData.find(function(p) {
-            return p['姓名'] === playerName;
+            return p.姓名 === playerName;
         });
         
         if (!player) {
-            return res.json({
+            return res.status(404).json({
                 success: false,
                 message: '未找到该球员'
             });
         }
         
-        const playerMatches = matchParticipantsData.filter(function(record) {
-            return record.playerName === playerName;
-        });
+        // 获取球员偏好
+        const preferences = playerPreferences[playerName] || {
+            favoriteClubs: [],
+            favoritePlayers: []
+        };
         
-        const playerGoals = matchEventsData.filter(function(event) {
-            return event.scorer === playerName;
-        });
+        // 获取球员比赛统计
+        const playerMatches = matchParticipantsData.filter(p => p.playerName === playerName || p.姓名 === playerName);
+        const playerGoals = matchEventsData.filter(e => e.scorer === playerName);
+        const playerAssists = matchEventsData.filter(e => e.assister === playerName);
         
-        const playerAssists = matchEventsData.filter(function(event) {
-            return event.assister === playerName;
-        });
+        // 获取训练出勤记录
+        const trainingRecords = trainingAttendanceData.filter(t => t.playerName === playerName || t.姓名 === playerName);
         
-        const enhancedPlayer = {
-            name: player['姓名'],
-            position: player['主要位置'] || 'CM',
-            rating: parseInt(player['综合能力'] || '75'),
-            number: player['球衣号码'] || '0',
-            totalMatches: playerMatches.length,
-            totalGoals: playerGoals.length,
-            totalAssists: playerAssists.length,
-            group: player['组别'] || '未知'
+        const playerDetail = {
+            ...player,
+            preferences: preferences,
+            stats: {
+                totalMatches: playerMatches.length,
+                totalGoals: playerGoals.length,
+                totalAssists: playerAssists.length,
+                trainingAttendance: trainingRecords.length
+            },
+            matchHistory: playerMatches.map(match => {
+                const activity = activitiesData.find(a => a.id === match.activityId);
+                const goals = matchEventsData.filter(e => e.activityId === match.activityId && e.scorer === playerName);
+                const assists = matchEventsData.filter(e => e.activityId === match.activityId && e.assister === playerName);
+                
+                return {
+                    id: match.activityId,
+                    date: activity ? activity.date : '未知日期',
+                    opponent: activity ? activity.opponent : '未知对手',
+                    status: match.status || match.状态 || '参与',
+                    goals: goals.length,
+                    assists: assists.length
+                };
+            }).sort((a, b) => new Date(b.date) - new Date(a.date))
         };
         
         res.json({
             success: true,
-            data: enhancedPlayer
+            data: playerDetail
+        });
+    } catch (error) {
+        console.error('获取球员详情失败:', error);
+        res.status(500).json({
+            success: false,
+            message: '获取失败'
+        });
+    }
+});
+
+// API: 获取具有相同偏好的球员列表
+app.get('/api/players/same-preference', function(req, res) {
+    try {
+        const { type, value } = req.query;
+        
+        if (!type || !value) {
+            return res.status(400).json({
+                success: false,
+                message: '缺少参数'
+            });
+        }
+        
+        const samePlayers = [];
+        
+        Object.keys(playerPreferences).forEach(playerName => {
+            const preferences = playerPreferences[playerName];
+            let hasMatch = false;
+            
+            if (type === 'club') {
+                hasMatch = preferences.favoriteClubs.some(club => club.name === value);
+            } else if (type === 'player') {
+                hasMatch = preferences.favoritePlayers.some(player => player.name === value);
+            } else if (type === 'zodiac') {
+                const player = playersData.find(p => p.姓名 === playerName);
+                hasMatch = player && player.星座 === value;
+            }
+            
+            if (hasMatch) {
+                const playerData = playersData.find(p => p.姓名 === playerName);
+                if (playerData) {
+                    samePlayers.push({
+                        name: playerName,
+                        nickname: playerData.蔚来app昵称,
+                        group: playerData.组别,
+                        position: playerData.主要位置,
+                        zodiac: playerData.星座
+                    });
+                }
+            }
         });
         
+        res.json({
+            success: true,
+            data: {
+                type: type,
+                value: value,
+                players: samePlayers
+            }
+        });
     } catch (error) {
-        console.error('获取球员信息失败:', error);
+        console.error('获取相同偏好球员失败:', error);
+        res.status(500).json({
+            success: false,
+            message: '获取失败'
+        });
+    }
+});
+
+// API: 获取属性描述
+app.get('/api/attribute-description/:attribute/:value', function(req, res) {
+    try {
+        const attribute = decodeURIComponent(req.params.attribute);
+        const value = parseInt(req.params.value);
+        
+        console.log('查找属性:', attribute, '数值:', value);
+        
+        // 尝试不同的属性名称匹配方式
+        let matchedAttribute = null;
+        const keys = Object.keys(attributeDescriptions);
+        
+        // 首先尝试精确匹配
+        if (attributeDescriptions[attribute]) {
+            matchedAttribute = attribute;
+        }
+        // 然后尝试包含英文名称的匹配
+        if (!matchedAttribute) {
+            matchedAttribute = keys.find(key => key.includes(attribute) || attribute.includes(key.split(' ')[0]));
+        }
+        // 最后尝试部分匹配
+        if (!matchedAttribute) {
+            matchedAttribute = keys.find(key => key.split(' ')[0] === attribute || key.split('(')[0].trim() === attribute);
+        }
+        
+        console.log('匹配到的属性:', matchedAttribute);
+        
+        if (!matchedAttribute || !attributeDescriptions[matchedAttribute]) {
+            return res.status(404).json({
+                success: false,
+                message: '未找到该属性描述'
+            });
+        }
+        
+        // 根据数值找到对应的描述
+        const descriptions = attributeDescriptions[matchedAttribute];
+        let matchedDescription = null;
+        
+        for (const desc of descriptions) {
+            const range = desc.range;
+            // 解析范围，例如 "60-68 (业余初学)"
+            const rangeMatch = range.match(/(\d+)-(\d+)/);
+            if (rangeMatch) {
+                const min = parseInt(rangeMatch[1]);
+                const max = parseInt(rangeMatch[2]);
+                if (value >= min && value <= max) {
+                    matchedDescription = desc;
+                    break;
+                }
+            }
+        }
+        
+        if (!matchedDescription) {
+            // 如果没有精确匹配，返回最接近的描述
+            matchedDescription = descriptions[Math.floor(descriptions.length / 2)];
+        }
+        
+        res.json({
+            success: true,
+            data: {
+                attribute: attribute,
+                value: value,
+                range: matchedDescription.range,
+                description: matchedDescription.description
+            }
+        });
+    } catch (error) {
+        console.error('获取属性描述失败:', error);
         res.status(500).json({
             success: false,
             message: '获取失败'

@@ -1084,17 +1084,119 @@
             color: var(--text-secondary);
             margin-top: 4px;
         }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--separator);
+        }
+
+        .nav-link:hover {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 移动端响应式设计 */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 16px;
+                align-items: center;
+            }
+            
+            .nav-menu {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+            
+            .nav-title {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-futbol"></i> 队内对抗模拟</h1>
-            <a href="display.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> 返回主页
-            </a>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <img src="logo.png" alt="队徽" class="logo">
+                <span>队内对抗模拟</span>
+            </div>
+            <div class="nav-menu">
+                <a href="display.html" class="nav-link">
+                    <i class="fas fa-home"></i> 首页
+                </a>
+                <a href="formation_analyzer.html" class="nav-link">⚽ 阵容评分</a>
+                <a href="match_history.html" class="nav-link">📋 历史赛事</a>
+                <a href="leaderboard.html" class="nav-link">🏆 排行榜</a>
+            </div>
         </div>
+    </div>
 
+    <div class="container">
         <div class="tabs">
             <button class="tab active" onclick="switchTab('participant-selection', event)">
                 <i class="fas fa-users"></i> 参与人员选择

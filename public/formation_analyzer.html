@@ -3,40 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>阵容评分 - 京蔚联足球队</title>
+    <title>阵容评分系统 - 京蔚联足球队</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-blue: #007AFF;
-            --secondary-blue: #5AC8FA;
-            --tertiary-blue: #E8F2FF;
-            --success-green: #30D158;
-            --warning-orange: #FF9500;
-            --danger-red: #FF3B30;
-            --background: #F2F2F7;
-            --surface: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #3C3C43;
-            --text-tertiary: #8E8E93;
-            --separator: rgba(60, 60, 67, 0.12);
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --radius-md: 16px;
-            --radius-lg: 20px;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #007AFF;
+            --secondary-color: #5AC8FA;
+            --background-color: #F2F2F7;
+            --surface-color: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --separator: #C6C6C8;
+            --green: #34C759;
+            --red: #FF3B30;
+            --orange: #FF9500;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
-            background: var(--background);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
             color: var(--text-primary);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
         }
 
         .container {
@@ -45,19 +39,30 @@
             padding: 20px;
         }
 
-        .header {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-sm);
+        /* 导航栏 */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(242, 242, 247, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 0;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            font-size: 28px;
+        .nav-title {
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
             display: flex;
@@ -65,42 +70,110 @@
             gap: 12px;
         }
 
-        .back-btn {
-            padding: 12px 20px;
-            background: var(--primary-blue);
-            color: white;
+        .logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--primary-color);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 8px;
+            background: var(--surface-color);
+            color: var(--text-secondary);
             text-decoration: none;
-            border-radius: 10px;
             font-weight: 500;
+            font-size: 15px;
             transition: all 0.2s ease;
+            border: 1px solid var(--separator);
         }
 
-        .back-btn:hover {
-            background: #0051D5;
-            transform: translateY(-1px);
+        .nav-link:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
         }
 
+        .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 主要内容区域 */
         .main-content {
             display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 24px;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            align-items: start;
         }
 
+        /* 阵型选择区域 */
         .formation-section {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow-sm);
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
         }
 
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .formation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .formation-btn {
+            background: var(--background-color);
+            border: 2px solid var(--separator);
+            border-radius: 12px;
+            padding: 16px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .formation-btn:hover {
+            border-color: var(--primary-color);
+        }
+
+        .formation-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 球场区域 */
         .field-container {
+            position: relative;
+            background: var(--surface-color);
+            border-radius: 16px;
+            padding: 40px 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .football-field {
             position: relative;
             width: 100%;
             height: 600px;
-            background: linear-gradient(to top, #4CAF50 0%, #45a049 100%);
-            border-radius: var(--radius-md);
-            border: 3px solid white;
-            margin-bottom: 24px;
+            background: linear-gradient(180deg, #2E8B57 0%, #228B22 100%);
+            border-radius: 12px;
             overflow: hidden;
         }
 
@@ -108,232 +181,141 @@
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><g stroke="white" stroke-width="2" fill="none"><line x1="60" y1="0" x2="60" y2="400"/><line x1="540" y1="0" x2="540" y2="400"/><line x1="300" y1="0" x2="300" y2="400"/><circle cx="300" cy="200" r="60"/><circle cx="300" cy="200" r="4" fill="white"/><rect x="0" y="140" width="60" height="120"/><rect x="540" y="140" width="60" height="120"/><rect x="0" y="170" width="20" height="60"/><rect x="580" y="170" width="20" height="60"/></g></svg>') no-repeat center/contain;
+            width: 100%;
+            height: 100%;
         }
 
         .position-slot {
             position: absolute;
             width: 60px;
             height: 60px;
-            border: 2px dashed rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid var(--primary-color);
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 500;
+            cursor: pointer;
             font-size: 12px;
-        }
-
-        .position-slot:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: white;
-        }
-
-        .position-slot.filled {
-            background: var(--primary-blue);
-            border: 2px solid white;
-            color: white;
-            font-size: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
             text-align: center;
             line-height: 1.2;
         }
 
-        .analysis-section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .position-slot:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
-        .stats-card {
-            background: var(--surface);
-            border-radius: var(--radius-md);
+        .position-slot.filled {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        /* 控制面板 */
+        .control-panel {
+            background: var(--surface-color);
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow);
         }
 
-        .stats-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--separator);
-        }
-
-        .stat-item:last-child {
-            border-bottom: none;
-        }
-
-        .stat-label {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .stat-value {
-            font-weight: 600;
-            color: var(--primary-blue);
-        }
-
-        .formation-selector {
+        .stats-section {
             margin-bottom: 24px;
         }
 
-        .formation-selector h3 {
-            margin-bottom: 12px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .formation-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .formation-btn {
-            padding: 8px 16px;
-            background: var(--surface);
-            border: 1px solid var(--separator);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-
-        .formation-btn.active {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
-
-        .player-selector {
-            background: var(--surface);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 20px;
-        }
-
-        .player-grid {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
-            max-height: 300px;
-            overflow-y: auto;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
         }
 
-        .player-option {
-            padding: 8px;
-            background: var(--tertiary-blue);
+        .stat-item {
+            background: var(--background-color);
+            padding: 12px;
             border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
             text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
             font-size: 12px;
-            font-weight: 500;
+            color: var(--text-secondary);
+            margin-top: 4px;
         }
 
-        .player-option:hover {
-            background: var(--secondary-blue);
-            color: white;
-        }
-
-        .player-option.selected {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        .strengths-weaknesses {
-            background: var(--surface);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            box-shadow: var(--shadow-sm);
+        /* 分析区域 */
+        .analysis-section {
+            margin-top: 20px;
         }
 
         .analysis-tabs {
             display: flex;
-            gap: 8px;
+            border-bottom: 1px solid var(--separator);
             margin-bottom: 16px;
         }
 
         .tab-btn {
-            padding: 8px 16px;
-            background: var(--tertiary-blue);
+            flex: 1;
+            padding: 12px;
+            background: none;
             border: none;
-            border-radius: 8px;
             cursor: pointer;
+            color: var(--text-secondary);
             font-weight: 500;
-            transition: all 0.2s ease;
+            transition: color 0.3s ease;
         }
 
         .tab-btn.active {
-            background: var(--primary-blue);
-            color: white;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
         }
 
         .analysis-content {
             display: none;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .analysis-content.active {
             display: block;
         }
 
-        .strength-item, .weakness-item {
+        .analysis-item {
             padding: 12px;
-            border-radius: 8px;
             margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .strength-item {
-            background: rgba(48, 209, 88, 0.1);
-            color: var(--success-green);
-            border-left: 4px solid var(--success-green);
-        }
-
-        .weakness-item {
-            background: rgba(255, 59, 48, 0.1);
-            color: var(--danger-red);
-            border-left: 4px solid var(--danger-red);
-        }
-
-        .clear-formation {
-            width: 100%;
-            padding: 12px;
-            background: var(--warning-orange);
-            color: white;
-            border: none;
             border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        .clear-formation:hover {
-            background: #E6820D;
+        .analysis-item.strength {
+            background: rgba(52, 199, 89, 0.1);
+            border-left: 4px solid var(--green);
         }
 
-        @media (max-width: 1200px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+        .analysis-item.weakness {
+            background: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid var(--red);
         }
 
-        /* 位置选择弹窗样式 */
+        .analysis-item.suggestion {
+            background: rgba(0, 122, 255, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        /* 弹窗样式 */
         .modal {
             display: none;
             position: fixed;
@@ -343,7 +325,7 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
         }
 
         .modal.active {
@@ -353,14 +335,13 @@
         }
 
         .modal-content {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
+            background: var(--surface-color);
+            border-radius: 16px;
             padding: 24px;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 70vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .modal-header {
@@ -368,345 +349,670 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--separator);
         }
 
-        .modal-header h3 {
-            margin: 0;
+        .modal-title {
             font-size: 18px;
             font-weight: 600;
         }
 
-        .modal-close {
+        .close-modal {
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
             color: var(--text-secondary);
-            padding: 0;
-            width: 32px;
-            height: 32px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .player-list {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .modal-close:hover {
-            background: var(--separator);
-            color: var(--text-primary);
-        }
-
-        .modal-player-item {
+        .player-item {
+            padding: 12px;
+            border: 1px solid var(--separator);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
         }
 
-        .modal-player-item:hover {
-            background: var(--tertiary-blue);
-            border-color: var(--primary-blue);
+        .player-item:hover {
+            background: var(--background-color);
+            border-color: var(--primary-color);
         }
 
-        .player-suitability {
-            text-align: right;
-            min-width: 100px;
+        .player-info {
+            flex: 1;
         }
 
-        .suitability-bar {
-            width: 80px;
-            height: 4px;
-            background: var(--separator);
-            border-radius: 2px;
-            overflow: hidden;
+        .player-name {
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
-        .suitability-fill {
-            height: 100%;
-            transition: width 0.3s ease;
+        .player-details {
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        .suitability-excellent {
-            background: var(--success-green);
+        .player-rating {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
         }
 
-        .suitability-good {
-            background: var(--primary-blue);
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            /* 导航栏移动端优化 */
+            .nav-content {
+                flex-direction: column;
+                gap: 16px;
+                padding: 0 16px;
+            }
+
+            .nav-title {
+                font-size: 20px;
+            }
+
+            .nav-menu {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                width: 100%;
+            }
+
+            .nav-link {
+                padding: 10px 8px;
+                font-size: 13px;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* 主要布局移动端优化 */
+            .container {
+                padding: 10px;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .formation-section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .formation-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .formation-btn {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+
+            /* 球场容器移动端优化 */
+            .field-container {
+                padding: 20px 10px;
+            }
+
+            .football-field {
+                height: 400px;
+            }
+
+            .position-slot {
+                width: 45px;
+                height: 45px;
+                font-size: 10px;
+            }
+
+            /* 控制面板移动端优化 */
+            .control-panel {
+                order: -1; /* 在移动端将控制面板移到球场上方 */
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-item {
+                padding: 12px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            /* 分析标签移动端优化 */
+            .analysis-tabs {
+                gap: 8px;
+            }
+
+            .tab-btn {
+                padding: 8px 12px;
+                font-size: 13px;
+                flex: 1;
+            }
+
+            /* 弹窗移动端优化 */
+            .modal-content {
+                width: 95%;
+                max-width: none;
+                margin: 20px auto;
+                max-height: 80vh;
+            }
+
+            .modal-header {
+                padding: 15px;
+            }
+
+            .modal-title {
+                font-size: 18px;
+            }
+
+            .search-box {
+                padding: 12px 15px;
+                font-size: 16px;
+            }
+
+            .player-list {
+                max-height: 50vh;
+            }
+
+            .player-item {
+                padding: 12px 15px;
+            }
+
+            .player-info {
+                gap: 8px;
+            }
+
+            .player-name {
+                font-size: 16px;
+            }
+
+            .player-details {
+                font-size: 13px;
+            }
         }
 
-        .suitability-average {
-            background: var(--warning-orange);
-        }
+        /* 超小屏幕优化 */
+        @media (max-width: 480px) {
+            .nav-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
 
-        .suitability-poor {
-            background: var(--danger-red);
+            .nav-link {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+
+            .formation-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .formation-btn {
+                padding: 10px;
+                font-size: 13px;
+            }
+
+            .football-field {
+                height: 350px;
+            }
+
+            .position-slot {
+                width: 40px;
+                height: 40px;
+                font-size: 9px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .analysis-tabs {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .tab-btn {
+                padding: 10px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="nav-bar">
+        <div class="nav-content">
+            <div class="nav-title">
+                <div class="logo"></div>
+                <span>京蔚联足球队管理系统</span>
+            </div>
+            <div class="nav-menu">
+                <a href="display.html" class="nav-link">
+                    <i class="fas fa-home"></i> 主页
+                </a>
+                <a href="player_stats.html" class="nav-link">
+                    <i class="fas fa-users"></i> 球员管理
+                </a>
+                <a href="match_simulator.html" class="nav-link">
+                    <i class="fas fa-futbol"></i> 比赛模拟
+                </a>
+                <a href="leaderboard.html" class="nav-link">
+                    <i class="fas fa-trophy"></i> 排行榜
+                </a>
+                <a href="formation_analyzer.html" class="nav-link active">
+                    <i class="fas fa-chess-board"></i> 阵容评分
+                </a>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="header">
-            <h1>⚽ 阵容评分系统</h1>
-            <a href="display.html" class="back-btn">
-                <i class="fas fa-arrow-left"></i> 返回主页
-            </a>
+        <!-- 阵型选择区域 -->
+        <div class="formation-section">
+            <h2 class="section-title">🎯 选择阵型</h2>
+            <div class="formation-grid">
+                <button class="formation-btn" data-formation="3131">
+                    <div style="font-weight: bold;">3-1-3-1</div>
+                    <div style="font-size: 12px; margin-top: 4px;">8人制</div>
+                </button>
+                <button class="formation-btn" data-formation="332">
+                    <div style="font-weight: bold;">3-3-2</div>
+                    <div style="font-size: 12px; margin-top: 4px;">8人制</div>
+                </button>
+                <button class="formation-btn" data-formation="242">
+                    <div style="font-weight: bold;">2-4-2</div>
+                    <div style="font-size: 12px; margin-top: 4px;">8人制</div>
+                </button>
+                <button class="formation-btn" data-formation="433">
+                    <div style="font-weight: bold;">4-3-3</div>
+                    <div style="font-size: 12px; margin-top: 4px;">11人制</div>
+                </button>
+                <button class="formation-btn" data-formation="442">
+                    <div style="font-weight: bold;">4-4-2</div>
+                    <div style="font-size: 12px; margin-top: 4px;">11人制</div>
+                </button>
+                <button class="formation-btn" data-formation="352">
+                    <div style="font-weight: bold;">3-5-2</div>
+                    <div style="font-size: 12px; margin-top: 4px;">11人制</div>
+                </button>
+            </div>
         </div>
 
         <div class="main-content">
-            <div class="formation-section">
-                <div class="formation-selector">
-                    <h3>选择阵型</h3>
-                    <div class="formation-buttons">
-                        <button class="formation-btn active" data-formation="3131">3-1-3-1 (8人制)</button>
-                        <button class="formation-btn" data-formation="332">3-3-2 (8人制)</button>
-                        <button class="formation-btn" data-formation="242">2-4-2 (8人制)</button>
-                        <button class="formation-btn" data-formation="433">4-3-3 (11人制)</button>
-                        <button class="formation-btn" data-formation="442">4-4-2 (11人制)</button>
-                        <button class="formation-btn" data-formation="352">3-5-2 (11人制)</button>
-                    </div>
+            <!-- 球场显示区域 -->
+            <div class="field-container">
+                <div class="football-field">
+                    <svg class="field-lines" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <!-- 外边界 -->
+                        <rect x="2" y="2" width="96" height="96" fill="none" stroke="white" stroke-width="0.3"/>
+                        
+                        <!-- 中线 -->
+                        <line x1="2" y1="50" x2="98" y2="50" stroke="white" stroke-width="0.2"/>
+                        
+                        <!-- 中圈 -->
+                        <circle cx="50" cy="50" r="8" fill="none" stroke="white" stroke-width="0.2"/>
+                        <circle cx="50" cy="50" r="0.5" fill="white"/>
+                        
+                        <!-- 上方球门区（攻击方向） -->
+                        <rect x="42" y="2" width="16" height="8" fill="none" stroke="white" stroke-width="0.2"/>
+                        <rect x="46" y="2" width="8" height="4" fill="none" stroke="white" stroke-width="0.2"/>
+                        <line x1="40" y1="0" x2="60" y2="0" stroke="white" stroke-width="0.3"/>
+                        
+                        <!-- 下方球门区（防守方向） -->
+                        <rect x="42" y="90" width="16" height="8" fill="none" stroke="white" stroke-width="0.2"/>
+                        <rect x="46" y="94" width="8" height="4" fill="none" stroke="white" stroke-width="0.2"/>
+                        <line x1="40" y1="100" x2="60" y2="100" stroke="white" stroke-width="0.3"/>
+                        
+                        <!-- 点球点 -->
+                        <circle cx="50" cy="12" r="0.5" fill="white"/>
+                        <circle cx="50" cy="88" r="0.5" fill="white"/>
+                        
+                        <!-- 角球区 -->
+                        <path d="M 2 2 A 2 2 0 0 0 4 4" fill="none" stroke="white" stroke-width="0.2"/>
+                        <path d="M 98 2 A 2 2 0 0 1 96 4" fill="none" stroke="white" stroke-width="0.2"/>
+                        <path d="M 2 98 A 2 2 0 0 1 4 96" fill="none" stroke="white" stroke-width="0.2"/>
+                        <path d="M 98 98 A 2 2 0 0 0 96 96" fill="none" stroke="white" stroke-width="0.2"/>
+                    </svg>
+                    <!-- 位置槽将通过JavaScript动态生成 -->
                 </div>
-
-                <div class="field-container">
-                    <div class="field-lines"></div>
-                    <div id="positionSlots"></div>
-                </div>
-
-                <button class="clear-formation" onclick="clearFormation()">
-                    <i class="fas fa-refresh"></i> 清空阵容
-                </button>
             </div>
 
-            <div class="analysis-section">
-                <div class="stats-card">
-                    <h3>📊 阵容统计</h3>
-                    <div class="stat-item">
-                        <span class="stat-label">已选球员</span>
-                        <span class="stat-value" id="selectedCount">0/11</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">平均能力</span>
-                        <span class="stat-value" id="avgRating">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">总身价</span>
-                        <span class="stat-value" id="totalValue">0万</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">竞技组球员</span>
-                        <span class="stat-value" id="competitiveCount">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">兴趣组球员</span>
-                        <span class="stat-value" id="hobbyCount">0</span>
-                    </div>
-                </div>
-
-                <div class="player-selector">
-                    <h3>球员选择</h3>
-                    <div class="player-grid" id="playerGrid">
-                        <div class="loading">加载中...</div>
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <div class="stats-section">
+                    <h3 class="section-title">📊 阵容统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="selectedCount">0/11</div>
+                            <div class="stat-label">已选球员</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="avgRating">--</div>
+                            <div class="stat-label">平均评分</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="chemistry">--</div>
+                            <div class="stat-label">化学反应</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="totalValue">--</div>
+                            <div class="stat-label">总身价</div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="strengths-weaknesses">
-                    <h3>阵容分析</h3>
+                <div class="analysis-section">
+                    <h3 class="section-title">📝 阵容分析</h3>
                     <div class="analysis-tabs">
-                        <button class="tab-btn active" onclick="showAnalysis('strengths')">优势</button>
-                        <button class="tab-btn" onclick="showAnalysis('weaknesses')">不足</button>
-                        <button class="tab-btn" onclick="showAnalysis('suggestions')">建议</button>
+                        <button class="tab-btn active" data-tab="strengths">优势</button>
+                        <button class="tab-btn" data-tab="weaknesses">不足</button>
+                        <button class="tab-btn" data-tab="suggestions">建议</button>
                     </div>
                     
-                    <div id="strengths" class="analysis-content active">
-                        <div id="strengthsList">选择球员后显示阵容优势</div>
+                    <div class="analysis-content active" id="strengths">
+                        <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            选择球员后显示阵容优势
+                        </div>
                     </div>
                     
-                    <div id="weaknesses" class="analysis-content">
-                        <div id="weaknessesList">选择球员后显示阵容不足</div>
+                    <div class="analysis-content" id="weaknesses">
+                        <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            选择球员后显示阵容不足
+                        </div>
                     </div>
                     
-                    <div id="suggestions" class="analysis-content">
-                        <div id="suggestionsList">选择球员后提供优化建议</div>
+                    <div class="analysis-content" id="suggestions">
+                        <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                            选择球员后提供优化建议
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal" id="positionModal">
+    <!-- 球员选择弹窗 -->
+    <div class="modal" id="playerModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="modalTitle">选择球员</h3>
-                <button class="modal-close" onclick="closePositionModal()">&times;</button>
+                <h3 class="modal-title" id="modalTitle">选择球员</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
             </div>
-            <div class="modal-body">
-                <div style="margin-bottom: 16px;">
-                    <input type="text" id="modalSearch" placeholder="搜索球员..." style="width: 100%; padding: 8px; border: 1px solid var(--separator); border-radius: 8px;">
-                </div>
-                <div id="modalPlayerList" class="modal-player-list">
-                    <!-- 球员列表将由JavaScript生成 -->
-                </div>
+            <input type="text" class="search-box" id="searchBox" placeholder="搜索球员姓名或位置...">
+            <div class="player-list" id="playerList">
+                <!-- 球员列表将通过JavaScript动态生成 -->
             </div>
         </div>
     </div>
 
     <script>
+        // 全局变量
         let allPlayers = [];
         let selectedPlayers = {};
         let currentFormation = '3131';
-        let selectedPosition = null;
-        let currentSelectingPosition = '';
+        let currentSelectingSlot = null;
 
-        // 位置适应性权重配置 - 基于position.md的关键能力属性
-        const positionWeights = {
+        // 位置要求权重配置
+        const positionRequirements = {
             'GK': {
-                '反应': 0.30, '守门扑救': 0.25, '扑接出击': 0.20, '扑接高球': 0.15, '守门站位': 0.10
+                physical: { 反应: 0.3, 手型控制: 0.25, 一对一: 0.2, 出击: 0.15, 高空球控制: 0.1 },
+                technical: { 大脚手抛球: 0.3, 传球: 0.2, 停球: 0.2, 冷静: 0.15, 专注度: 0.15 },
+                mental: { 比赛阅读: 0.3, 冷静: 0.25, 专注度: 0.25, 领导力: 0.2 }
             },
             'CB': {
-                '抢断': 0.30, '头球': 0.25, '比赛阅读': 0.20, '强壮': 0.15, '传球': 0.10
+                physical: { 强壮: 0.25, 头球: 0.25, 弹跳: 0.2, 速度: 0.15, 体能恢复: 0.15 },
+                technical: { 抢断: 0.3, 传球: 0.25, 停球: 0.2, 头球: 0.15, 定位球: 0.1 },
+                mental: { 比赛阅读: 0.3, 专注度: 0.25, 勇敢决心: 0.2, 冷静: 0.15, 领导力: 0.1 }
             },
             'LB': {
-                '速度': 0.25, '抢断': 0.20, '传中': 0.20, '耐力': 0.15, '积极性': 0.10, '传球': 0.10
+                physical: { 速度: 0.3, 耐力: 0.25, 敏捷平衡: 0.2, 强壮: 0.15, 弹跳: 0.1 },
+                technical: { 传中: 0.25, 盘带: 0.2, 传球: 0.2, 抢断: 0.2, 停球: 0.15 },
+                mental: { 积极性: 0.3, 团队合作: 0.25, 大局观: 0.2, 比赛阅读: 0.15, 专注度: 0.1 }
             },
             'RB': {
-                '速度': 0.25, '抢断': 0.20, '传中': 0.20, '耐力': 0.15, '积极性': 0.10, '传球': 0.10
+                physical: { 速度: 0.3, 耐力: 0.25, 敏捷平衡: 0.2, 强壮: 0.15, 弹跳: 0.1 },
+                technical: { 传中: 0.25, 盘带: 0.2, 传球: 0.2, 抢断: 0.2, 停球: 0.15 },
+                mental: { 积极性: 0.3, 团队合作: 0.25, 大局观: 0.2, 比赛阅读: 0.15, 专注度: 0.1 }
             },
             'CDM': {
-                '抢断': 0.30, '比赛阅读': 0.25, '积极性': 0.20, '传球': 0.15, '强壮': 0.10
+                physical: { 强壮: 0.25, 耐力: 0.25, 速度: 0.2, 体能恢复: 0.15, 弹跳: 0.15 },
+                technical: { 抢断: 0.3, 传球: 0.25, 停球: 0.2, 盘带: 0.15, 远射: 0.1 },
+                mental: { 比赛阅读: 0.3, 大局观: 0.25, 专注度: 0.2, 团队合作: 0.15, 冷静: 0.1 }
             },
             'CM': {
-                '传球': 0.30, '停球': 0.20, '耐力': 0.20, '大局观': 0.15, '比赛阅读': 0.15
-            },
-            'LM': {
-                '速度': 0.25, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.15
-            },
-            'RM': {
-                '速度': 0.25, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.15
-            },
-            'LW': {
-                '速度': 0.30, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.10
-            },
-            'RW': {
-                '速度': 0.30, '盘带': 0.25, '传中': 0.20, '积极性': 0.15, '射门': 0.10
-            },
-            'ST': {
-                '射门': 0.35, '停球': 0.20, '冷静': 0.20, '比赛阅读': 0.15, '速度': 0.10
+                physical: { 耐力: 0.3, 速度: 0.25, 敏捷平衡: 0.2, 强壮: 0.15, 体能恢复: 0.1 },
+                technical: { 传球: 0.3, 停球: 0.25, 盘带: 0.2, 远射: 0.15, 定位球: 0.1 },
+                mental: { 大局观: 0.3, 团队合作: 0.25, 比赛阅读: 0.2, 冷静: 0.15, 专注度: 0.1 }
             },
             'CAM': {
-                '传球': 0.30, '技术综合': 0.25, '大局观': 0.20, '盘带': 0.15, '远射': 0.10
+                physical: { 敏捷平衡: 0.3, 速度: 0.25, 耐力: 0.2, 弹跳: 0.15, 强壮: 0.1 },
+                technical: { 传球: 0.3, 盘带: 0.25, 停球: 0.2, 射门: 0.15, 定位球: 0.1 },
+                mental: { 大局观: 0.35, 冷静: 0.25, 比赛阅读: 0.2, 团队合作: 0.15, 专注度: 0.05 }
+            },
+            'LM': {
+                physical: { 速度: 0.35, 耐力: 0.25, 敏捷平衡: 0.2, 强壮: 0.1, 弹跳: 0.1 },
+                technical: { 盘带: 0.3, 传中: 0.25, 传球: 0.2, 停球: 0.15, 远射: 0.1 },
+                mental: { 积极性: 0.3, 大局观: 0.25, 团队合作: 0.2, 比赛阅读: 0.15, 冷静: 0.1 }
+            },
+            'RM': {
+                physical: { 速度: 0.35, 耐力: 0.25, 敏捷平衡: 0.2, 强壮: 0.1, 弹跳: 0.1 },
+                technical: { 盘带: 0.3, 传中: 0.25, 传球: 0.2, 停球: 0.15, 远射: 0.1 },
+                mental: { 积极性: 0.3, 大局观: 0.25, 团队合作: 0.2, 比赛阅读: 0.15, 冷静: 0.1 }
+            },
+            'LW': {
+                physical: { 速度: 0.35, 敏捷平衡: 0.25, 耐力: 0.2, 弹跳: 0.1, 强壮: 0.1 },
+                technical: { 盘带: 0.35, 射门: 0.25, 传中: 0.2, 停球: 0.15, 传球: 0.05 },
+                mental: { 积极性: 0.3, 冷静: 0.25, 大局观: 0.2, 比赛阅读: 0.15, 专注度: 0.1 }
+            },
+            'RW': {
+                physical: { 速度: 0.35, 敏捷平衡: 0.25, 耐力: 0.2, 弹跳: 0.1, 强壮: 0.1 },
+                technical: { 盘带: 0.35, 射门: 0.25, 传中: 0.2, 停球: 0.15, 传球: 0.05 },
+                mental: { 积极性: 0.3, 冷静: 0.25, 大局观: 0.2, 比赛阅读: 0.15, 专注度: 0.1 }
+            },
+            'ST': {
+                physical: { 速度: 0.25, 强壮: 0.25, 弹跳: 0.2, 敏捷平衡: 0.15, 耐力: 0.15 },
+                technical: { 射门: 0.35, 停球: 0.25, 头球: 0.2, 盘带: 0.15, 定位球: 0.05 },
+                mental: { 冷静: 0.3, 比赛阅读: 0.25, 积极性: 0.2, 专注度: 0.15, 勇敢决心: 0.1 }
             }
         };
 
-        // 阵型配置 - 支持不同人数比赛
+        // 阵型配置
         const formations = {
             '3131': {
-                name: '3-1-3-1 (8人制)',
+                name: '3-1-3-1',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'lcb', label: 'LCB', x: 25, y: 20, position: 'CB' },
-                    { id: 'cb', label: 'CB', x: 50, y: 20, position: 'CB' },
-                    { id: 'rcb', label: 'RCB', x: 75, y: 20, position: 'CB' },
-                    { id: 'dm', label: 'DM', x: 50, y: 35, position: 'CDM' },
-                    { id: 'lm', label: 'LM', x: 25, y: 55, position: 'LM' },
-                    { id: 'am', label: 'AM', x: 50, y: 55, position: 'CAM' },
-                    { id: 'rm', label: 'RM', x: 75, y: 55, position: 'RM' },
-                    { id: 'st', label: 'ST', x: 50, y: 80, position: 'ST' }
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'lcb', label: 'LCB', x: 25, y: 80, position: 'CB' },
+                    { id: 'cb', label: 'CB', x: 50, y: 80, position: 'CB' },
+                    { id: 'rcb', label: 'RCB', x: 75, y: 80, position: 'CB' },
+                    { id: 'dm', label: 'DM', x: 50, y: 65, position: 'CDM' },
+                    { id: 'lm', label: 'LM', x: 25, y: 45, position: 'LM' },
+                    { id: 'am', label: 'AM', x: 50, y: 45, position: 'CAM' },
+                    { id: 'rm', label: 'RM', x: 75, y: 45, position: 'RM' },
+                    { id: 'st', label: 'ST', x: 50, y: 20, position: 'ST' }
                 ]
             },
             '332': {
-                name: '3-3-2 (8人制)',
+                name: '3-3-2',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'lcb', label: 'LCB', x: 25, y: 20, position: 'CB' },
-                    { id: 'cb', label: 'CB', x: 50, y: 20, position: 'CB' },
-                    { id: 'rcb', label: 'RCB', x: 75, y: 20, position: 'CB' },
-                    { id: 'lcm', label: 'LCM', x: 30, y: 45, position: 'CM' },
-                    { id: 'cm', label: 'CM', x: 50, y: 45, position: 'CM' },
-                    { id: 'rcm', label: 'RCM', x: 70, y: 45, position: 'CM' },
-                    { id: 'lst', label: 'LST', x: 40, y: 75, position: 'ST' },
-                    { id: 'rst', label: 'RST', x: 60, y: 75, position: 'ST' }
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'lcb', label: 'LCB', x: 25, y: 80, position: 'CB' },
+                    { id: 'cb', label: 'CB', x: 50, y: 80, position: 'CB' },
+                    { id: 'rcb', label: 'RCB', x: 75, y: 80, position: 'CB' },
+                    { id: 'lcm', label: 'LCM', x: 30, y: 55, position: 'CM' },
+                    { id: 'cm', label: 'CM', x: 50, y: 55, position: 'CM' },
+                    { id: 'rcm', label: 'RCM', x: 70, y: 55, position: 'CM' },
+                    { id: 'lst', label: 'LST', x: 40, y: 25, position: 'ST' },
+                    { id: 'rst', label: 'RST', x: 60, y: 25, position: 'ST' }
                 ]
             },
             '242': {
-                name: '2-4-2 (8人制)',
+                name: '2-4-2',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'cb1', label: 'CB1', x: 35, y: 20, position: 'CB' },
-                    { id: 'cb2', label: 'CB2', x: 65, y: 20, position: 'CB' },
-                    { id: 'lm', label: 'LM', x: 15, y: 45, position: 'LM' },
-                    { id: 'lcm', label: 'LCM', x: 40, y: 45, position: 'CM' },
-                    { id: 'rcm', label: 'RCM', x: 60, y: 45, position: 'CM' },
-                    { id: 'rm', label: 'RM', x: 85, y: 45, position: 'RM' },
-                    { id: 'lst', label: 'LST', x: 40, y: 75, position: 'ST' },
-                    { id: 'rst', label: 'RST', x: 60, y: 75, position: 'ST' }
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'cb1', label: 'CB1', x: 35, y: 80, position: 'CB' },
+                    { id: 'cb2', label: 'CB2', x: 65, y: 80, position: 'CB' },
+                    { id: 'lm', label: 'LM', x: 15, y: 55, position: 'LM' },
+                    { id: 'lcm', label: 'LCM', x: 40, y: 55, position: 'CM' },
+                    { id: 'rcm', label: 'RCM', x: 60, y: 55, position: 'CM' },
+                    { id: 'rm', label: 'RM', x: 85, y: 55, position: 'RM' },
+                    { id: 'lst', label: 'LST', x: 40, y: 25, position: 'ST' },
+                    { id: 'rst', label: 'RST', x: 60, y: 25, position: 'ST' }
                 ]
             },
             '433': {
-                name: '4-3-3 (11人制)',
+                name: '4-3-3',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'lb', label: 'LB', x: 15, y: 20, position: 'LB' },
-                    { id: 'cb1', label: 'CB', x: 35, y: 20, position: 'CB' },
-                    { id: 'cb2', label: 'CB', x: 65, y: 20, position: 'CB' },
-                    { id: 'rb', label: 'RB', x: 85, y: 20, position: 'RB' },
-                    { id: 'cdm', label: 'CDM', x: 50, y: 35, position: 'CDM' },
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'lb', label: 'LB', x: 15, y: 80, position: 'LB' },
+                    { id: 'cb1', label: 'CB', x: 35, y: 80, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 65, y: 80, position: 'CB' },
+                    { id: 'rb', label: 'RB', x: 85, y: 80, position: 'RB' },
+                    { id: 'cdm', label: 'CDM', x: 50, y: 65, position: 'CDM' },
                     { id: 'cm1', label: 'CM', x: 35, y: 50, position: 'CM' },
                     { id: 'cm2', label: 'CM', x: 65, y: 50, position: 'CM' },
-                    { id: 'lw', label: 'LW', x: 25, y: 75, position: 'LW' },
-                    { id: 'st', label: 'ST', x: 50, y: 80, position: 'ST' },
-                    { id: 'rw', label: 'RW', x: 75, y: 75, position: 'RW' }
+                    { id: 'lw', label: 'LW', x: 25, y: 25, position: 'LW' },
+                    { id: 'st', label: 'ST', x: 50, y: 20, position: 'ST' },
+                    { id: 'rw', label: 'RW', x: 75, y: 25, position: 'RW' }
                 ]
             },
             '442': {
-                name: '4-4-2 (11人制)',
+                name: '4-4-2',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'lb', label: 'LB', x: 15, y: 20, position: 'LB' },
-                    { id: 'cb1', label: 'CB', x: 35, y: 20, position: 'CB' },
-                    { id: 'cb2', label: 'CB', x: 65, y: 20, position: 'CB' },
-                    { id: 'rb', label: 'RB', x: 85, y: 20, position: 'RB' },
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'lb', label: 'LB', x: 15, y: 80, position: 'LB' },
+                    { id: 'cb1', label: 'CB', x: 35, y: 80, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 65, y: 80, position: 'CB' },
+                    { id: 'rb', label: 'RB', x: 85, y: 80, position: 'RB' },
                     { id: 'lm', label: 'LM', x: 20, y: 50, position: 'LM' },
                     { id: 'cm1', label: 'CM', x: 40, y: 50, position: 'CM' },
                     { id: 'cm2', label: 'CM', x: 60, y: 50, position: 'CM' },
                     { id: 'rm', label: 'RM', x: 80, y: 50, position: 'RM' },
-                    { id: 'st1', label: 'ST', x: 40, y: 80, position: 'ST' },
-                    { id: 'st2', label: 'ST', x: 60, y: 80, position: 'ST' }
+                    { id: 'st1', label: 'ST', x: 40, y: 20, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 60, y: 20, position: 'ST' }
                 ]
             },
             '352': {
-                name: '3-5-2 (11人制)',
+                name: '3-5-2',
                 positions: [
-                    { id: 'gk', label: 'GK', x: 50, y: 5, position: 'GK' },
-                    { id: 'cb1', label: 'CB', x: 25, y: 20, position: 'CB' },
-                    { id: 'cb2', label: 'CB', x: 50, y: 20, position: 'CB' },
-                    { id: 'cb3', label: 'CB', x: 75, y: 20, position: 'CB' },
-                    { id: 'lwb', label: 'LWB', x: 15, y: 40, position: 'LB' },
-                    { id: 'cdm', label: 'CDM', x: 35, y: 40, position: 'CDM' },
-                    { id: 'cm', label: 'CM', x: 50, y: 45, position: 'CM' },
-                    { id: 'cam', label: 'CAM', x: 65, y: 40, position: 'CAM' },
-                    { id: 'rwb', label: 'RWB', x: 85, y: 40, position: 'RB' },
-                    { id: 'st1', label: 'ST', x: 40, y: 75, position: 'ST' },
-                    { id: 'st2', label: 'ST', x: 60, y: 75, position: 'ST' }
+                    { id: 'gk', label: 'GK', x: 50, y: 95, position: 'GK' },
+                    { id: 'cb1', label: 'CB', x: 25, y: 80, position: 'CB' },
+                    { id: 'cb2', label: 'CB', x: 50, y: 80, position: 'CB' },
+                    { id: 'cb3', label: 'CB', x: 75, y: 80, position: 'CB' },
+                    { id: 'lwb', label: 'LWB', x: 15, y: 60, position: 'LB' },
+                    { id: 'cdm', label: 'CDM', x: 35, y: 60, position: 'CDM' },
+                    { id: 'cm', label: 'CM', x: 50, y: 55, position: 'CM' },
+                    { id: 'cam', label: 'CAM', x: 65, y: 60, position: 'CAM' },
+                    { id: 'rwb', label: 'RWB', x: 85, y: 60, position: 'RB' },
+                    { id: 'st1', label: 'ST', x: 40, y: 25, position: 'ST' },
+                    { id: 'st2', label: 'ST', x: 60, y: 25, position: 'ST' }
                 ]
             }
         };
 
-        // 初始化
-        async function init() {
-            try {
-                await loadPlayers();
-                setupFormation();
-                setupEventListeners();
-            } catch (error) {
-                console.error('初始化失败:', error);
+        // 计算球员位置适应性
+        function calculatePositionSuitability(player, targetPosition) {
+            if (!player || !targetPosition) return 0;
+            
+            const requirements = positionRequirements[targetPosition];
+            if (!requirements) return 50; // 默认适应性
+            
+            let suitabilityScore = 0;
+            let totalWeight = 0;
+            
+            // 计算三个维度的得分
+            ['physical', 'technical', 'mental'].forEach(dimension => {
+                if (requirements[dimension]) {
+                    let dimensionScore = 0;
+                    let dimensionWeight = 0;
+                    
+                    Object.entries(requirements[dimension]).forEach(([attribute, weight]) => {
+                        const playerValue = parseFloat(player[attribute]) || 0;
+                        dimensionScore += playerValue * weight;
+                        dimensionWeight += weight;
+                    });
+                    
+                    if (dimensionWeight > 0) {
+                        suitabilityScore += dimensionScore;
+                        totalWeight += dimensionWeight;
+                    }
+                }
+            });
+            
+            // 基础适应性得分
+            let baseScore = totalWeight > 0 ? suitabilityScore / totalWeight : 50;
+            
+            // 位置匹配度加成
+            const mainPosition = player.主要位置;
+            const secondaryPosition = player.次要位置;
+            let positionBonus = 0;
+            
+            if (mainPosition === targetPosition) {
+                positionBonus = 15; // 主位置完全匹配
+            } else if (secondaryPosition === targetPosition) {
+                positionBonus = 8; // 次位置匹配
+            } else {
+                // 位置兼容性判断
+                const compatibility = getPositionCompatibility(mainPosition, targetPosition);
+                positionBonus = compatibility;
             }
+            
+            // 综合能力影响
+            const overallRating = parseInt(player.综合能力) || 70;
+            const overallBonus = (overallRating - 70) * 0.1; // 每超过70分，加0.1分
+            
+            const finalScore = Math.min(100, Math.max(0, baseScore + positionBonus + overallBonus));
+            return Math.round(finalScore);
+        }
+        
+        // 位置兼容性判断
+        function getPositionCompatibility(playerPosition, targetPosition) {
+            const compatibilityMap = {
+                'CB': { 'CDM': 5, 'LB': 3, 'RB': 3 },
+                'LB': { 'CB': 3, 'LM': 6, 'LW': 4 },
+                'RB': { 'CB': 3, 'RM': 6, 'RW': 4 },
+                'CDM': { 'CB': 5, 'CM': 7 },
+                'CM': { 'CDM': 7, 'CAM': 6, 'LM': 4, 'RM': 4 },
+                'CAM': { 'CM': 6, 'ST': 4, 'LW': 3, 'RW': 3 },
+                'LM': { 'LB': 6, 'CM': 4, 'LW': 7 },
+                'RM': { 'RB': 6, 'CM': 4, 'RW': 7 },
+                'LW': { 'LM': 7, 'ST': 5, 'CAM': 3 },
+                'RW': { 'RM': 7, 'ST': 5, 'CAM': 3 },
+                'ST': { 'CAM': 4, 'LW': 5, 'RW': 5 }
+            };
+            
+            return compatibilityMap[playerPosition]?.[targetPosition] || 0;
         }
 
         // 加载球员数据
@@ -714,65 +1020,179 @@
             try {
                 const response = await fetch('/api/players');
                 const data = await response.json();
-                allPlayers = data.success ? data.data : data;
-                
-                // 更新球员加载状态
-                document.getElementById('playerGrid').innerHTML = '';
-                console.log('球员数据加载完成:', allPlayers.length);
-                
-                // 显示简化的球员列表（仅作为参考）
-                const playerGrid = document.getElementById('playerGrid');
-                playerGrid.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
-                        <p>已加载 ${allPlayers.length} 名球员</p>
-                        <p style="font-size: 12px;">点击阵型上的位置选择球员</p>
-                    </div>
-                `;
+                if (data.success) {
+                    allPlayers = data.data;
+                    console.log('加载球员数据成功，共', allPlayers.length, '名球员');
+                } else {
+                    throw new Error('API返回错误');
+                }
             } catch (error) {
                 console.error('加载球员数据失败:', error);
-                document.getElementById('playerGrid').innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: var(--danger-red);">
-                        加载失败，请刷新页面重试
-                    </div>
-                `;
-                throw error;
+                alert('加载球员数据失败，请刷新页面重试');
             }
         }
 
-        // 设置阵型
-        function setupFormation() {
-            const container = document.querySelector('.field-container');
-            const existingSlots = container.querySelectorAll('.position-slot');
-            existingSlots.forEach(slot => slot.remove());
+        // 切换阵型
+        function changeFormation(formation) {
+            // 更新按钮状态
+            document.querySelectorAll('.formation-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.formation === formation) {
+                    btn.classList.add('active');
+                }
+            });
 
+            currentFormation = formation;
+            selectedPlayers = {};
+            setupField();
+            updateStats();
+            updateAnalysis();
+        }
+
+        // 设置球场
+        function setupField() {
+            const container = document.querySelector('.football-field');
             const formation = formations[currentFormation];
+            
+            // 清除现有位置槽
+            container.querySelectorAll('.position-slot').forEach(slot => slot.remove());
+
+            // 创建新的位置槽
             formation.positions.forEach(pos => {
                 const slot = document.createElement('div');
                 slot.className = 'position-slot';
                 slot.id = pos.id;
-                slot.style.left = `${pos.x}%`;
-                slot.style.top = `${pos.y}%`;
+                slot.style.left = pos.x + '%';
+                slot.style.top = pos.y + '%';
                 slot.textContent = pos.label;
-                
-                slot.addEventListener('click', () => {
-                    openPositionModal(pos.id, pos.position, pos.label);
-                });
-                
+                slot.onclick = () => openPlayerModal(pos.id, pos.label);
                 container.appendChild(slot);
             });
-
-            updateFormationDisplay();
         }
 
-        // 更新阵型显示
-        function updateFormationDisplay() {
+        // 打开球员选择弹窗
+        function openPlayerModal(slotId, slotLabel) {
+            currentSelectingSlot = slotId;
+            document.getElementById('modalTitle').textContent = `选择 ${slotLabel} 球员`;
+            document.getElementById('searchBox').value = '';
+            renderPlayerList();
+            document.getElementById('playerModal').classList.add('active');
+        }
+
+        // 关闭弹窗
+        function closeModal() {
+            document.getElementById('playerModal').classList.remove('active');
+        }
+
+        // 渲染球员列表
+        function renderPlayerList() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const usedPlayers = Object.values(selectedPlayers).map(p => p?.姓名).filter(Boolean);
+            
+            // 获取当前选择位置
+            const formation = formations[currentFormation];
+            const currentSlot = formation.positions.find(pos => pos.id === currentSelectingSlot);
+            const targetPosition = currentSlot?.position || 'CM';
+            
+            let filteredPlayers = allPlayers.filter(player => {
+                const nameMatch = player.姓名.toLowerCase().includes(searchTerm);
+                const positionMatch = (player.主要位置 || '').toLowerCase().includes(searchTerm) ||
+                                   (player.次要位置 || '').toLowerCase().includes(searchTerm);
+                const notUsed = !usedPlayers.includes(player.姓名);
+                return (nameMatch || positionMatch) && notUsed;
+            });
+
+            // 计算位置适应性并排序
+            filteredPlayers = filteredPlayers.map(player => ({
+                ...player,
+                suitability: calculatePositionSuitability(player, targetPosition)
+            })).sort((a, b) => {
+                // 首先按适应性排序
+                if (b.suitability !== a.suitability) {
+                    return b.suitability - a.suitability;
+                }
+                // 适应性相同时按综合能力排序
+                return parseInt(b.综合能力) - parseInt(a.综合能力);
+            });
+
+            const playerList = document.getElementById('playerList');
+            
+            if (filteredPlayers.length === 0) {
+                playerList.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">没有找到匹配的球员</div>';
+                return;
+            }
+
+            playerList.innerHTML = filteredPlayers.map(player => {
+                const suitabilityColor = getSuitabilityColor(player.suitability);
+                const positionMatch = getPositionMatchText(player, targetPosition);
+                
+                return `
+                    <div class="player-item" onclick="selectPlayer('${player.姓名}')">
+                        <div class="player-info">
+                            <div class="player-name">${player.姓名}</div>
+                            <div class="player-details">
+                                <span>${player.主要位置}${player.次要位置 ? '/' + player.次要位置 : ''}</span> • 
+                                <span>${player.组别}</span> • 
+                                <span style="color: ${suitabilityColor}; font-weight: bold;">${positionMatch}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="player-rating">${player.综合能力}</div>
+                            <div style="background: ${suitabilityColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                                ${player.suitability}%
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 获取适应性颜色
+        function getSuitabilityColor(suitability) {
+            if (suitability >= 85) return '#34C759'; // 绿色 - 完美
+            if (suitability >= 75) return '#30D158'; // 浅绿 - 优秀
+            if (suitability >= 65) return '#FF9500'; // 橙色 - 良好
+            if (suitability >= 50) return '#FF6B35'; // 橙红 - 一般
+            return '#FF3B30'; // 红色 - 不适合
+        }
+
+        // 获取位置匹配文本
+        function getPositionMatchText(player, targetPosition) {
+            const suitability = player.suitability;
+            if (player.主要位置 === targetPosition) return '主位置';
+            if (player.次要位置 === targetPosition) return '次位置';
+            if (suitability >= 75) return '高适应';
+            if (suitability >= 60) return '可胜任';
+            return '客串';
+        }
+
+        // 选择球员
+        function selectPlayer(playerName) {
+            const player = allPlayers.find(p => p.姓名 === playerName);
+            if (player) {
+                selectedPlayers[currentSelectingSlot] = player;
+                updateFieldDisplay();
+                updateStats();
+                updateAnalysis();
+                closeModal();
+            }
+        }
+
+        // 更新球场显示
+        function updateFieldDisplay() {
             const formation = formations[currentFormation];
             formation.positions.forEach(pos => {
                 const slot = document.getElementById(pos.id);
-                if (selectedPlayers[pos.id]) {
-                    const player = selectedPlayers[pos.id];
+                const player = selectedPlayers[pos.id];
+                
+                if (player) {
                     slot.classList.add('filled');
-                    slot.innerHTML = `<div style="font-size: 10px; text-align: center; line-height: 1.1;">${player.姓名}<br><span style="font-size: 8px;">${player.综合能力}</span></div>`;
+                    slot.innerHTML = `
+                        <div style="font-size: 10px; text-align: center; line-height: 1.1;">
+                            ${player.姓名}<br>
+                            <span style="font-size: 8px;">${player.综合能力}</span>
+                        </div>
+                    `;
                 } else {
                     slot.classList.remove('filled');
                     slot.textContent = pos.label;
@@ -780,538 +1200,332 @@
             });
         }
 
-        // 打开位置选择弹窗
-        function openPositionModal(positionId, position, positionLabel) {
-            currentSelectingPosition = positionId;
-            
-            const modal = document.getElementById('positionModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalPlayerList = document.getElementById('modalPlayerList');
-            const modalSearch = document.getElementById('modalSearch');
-            
-            modalTitle.textContent = `选择${positionLabel}球员`;
-            
-            // 清空搜索框
-            modalSearch.value = '';
-            
-            // 渲染可选球员列表
-            renderModalPlayerList('');
-            
-            // 添加搜索事件
-            modalSearch.onkeyup = (e) => {
-                renderModalPlayerList(e.target.value);
-            };
-            
-            // 显示弹窗
-            modal.classList.add('active');
-        }
-
-        // 渲染弹窗中的球员列表
-        function renderModalPlayerList(searchTerm = '') {
-            const modalPlayerList = document.getElementById('modalPlayerList');
-            const position = getPositionFromSlot(currentSelectingPosition);
-            
-            // 过滤可用球员
-            const filteredPlayers = allPlayers.filter(player => {
-                // 搜索过滤
-                const matchSearch = player.姓名.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                  (player.主要位置 || '').toLowerCase().includes(searchTerm.toLowerCase());
-                
-                // 检查是否已被其他位置使用
-                const isAlreadyUsed = Object.values(selectedPlayers).some(p => p && p.姓名 === player.姓名);
-                
-                return matchSearch && !isAlreadyUsed;
-            });
-            
-            // 按位置适应性排序
-            const sortedPlayers = filteredPlayers.map(player => {
-                const suitability = calculatePositionSuitability(player, position);
-                return { ...player, suitability };
-            }).sort((a, b) => b.suitability - a.suitability);
-            
-            modalPlayerList.innerHTML = sortedPlayers.map(player => {
-                const suitabilityClass = getSuitabilityClass(player.suitability);
-                const suitabilityText = getSuitabilityText(player.suitability);
-                
-                return `
-                    <div class="modal-player-item" onclick="selectPlayerForPosition('${player.姓名}')">
-                        <div class="player-info">
-                            <div class="player-name">${player.姓名}</div>
-                            <div class="player-position">${player.主要位置} • ${player.组别} • 评分${player.综合能力}</div>
-                        </div>
-                        <div class="player-suitability">
-                            <div style="font-size: 12px; margin-bottom: 4px;">${suitabilityText}</div>
-                            <div class="suitability-bar">
-                                <div class="suitability-fill ${suitabilityClass}" style="width: ${player.suitability}%"></div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            if (sortedPlayers.length === 0) {
-                modalPlayerList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                        ${searchTerm ? '没有找到匹配的球员' : '没有可用球员'}
-                    </div>
-                `;
-            }
-        }
-
-        // 获取位置槽对应的位置
-        function getPositionFromSlot(slotId) {
-            // 从阵型配置中查找对应位置
-            for (const formationKey in formations) {
-                const formation = formations[formationKey];
-                const position = formation.positions.find(pos => pos.id === slotId);
-                if (position) {
-                    return position.position;
-                }
-            }
-            return 'CM'; // 默认位置
-        }
-
-        // 计算位置适应性
-        function calculatePositionSuitability(player, targetPosition) {
-            // 如果球员的主要位置匹配，给基础分
-            let baseScore = 60;
-            if (player.主要位置 === targetPosition) {
-                baseScore = 85;
-            } else {
-                // 检查位置兼容性
-                const compatibility = getPositionCompatibility(player.主要位置, targetPosition);
-                baseScore += compatibility;
-            }
-            
-            // 根据球员的具体能力值进行调整
-            const weights = positionWeights[targetPosition] || {};
-            let abilityScore = 0;
-            let totalWeight = 0;
-            
-            Object.entries(weights).forEach(([attr, weight]) => {
-                const value = parseInt(player[attr]) || 70;
-                abilityScore += value * weight;
-                totalWeight += weight;
-            });
-            
-            if (totalWeight > 0) {
-                abilityScore = abilityScore / totalWeight;
-                // 将能力分数转换为适应性调整分（-10到+10）
-                const abilityAdjustment = (abilityScore - 75) * 0.4;
-                baseScore += abilityAdjustment;
-            }
-            
-            return Math.max(20, Math.min(100, Math.round(baseScore)));
-        }
-
-        // 获取位置兼容性分数
-        function getPositionCompatibility(playerPos, targetPos) {
-            const compatibilityMap = {
-                'CB': { 'CDM': 15, 'LB': 10, 'RB': 10 },
-                'LB': { 'CB': 10, 'LM': 20, 'LW': 15 },
-                'RB': { 'CB': 10, 'RM': 20, 'RW': 15 },
-                'CDM': { 'CB': 15, 'CM': 25 },
-                'CM': { 'CDM': 20, 'CAM': 20, 'LM': 15, 'RM': 15 },
-                'CAM': { 'CM': 20, 'LW': 15, 'RW': 15, 'ST': 10 },
-                'LM': { 'LB': 20, 'CM': 15, 'LW': 25 },
-                'RM': { 'RB': 20, 'CM': 15, 'RW': 25 },
-                'LW': { 'LM': 25, 'ST': 15, 'CAM': 15 },
-                'RW': { 'RM': 25, 'ST': 15, 'CAM': 15 },
-                'ST': { 'CAM': 10, 'LW': 15, 'RW': 15 }
-            };
-            
-            return compatibilityMap[playerPos]?.[targetPos] || 0;
-        }
-
-        // 为位置选择球员
-        function selectPlayerForPosition(playerName) {
-            const player = allPlayers.find(p => p.姓名 === playerName);
-            if (!player) return;
-            
-            // 移除球员在其他位置的配置
-            Object.keys(selectedPlayers).forEach(key => {
-                if (selectedPlayers[key] && selectedPlayers[key].姓名 === playerName) {
-                    delete selectedPlayers[key];
-                }
-            });
-            
-            // 设置新位置
-            selectedPlayers[currentSelectingPosition] = player;
-            
-            // 更新阵型显示
-            updateFormationDisplay();
-            
-            // 关闭弹窗
-            closePositionModal();
-            
-            // 更新统计
-            updateStats();
-            updateAnalysis();
-        }
-
-        // 获取适应性等级样式
-        function getSuitabilityClass(suitability) {
-            if (suitability >= 85) return 'suitability-excellent';
-            if (suitability >= 75) return 'suitability-good';
-            if (suitability >= 60) return 'suitability-average';
-            return 'suitability-poor';
-        }
-
-        // 获取适应性文本
-        function getSuitabilityText(suitability) {
-            if (suitability >= 85) return '非常适合';
-            if (suitability >= 75) return '比较适合';
-            if (suitability >= 60) return '一般适合';
-            return '不太适合';
-        }
-
-        // 关闭位置选择弹窗
-        function closePositionModal() {
-            const modal = document.getElementById('positionModal');
-            if (modal) {
-                modal.classList.remove('active');
-            }
-        }
-
         // 更新统计信息
         function updateStats() {
-            const selectedCount = Object.keys(selectedPlayers).length;
+            const players = Object.values(selectedPlayers).filter(Boolean);
             const maxPlayers = formations[currentFormation].positions.length;
             
-            document.getElementById('selectedCount').textContent = `${selectedCount}/${maxPlayers}`;
+            document.getElementById('selectedCount').textContent = `${players.length}/${maxPlayers}`;
             
-            if (selectedCount === 0) {
-                document.getElementById('avgRating').textContent = '0';
-                document.getElementById('competitiveCount').textContent = '0';
-                document.getElementById('hobbyCount').textContent = '0';
-                return;
-            }
-            
-            const players = Object.values(selectedPlayers);
-            
-            // 计算平均能力
-            const avgRating = players.reduce((sum, p) => sum + (parseInt(p.综合能力) || 70), 0) / players.length;
-            document.getElementById('avgRating').textContent = Math.round(avgRating);
-            
-            // 统计组别
-            const competitiveCount = players.filter(p => p.组别 === '竞技组').length;
-            const hobbyCount = players.filter(p => p.组别 === '兴趣组').length;
-            document.getElementById('competitiveCount').textContent = competitiveCount;
-            document.getElementById('hobbyCount').textContent = hobbyCount;
-            
-            // 计算总身价
-            calculateTotalValue(players);
-        }
-
-        // 计算总身价（修复版本）
-        async function calculateTotalValue(players) {
-            let totalValue = 0;
-            let successCount = 0;
-            
-            const promises = players.map(async (player) => {
-                try {
-                    const response = await fetch(`/api/player/${encodeURIComponent(player.姓名)}`);
-                    const data = await response.json();
-                    if (data.success && data.data && data.data.marketValue) {
-                        totalValue += data.data.marketValue.value || 0;
-                        successCount++;
-                    }
-                } catch (error) {
-                    // 静默处理错误，使用综合能力作为估算值
-                    const estimatedValue = Math.max(1000, (parseInt(player.综合能力) || 70) * 100);
-                    totalValue += estimatedValue;
-                    successCount++;
-                }
-            });
-            
-            await Promise.all(promises);
-            
-            // 格式化显示
-            if (totalValue >= 10000) {
-                document.getElementById('totalValue').textContent = (totalValue / 10000).toFixed(1) + '万';
-            } else if (totalValue >= 1000) {
-                document.getElementById('totalValue').textContent = (totalValue / 1000).toFixed(1) + '千';
-            } else {
-                document.getElementById('totalValue').textContent = totalValue + '元';
-            }
-        }
-
-        // 专业阵容分析系统
-        function updateAnalysis() {
-            const players = Object.values(selectedPlayers);
             if (players.length === 0) {
-                document.getElementById('strengthsList').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后显示阵容优势</div>';
-                document.getElementById('weaknessesList').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后显示阵容不足</div>';
-                document.getElementById('suggestionsList').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后提供优化建议</div>';
+                document.getElementById('avgRating').textContent = '--';
+                document.getElementById('chemistry').textContent = '--';
+                document.getElementById('totalValue').textContent = '--';
                 return;
             }
 
-            // 生成专业球评风格的分析
-            const analysis = generateProfessionalAnalysis(players);
+            // 平均评分
+            const avgRating = players.reduce((sum, p) => sum + parseInt(p.综合能力), 0) / players.length;
+            document.getElementById('avgRating').textContent = Math.round(avgRating);
+
+            // 化学反应（组别统计）
+            const competitive = players.filter(p => p.组别 === '竞技组').length;
+            const hobby = players.filter(p => p.组别 === '兴趣组').length;
+            document.getElementById('chemistry').textContent = `${competitive}竞技/${hobby}兴趣`;
+
+            // 总身价（简化计算）
+            const totalValue = players.reduce((sum, p) => sum + parseInt(p.综合能力) * 100, 0);
+            document.getElementById('totalValue').textContent = (totalValue / 10000).toFixed(1) + '万';
+        }
+
+        // 更新分析
+        function updateAnalysis() {
+            const players = Object.values(selectedPlayers).filter(Boolean);
             
-            document.getElementById('strengthsList').innerHTML = analysis.strengths.map(s => 
-                `<div class="strength-item">${s}</div>`
+            if (players.length === 0) {
+                document.getElementById('strengths').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后显示阵容优势</div>';
+                document.getElementById('weaknesses').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后显示阵容不足</div>';
+                document.getElementById('suggestions').innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">选择球员后提供优化建议</div>';
+                return;
+            }
+
+            const analysis = generateAnalysis(players);
+            
+            document.getElementById('strengths').innerHTML = analysis.strengths.map(s => 
+                `<div class="analysis-item strength">${s}</div>`
             ).join('');
 
-            document.getElementById('weaknessesList').innerHTML = analysis.weaknesses.map(w => 
-                `<div class="weakness-item">${w}</div>`
+            document.getElementById('weaknesses').innerHTML = analysis.weaknesses.map(w => 
+                `<div class="analysis-item weakness">${w}</div>`
             ).join('');
 
-            document.getElementById('suggestionsList').innerHTML = analysis.suggestions.map(s => 
-                `<div style="padding: 12px; background: rgba(0, 122, 255, 0.1); border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--primary-blue);">${s}</div>`
+            document.getElementById('suggestions').innerHTML = analysis.suggestions.map(s => 
+                `<div class="analysis-item suggestion">${s}</div>`
             ).join('');
         }
 
-        // 生成专业球评员风格的阵容分析
-        function generateProfessionalAnalysis(players) {
-            const analysis = {
-                strengths: [],
-                weaknesses: [],
-                suggestions: []
-            };
+        // 生成分析报告
+        function generateAnalysis(players) {
+            const analysis = { strengths: [], weaknesses: [], suggestions: [] };
             
-            // 基础统计
-            const stats = analyzeFormationStats(players);
-            const positionGroups = categorizePlayersByPosition(players);
-            const keyPlayers = identifyKeyPlayers(players);
+            if (players.length === 0) return analysis;
             
-            // === 优势分析 ===
+            const avgRating = players.reduce((sum, p) => sum + parseInt(p.综合能力), 0) / players.length;
+            const competitiveCount = players.filter(p => p.组别 === '竞技组').length;
+            const maxPlayers = formations[currentFormation].positions.length;
+            const formation = formations[currentFormation];
             
-            // 门将分析
-            if (positionGroups.goalkeepers.length > 0) {
-                const gk = positionGroups.goalkeepers[0];
-                const gkRating = parseInt(gk.综合能力) || 70;
-                if (gkRating >= 82) {
-                    analysis.strengths.push(`🥅 <strong>门将位置稳固</strong> - ${gk.姓名}作为最后一道防线表现出色，综合能力${gkRating}分，能够为球队提供可靠的门前保障，其出色的反应和扑救能力将是球队防守体系的重要基石。`);
-                } else if (gkRating >= 75) {
-                    analysis.strengths.push(`🥅 <strong>门将基础扎实</strong> - ${gk.姓名}具备基本的门将素质，能够胜任门将职责，为球队提供稳定的后防保障。`);
-                }
+            // 高级统计分析
+            const positionAnalysis = analyzePositionalBalance(players, formation);
+            const attributeAnalysis = analyzeTeamAttributes(players);
+            const tacticalAnalysis = analyzeTacticalSuitability(players, formation);
+            
+            // 优势分析 - 更专业化
+            if (avgRating >= 90) {
+                analysis.strengths.push('⭐ 超级巨星阵容 - 平均评分90+，拥有世界级别的个人能力，技战术执行力极强');
+            } else if (avgRating >= 85) {
+                analysis.strengths.push('⭐ 顶级实力配置 - 球员综合实力优异，基本功扎实，比赛稳定性极佳');
+            } else if (avgRating >= 80) {
+                analysis.strengths.push('⭐ 实力均衡阵容 - 整体水平出色，各位置都有可靠球员');
             }
             
-            // 后卫线分析
-            const defenders = [...positionGroups.centerBacks, ...positionGroups.fullBacks];
-            if (defenders.length >= 3) {
-                const avgDefenseRating = defenders.reduce((sum, p) => sum + (parseInt(p.综合能力) || 70), 0) / defenders.length;
-                if (avgDefenseRating >= 80) {
-                    const topDefender = defenders.sort((a, b) => (parseInt(b.综合能力) || 70) - (parseInt(a.综合能力) || 70))[0];
-                    analysis.strengths.push(`🛡️ <strong>后防线实力雄厚</strong> - 以${topDefender.姓名}为核心的后防线平均评分${avgDefenseRating.toFixed(1)}分，具备出色的防守硬度。后卫群体在抢断、头球和位置感方面表现突出，能够有效限制对手的进攻威胁。`);
-                } else if (avgDefenseRating >= 75) {
-                    analysis.strengths.push(`🛡️ <strong>后防线配置合理</strong> - 后防线人员配置齐整，具备基本的防守能力，能够应对大部分比赛情况。`);
-                }
+            // 组别平衡分析
+            if (competitiveCount >= players.length * 0.8) {
+                analysis.strengths.push('🔥 竞技底蕴深厚 - 竞技组球员占主导，比赛经验丰富，关键时刻心理素质强');
+            } else if (competitiveCount >= players.length * 0.6) {
+                analysis.strengths.push('⚖️ 经验新秀平衡 - 老将经验与新生代活力完美融合');
             }
             
-            // 中场分析
-            const midfielders = [...positionGroups.defensiveMidfielders, ...positionGroups.centralMidfielders, ...positionGroups.attackingMidfielders, ...positionGroups.wideMidfielders];
-            if (midfielders.length >= 3) {
-                const avgMidRating = midfielders.reduce((sum, p) => sum + (parseInt(p.综合能力) || 70), 0) / midfielders.length;
-                if (avgMidRating >= 80) {
-                    const topMidfielder = midfielders.sort((a, b) => (parseInt(b.综合能力) || 70) - (parseInt(a.综合能力) || 70))[0];
-                    analysis.strengths.push(`⚡ <strong>中场控制力强</strong> - ${topMidfielder.姓名}领衔的中场组合平均评分${avgMidRating.toFixed(1)}分，在传球组织、跑动覆盖和攻防转换方面表现出色。这样的中场配置能够有效控制比赛节奏，为前场输送充足的炮弹。`);
-                }
-                
-                // 分析中场的特点
-                const passers = midfielders.filter(p => (parseInt(p.传球) || 70) >= 80);
-                if (passers.length >= 2) {
-                    analysis.strengths.push(`🎯 <strong>传球组织犀利</strong> - ${passers.map(p => p.姓名).join('、')}等球员传球能力突出，具备出色的大局观和传球精度，能够通过精准的传递撕破对方防线。`);
-                }
+            // 位置分析
+            if (positionAnalysis.perfectMatches >= players.length * 0.7) {
+                analysis.strengths.push('🎯 位置配置完美 - 大部分球员都在主位置上，发挥空间最大化');
             }
             
-            // 进攻分析
-            const attackers = [...positionGroups.forwards, ...positionGroups.wingers];
-            if (attackers.length >= 2) {
-                const avgAttackRating = attackers.reduce((sum, p) => sum + (parseInt(p.综合能力) || 70), 0) / attackers.length;
-                if (avgAttackRating >= 80) {
-                    const topAttacker = attackers.sort((a, b) => (parseInt(b.综合能力) || 70) - (parseInt(a.综合能力) || 70))[0];
-                    analysis.strengths.push(`⚽ <strong>进攻火力充足</strong> - ${topAttacker.姓名}率领的攻击群平均评分${avgAttackRating.toFixed(1)}分，射门能力和临门一脚把握能力出众。前场组合在速度、技术和终结能力方面具备威胁，是球队得分的重要保障。`);
-                }
-                
-                // 分析速度和突破
-                const fastPlayers = attackers.filter(p => (parseInt(p.速度) || 70) >= 80);
-                if (fastPlayers.length >= 2) {
-                    analysis.strengths.push(`💨 <strong>边路突击犀利</strong> - ${fastPlayers.map(p => p.姓名).join('、')}等球员速度优势明显，能够在边路制造威胁，通过快速突进和传中为球队创造进球机会。`);
-                }
+            // 属性优势分析
+            if (attributeAnalysis.technical >= 85) {
+                analysis.strengths.push('⚽ 技术功底深厚 - 球队传控能力出色，能够打出流畅的地面配合');
+            }
+            if (attributeAnalysis.physical >= 85) {
+                analysis.strengths.push('💪 身体素质突出 - 对抗能力强，耐力充沛，适合高强度比赛');
+            }
+            if (attributeAnalysis.mental >= 85) {
+                analysis.strengths.push('🧠 心理素质过硬 - 比赛阅读能力强，关键时刻不掉链子');
             }
             
-            // 整体能力分析
-            if (stats.avgRating >= 82) {
-                analysis.strengths.push(`⭐ <strong>整体实力雄厚</strong> - 全队平均评分${stats.avgRating.toFixed(1)}分，球员个人能力突出，阵容深度充足，具备在高水平比赛中竞争的实力。`);
-            } else if (stats.avgRating >= 78) {
-                analysis.strengths.push(`⭐ <strong>整体配置均衡</strong> - 全队平均评分${stats.avgRating.toFixed(1)}分，各位置球员能力相对均衡，没有明显的能力短板。`);
+            // 战术适应性
+            if (tacticalAnalysis.overallSuitability >= 80) {
+                analysis.strengths.push('🎭 战术执行完美 - 阵型配置科学，球员特点与位置需求高度匹配');
             }
             
-            // 战术适应性分析
-            if (currentFormation === '3131') {
-                analysis.strengths.push(`📐 <strong>阵型特点鲜明</strong> - 3-1-3-1阵型注重中场控制和边路突破，当前人员配置能够很好地发挥这一战术体系的优势，防守稳固的同时保证了进攻的威胁性。`);
-            } else if (currentFormation === '332') {
-                analysis.strengths.push(`📐 <strong>攻击阵型犀利</strong> - 3-3-2阵型前场双前锋配置，能够在对方禁区形成有效的支点，中场三人组合保证了攻防平衡。`);
-            } else if (currentFormation === '242') {
-                analysis.strengths.push(`📐 <strong>边路攻击活跃</strong> - 2-4-2阵型强调边路的攻防参与，当前边前卫配置能够很好地拉开对方防线，为中路进攻创造空间。`);
+            // 不足分析 - 深度剖析
+            if (avgRating < 75) {
+                analysis.weaknesses.push('⚠️ 整体实力待提升 - 平均评分偏低，需重点补强核心位置关键球员');
             }
             
-            // === 不足分析 ===
-            
-            // 门将检查
-            if (positionGroups.goalkeepers.length === 0) {
-                analysis.weaknesses.push(`❌ <strong>门将位置空缺</strong> - 当前阵容缺少专职门将，这是防守体系的致命短板。没有门将的球队在比赛中将面临巨大的防守压力。`);
+            if (competitiveCount < players.length * 0.4) {
+                analysis.weaknesses.push('📚 比赛经验不足 - 兴趣组球员偏多，大赛经验有待积累，抗压能力需要加强');
             }
             
-            // 后防线不足
-            if (defenders.length < 3) {
-                analysis.weaknesses.push(`⚠️ <strong>后防线人手不足</strong> - 当前后防配置过于单薄，缺乏足够的防守深度。在面对对手高强度进攻时，可能出现防守漏洞。`);
-            } else if (defenders.length >= 3) {
-                const weakDefenders = defenders.filter(p => (parseInt(p.综合能力) || 70) < 75);
-                if (weakDefenders.length >= 2) {
-                    analysis.weaknesses.push(`⚠️ <strong>部分后卫能力偏弱</strong> - ${weakDefenders.map(p => p.姓名).join('、')}等后卫球员的综合能力有待提升，在关键比赛中可能成为对手重点突破的目标。`);
-                }
+            // 位置不足分析
+            if (positionAnalysis.perfectMatches < players.length * 0.5) {
+                analysis.weaknesses.push('🔄 位置适配欠佳 - 多数球员非主位置作战，发挥可能受限');
             }
             
-            // 中场控制力
-            if (midfielders.length < 3) {
-                analysis.weaknesses.push(`⚠️ <strong>中场人员配置不足</strong> - 中场是现代足球的核心区域，当前配置可能导致中场控制力不足，难以有效组织进攻和防守。`);
-            } else {
-                const weakMidfielders = midfielders.filter(p => (parseInt(p.传球) || 70) < 75);
-                if (weakMidfielders.length > midfielders.length / 2) {
-                    analysis.weaknesses.push(`⚠️ <strong>中场传球组织有待加强</strong> - 部分中场球员在传球和组织能力方面存在不足，可能影响球队的整体进攻流畅性。`);
-                }
+            // 属性短板分析
+            if (attributeAnalysis.technical < 75) {
+                analysis.weaknesses.push('⚽ 技术环节薄弱 - 传控基本功有待加强，复杂战术执行难度大');
+            }
+            if (attributeAnalysis.physical < 75) {
+                analysis.weaknesses.push('💪 身体条件不足 - 对抗强度和耐力储备需要提升');
+            }
+            if (attributeAnalysis.mental < 75) {
+                analysis.weaknesses.push('🧠 心理建设待强化 - 比赛阅读和抗压能力需要通过训练提升');
             }
             
-            // 进攻火力
-            if (attackers.length < 2) {
-                analysis.weaknesses.push(`⚠️ <strong>进攻点偏少</strong> - 前场进攻球员配置不足，缺乏足够的得分威胁，可能导致球队在比赛中破门乏术。`);
-            } else {
-                const poorFinishers = attackers.filter(p => (parseInt(p.射门) || 70) < 75);
-                if (poorFinishers.length > attackers.length / 2) {
-                    analysis.weaknesses.push(`⚠️ <strong>临门一脚把握能力有待提升</strong> - 前场球员在射门和把握机会方面还有提升空间，需要加强终结能力的训练。`);
-                }
+            // 具体位置分析
+            const positionWeaknesses = identifyPositionWeaknesses(players, formation);
+            positionWeaknesses.forEach(weakness => analysis.weaknesses.push(weakness));
+            
+            if (players.length < maxPlayers) {
+                analysis.weaknesses.push('❌ 阵容配置不完整 - 存在位置空缺，影响整体战术体系运转');
             }
             
-            // 整体能力
-            if (stats.avgRating < 75) {
-                analysis.weaknesses.push(`📉 <strong>整体实力有待提升</strong> - 全队平均评分${stats.avgRating.toFixed(1)}分，整体实力在同级别比赛中可能处于劣势，需要重点关注球员个人能力的提升。`);
+            // 专业建议 - 参考职业球评
+            if (players.length < maxPlayers) {
+                analysis.suggestions.push('📋 优先填满阵容 - 先确保11人配置完整，再考虑位置优化');
             }
             
-            // 组别平衡
-            const competitiveRatio = stats.competitiveCount / players.length;
-            if (competitiveRatio < 0.5) {
-                analysis.weaknesses.push(`⚠️ <strong>竞技水平有待提升</strong> - 竞技组球员比例偏低(${(competitiveRatio * 100).toFixed(0)}%)，整体竞技水平可能不足以应对高强度比赛。`);
-            }
-            
-            // === 优化建议 ===
-            
-            // 基于不足提供针对性建议
-            if (positionGroups.goalkeepers.length === 0) {
-                analysis.suggestions.push(`🎯 <strong>优先引进门将</strong> - 建议立即寻找一名经验丰富的门将加入阵容，推荐关注刘学、庞博等具备专业门将背景的球员。`);
-            }
-            
-            if (defenders.length < 4) {
-                analysis.suggestions.push(`🎯 <strong>补强后防线</strong> - 建议增加1-2名后卫球员，重点关注抢断能力强、头球出色的中后卫，以及速度快、传中好的边后卫。`);
-            }
-            
-            if (stats.avgRating < 78) {
-                analysis.suggestions.push(`🎯 <strong>提升球员质量</strong> - 考虑用综合能力80+的球员替换目前评分较低的位置，优先考虑关键位置如中后卫、中前卫的补强。`);
-            }
+            // 基于属性的建议
+            const keyWeaknesses = getKeyAttributeWeaknesses(attributeAnalysis);
+            keyWeaknesses.forEach(suggestion => analysis.suggestions.push(suggestion));
             
             // 战术建议
-            if (currentFormation === '3131' && positionGroups.wingers.length < 2) {
-                analysis.suggestions.push(`📐 <strong>完善边路配置</strong> - 3-1-3-1阵型依赖边路活跃度，建议选择速度快、传中能力强的边前卫，如具备LM/RM特长的球员。`);
-            }
-            
-            if (currentFormation === '332' && attackers.length < 2) {
-                analysis.suggestions.push(`📐 <strong>双前锋组合优化</strong> - 3-3-2阵型需要两名前锋形成有效组合，建议选择一高一快的搭配，或者两名技术型前锋。`);
-            }
+            const tacticalSuggestions = getTacticalSuggestions(tacticalAnalysis, formation);
+            tacticalSuggestions.forEach(suggestion => analysis.suggestions.push(suggestion));
             
             // 训练建议
-            const needPassingTraining = players.filter(p => p.主要位置.includes('M') && (parseInt(p.传球) || 70) < 80);
-            if (needPassingTraining.length > 0) {
-                analysis.suggestions.push(`⚽ <strong>强化传球训练</strong> - ${needPassingTraining.map(p => p.姓名).join('、')}等中场球员建议加强传球和大局观的训练，提升球队整体的传控能力。`);
+            if (avgRating < 85) {
+                analysis.suggestions.push('🏃‍♂️ 加强针对性训练 - 重点提升弱势环节，制定个性化训练计划');
             }
             
-            const needDefenseTraining = defenders.filter(p => (parseInt(p.抢断) || 70) < 80);
-            if (needDefenseTraining.length > 0) {
-                analysis.suggestions.push(`🛡️ <strong>强化防守训练</strong> - ${needDefenseTraining.map(p => p.姓名).join('、')}等后卫球员建议重点训练抢断和位置感，提升防守硬度。`);
-            }
-            
-            // 如果没有明显问题，给出积极建议
-            if (analysis.weaknesses.length === 0) {
-                analysis.suggestions.push(`✨ <strong>阵容配置优秀</strong> - 当前阵容配置合理，各位置人员齐整，建议重点进行战术配合训练，提升整体默契度。`);
-                analysis.suggestions.push(`📈 <strong>保持状态</strong> - 建议定期评估球员状态，适时进行轮换，保持球队的竞技状态和战斗力。`);
-            }
-            
+            analysis.suggestions.push('⚽ 战术磨合至关重要 - 多进行分组对抗，提升球员间默契度');
+            analysis.suggestions.push('📊 持续数据跟踪 - 记录比赛表现，及时调整阵容配置');
+
             return analysis;
         }
 
-        // 分析阵型基础统计
-        function analyzeFormationStats(players) {
-            const avgRating = players.reduce((sum, p) => sum + (parseInt(p.综合能力) || 70), 0) / players.length;
-            const competitiveCount = players.filter(p => p.组别 === '竞技组').length;
-            const hobbyCount = players.filter(p => p.组别 === '兴趣组').length;
+        // 位置平衡分析
+        function analyzePositionalBalance(players, formation) {
+            let perfectMatches = 0;
+            let goodMatches = 0;
             
-            return {
-                avgRating,
-                competitiveCount,
-                hobbyCount,
-                totalPlayers: players.length
-            };
-        }
-
-        // 按位置分类球员
-        function categorizePlayersByPosition(players) {
-            return {
-                goalkeepers: players.filter(p => p.主要位置 === 'GK'),
-                centerBacks: players.filter(p => p.主要位置 === 'CB'),
-                fullBacks: players.filter(p => ['LB', 'RB'].includes(p.主要位置)),
-                defensiveMidfielders: players.filter(p => p.主要位置 === 'CDM'),
-                centralMidfielders: players.filter(p => p.主要位置 === 'CM'),
-                attackingMidfielders: players.filter(p => p.主要位置 === 'CAM'),
-                wideMidfielders: players.filter(p => ['LM', 'RM'].includes(p.主要位置)),
-                wingers: players.filter(p => ['LW', 'RW'].includes(p.主要位置)),
-                forwards: players.filter(p => p.主要位置 === 'ST')
-            };
-        }
-
-        // 识别关键球员
-        function identifyKeyPlayers(players) {
-            return players.sort((a, b) => (parseInt(b.综合能力) || 70) - (parseInt(a.综合能力) || 70)).slice(0, 3);
-        }
-
-        // 设置事件监听器
-        function setupEventListeners() {
-            // 阵型切换
-            document.querySelectorAll('.formation-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.formation-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFormation = btn.dataset.formation;
-                    clearFormation();
-                    setupFormation();
-                });
+            formation.positions.forEach(pos => {
+                const player = selectedPlayers[pos.id];
+                if (player) {
+                    if (player.主要位置 === pos.position) {
+                        perfectMatches++;
+                    } else if (player.次要位置 === pos.position || 
+                              calculatePositionSuitability(player, pos.position) >= 75) {
+                        goodMatches++;
+                    }
+                }
             });
-        }
-
-        // 清空阵容
-        function clearFormation() {
-            selectedPlayers = {};
-            selectedPosition = null;
-            setupFormation();
-            updateStats();
-            updateAnalysis();
             
-            // 重置统计显示 - 修复球员数量显示
-            const maxPlayers = formations[currentFormation].positions.length;
-            document.getElementById('selectedCount').textContent = `0/${maxPlayers}`;
-            document.getElementById('avgRating').textContent = '0';
-            document.getElementById('totalValue').textContent = '0万';
-            document.getElementById('competitiveCount').textContent = '0';
-            document.getElementById('hobbyCount').textContent = '0';
+            return { perfectMatches, goodMatches };
         }
 
-        // 显示分析标签
-        function showAnalysis(type) {
+        // 团队属性分析
+        function analyzeTeamAttributes(players) {
+            if (players.length === 0) return { technical: 0, physical: 0, mental: 0 };
+            
+            const technicalAttrs = ['传球', '停球', '盘带', '射门', '头球', '抢断', '远射', '传中', '定位球'];
+            const physicalAttrs = ['速度', '耐力', '强壮', '敏捷平衡', '弹跳', '体能恢复'];
+            const mentalAttrs = ['积极性', '比赛阅读', '勇敢决心', '冷静', '专注度', '团队合作', '大局观', '领导力'];
+            
+            const avgAttr = (attrs) => {
+                const sum = players.reduce((total, player) => {
+                    const playerSum = attrs.reduce((pSum, attr) => pSum + (parseInt(player[attr]) || 0), 0);
+                    return total + playerSum / attrs.length;
+                }, 0);
+                return sum / players.length;
+            };
+            
+            return {
+                technical: Math.round(avgAttr(technicalAttrs)),
+                physical: Math.round(avgAttr(physicalAttrs)),
+                mental: Math.round(avgAttr(mentalAttrs))
+            };
+        }
+
+        // 战术适应性分析
+        function analyzeTacticalSuitability(players, formation) {
+            let totalSuitability = 0;
+            let validPositions = 0;
+            
+            formation.positions.forEach(pos => {
+                const player = selectedPlayers[pos.id];
+                if (player) {
+                    totalSuitability += calculatePositionSuitability(player, pos.position);
+                    validPositions++;
+                }
+            });
+            
+            return {
+                overallSuitability: validPositions > 0 ? totalSuitability / validPositions : 0,
+                validPositions
+            };
+        }
+
+        // 识别位置弱点
+        function identifyPositionWeaknesses(players, formation) {
+            const weaknesses = [];
+            const positionGroups = {
+                '后防线': ['CB', 'LB', 'RB'],
+                '中场': ['CDM', 'CM', 'CAM', 'LM', 'RM'],
+                '前场': ['LW', 'RW', 'ST']
+            };
+            
+            Object.entries(positionGroups).forEach(([groupName, positions]) => {
+                const groupPlayers = formation.positions
+                    .filter(pos => positions.includes(pos.position))
+                    .map(pos => selectedPlayers[pos.id])
+                    .filter(Boolean);
+                
+                if (groupPlayers.length > 0) {
+                    const avgRating = groupPlayers.reduce((sum, p) => sum + parseInt(p.综合能力), 0) / groupPlayers.length;
+                    if (avgRating < 75) {
+                        weaknesses.push(`🚨 ${groupName}薄弱 - 该区域球员实力偏弱，容易成为对手重点突破区域`);
+                    }
+                }
+            });
+            
+            return weaknesses;
+        }
+
+        // 获取关键属性弱点
+        function getKeyAttributeWeaknesses(attributeAnalysis) {
+            const suggestions = [];
+            
+            if (attributeAnalysis.technical < 80) {
+                suggestions.push('⚽ 技术训练加强 - 重点提升传控基本功，多练习小场地配合');
+            }
+            if (attributeAnalysis.physical < 80) {
+                suggestions.push('💪 体能储备提升 - 加强有氧训练和力量训练，提高比赛持续作战能力');
+            }
+            if (attributeAnalysis.mental < 80) {
+                suggestions.push('🧠 心理素质培养 - 多参与实战，提升比赛阅读和心理抗压能力');
+            }
+            
+            return suggestions;
+        }
+
+        // 获取战术建议
+        function getTacticalSuggestions(tacticalAnalysis, formation) {
+            const suggestions = [];
+            
+            if (tacticalAnalysis.overallSuitability < 70) {
+                suggestions.push('🔄 考虑阵型调整 - 当前阵型与球员特点匹配度不高，建议尝试其他阵型');
+            } else if (tacticalAnalysis.overallSuitability < 80) {
+                suggestions.push('🎯 优化个别位置 - 重点关注适应性较低的位置，寻找更合适的人选');
+            }
+            
+            // 基于阵型的具体建议
+            if (currentFormation === '433') {
+                suggestions.push('⚽ 注重边路突破 - 4-3-3阵型应充分利用边锋的速度和技术优势');
+            } else if (currentFormation === '442') {
+                suggestions.push('🎯 中场密度优势 - 4-4-2阵型要发挥中场人数优势，控制比赛节奏');
+            } else if (currentFormation === '352') {
+                suggestions.push('🚀 翼卫攻守转换 - 3-5-2阵型成败关键在于翼卫的攻防转换能力');
+            }
+            
+            return suggestions;
+        }
+
+        // 切换分析标签
+        function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.analysis-content').forEach(content => content.classList.remove('active'));
             
             event.target.classList.add('active');
-            document.getElementById(type).classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        // 初始化
+        async function init() {
+            console.log('初始化阵容评分系统...');
+            
+            await loadPlayers();
+            
+            // 设置默认阵型
+            changeFormation('3131');
+            
+            // 设置事件监听器
+            document.querySelectorAll('.formation-btn').forEach(btn => {
+                btn.addEventListener('click', () => changeFormation(btn.dataset.formation));
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+
+            document.getElementById('searchBox').addEventListener('input', renderPlayerList);
+            
+            // 点击弹窗外部关闭
+            document.getElementById('playerModal').addEventListener('click', (e) => {
+                if (e.target.id === 'playerModal') closeModal();
+            });
+
+            console.log('阵容评分系统初始化完成');
         }
 
         // 页面加载完成后初始化
