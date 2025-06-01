@@ -5,7 +5,7 @@ const csv = require('csv-parser');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // 启用 CORS
 app.use(cors());
@@ -24,17 +24,49 @@ app.get('/health', (req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// 存储数据
+// 全局数据变量
 let playersData = [];
 let activitiesData = [];
 let matchEventsData = [];
 let matchParticipantsData = [];
 let trainingAttendanceData = [];
-let goalkeepersData = []; // 新增：门将数据
-let attributeDescriptions = {}; // 新增：属性描述数据
-let famousClubs = []; // 新增：知名俱乐部数据
-let famousPlayers = []; // 新增：知名球员数据
-let playerPreferences = {}; // 新增：球员偏好数据
+let goalkeepersData = [];
+let attributeDescriptions = {};
+let famousClubsData = [];
+let famousPlayersData = [];
+let playerPreferences = {};
+
+// 验证并修复比赛数据一致性 - 移动到全局作用域顶部
+function validateAndFixMatchData(participants, events) {
+    const starters = [];
+    const substitutes = [];
+    
+    // 从参与者数据中提取首发和替补
+    participants.forEach(participant => {
+        if (participant.状态 === '首发' || participant.角色 === '首发') {
+            starters.push(participant.姓名);
+        } else if (participant.状态 === '替补' || participant.角色 === '替补') {
+            substitutes.push(participant.姓名);
+        } else {
+            // 默认作为首发处理
+            starters.push(participant.姓名);
+        }
+    });
+    
+    // 确保有足够的首发球员
+    if (starters.length < 7) {
+        console.log(`警告: 首发球员不足 (${starters.length}/7)，将从替补中补充`);
+        const needMore = 7 - starters.length;
+        const movedFromSubs = substitutes.splice(0, needMore);
+        starters.push(...movedFromSubs);
+    }
+    
+    return {
+        starters: [...new Set(starters)], // 去重
+        substitutes: [...new Set(substitutes)], // 去重
+        isValid: starters.length >= 7
+    };
+}
 
 // 读取球员CSV文件
 function loadPlayersData() {
@@ -172,8 +204,8 @@ function loadFamousClubsData() {
     try {
         const data = fs.readFileSync('famous_clubs.json', 'utf8');
         const clubsData = JSON.parse(data);
-        famousClubs = clubsData.clubs;
-        console.log('知名俱乐部数据加载完成，共 ' + famousClubs.length + ' 个俱乐部');
+        famousClubsData = clubsData.clubs;
+        console.log('知名俱乐部数据加载完成，共 ' + famousClubsData.length + ' 个俱乐部');
     } catch (err) {
         console.error('读取知名俱乐部文件失败:', err);
     }
@@ -184,8 +216,8 @@ function loadFamousPlayersData() {
     try {
         const data = fs.readFileSync('famous_players.json', 'utf8');
         const playersData = JSON.parse(data);
-        famousPlayers = playersData.players;
-        console.log('知名球员数据加载完成，共 ' + famousPlayers.length + ' 个球员');
+        famousPlayersData = playersData.players;
+        console.log('知名球员数据加载完成，共 ' + famousPlayersData.length + ' 个球员');
     } catch (err) {
         console.error('读取知名球员文件失败:', err);
     }
@@ -208,7 +240,7 @@ function generatePlayerPreferences() {
         for (let i = 0; i < numClubs; i++) {
             let randomClub;
             do {
-                randomClub = famousClubs[Math.floor(Math.random() * famousClubs.length)];
+                randomClub = famousClubsData[Math.floor(Math.random() * famousClubsData.length)];
             } while (selectedClubs.includes(randomClub.id));
             selectedClubs.push(randomClub.id);
             playerPreferences[playerName].favoriteClubs.push(randomClub);
@@ -220,7 +252,7 @@ function generatePlayerPreferences() {
         for (let i = 0; i < numPlayers; i++) {
             let randomPlayer;
             do {
-                randomPlayer = famousPlayers[Math.floor(Math.random() * famousPlayers.length)];
+                randomPlayer = famousPlayersData[Math.floor(Math.random() * famousPlayersData.length)];
             } while (selectedPlayers.includes(randomPlayer.id));
             selectedPlayers.push(randomPlayer.id);
             playerPreferences[playerName].favoritePlayers.push(randomPlayer);
@@ -228,38 +260,6 @@ function generatePlayerPreferences() {
     });
     
     console.log('球员偏好数据生成完成');
-}
-
-// 验证并修复比赛数据一致性
-function validateAndFixMatchData(participants, events) {
-    const starters = [];
-    const substitutes = [];
-    
-    // 从参与者数据中提取首发和替补
-    participants.forEach(participant => {
-        if (participant.状态 === '首发' || participant.角色 === '首发') {
-            starters.push(participant.姓名);
-        } else if (participant.状态 === '替补' || participant.角色 === '替补') {
-            substitutes.push(participant.姓名);
-        } else {
-            // 默认作为首发处理
-            starters.push(participant.姓名);
-        }
-    });
-    
-    // 确保有足够的首发球员
-    if (starters.length < 7) {
-        console.log(`警告: 首发球员不足 (${starters.length}/7)，将从替补中补充`);
-        const needMore = 7 - starters.length;
-        const movedFromSubs = substitutes.splice(0, needMore);
-        starters.push(...movedFromSubs);
-    }
-    
-    return {
-        starters: [...new Set(starters)], // 去重
-        substitutes: [...new Set(substitutes)], // 去重
-        isValid: starters.length >= 7
-    };
 }
 
 // 初始化加载数据
@@ -1233,7 +1233,7 @@ app.get('/api/club-fans/:clubId', (req, res) => {
     
     try {
         // 找到对应的俱乐部信息
-        const club = famousClubs.find(c => c.id === clubId);
+        const club = famousClubsData.find(c => c.id === clubId);
         if (!club) {
             return res.json({
                 success: false,
@@ -1281,7 +1281,7 @@ app.get('/api/player-fans/:playerId', (req, res) => {
     
     try {
         // 找到对应的球员信息
-        const player = famousPlayers.find(p => p.id === playerId);
+        const player = famousPlayersData.find(p => p.id === playerId);
         if (!player) {
             return res.json({
                 success: false,
