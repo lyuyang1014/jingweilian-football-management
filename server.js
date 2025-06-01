@@ -726,6 +726,29 @@ app.get('/api/match/:id', (req, res) => {
     // 获取比赛事件
     const events = matchEventsData.filter(e => e.activityId === matchId);
     
+    // 确保validateAndFixMatchData函数存在
+    if (typeof validateAndFixMatchData !== 'function') {
+        console.log('警告: validateAndFixMatchData函数未定义，使用简化版本');
+        function validateAndFixMatchData(participants, events) {
+            const starters = [];
+            const substitutes = [];
+            
+            participants.forEach(participant => {
+                if (participant.状态 === '首发' || participant.角色 === '首发') {
+                    starters.push(participant.姓名);
+                } else {
+                    substitutes.push(participant.姓名);
+                }
+            });
+            
+            return {
+                starters: [...new Set(starters)],
+                substitutes: [...new Set(substitutes)],
+                isValid: starters.length >= 7
+            };
+        }
+    }
+    
     // 验证并修复比赛数据一致性
     const validationResult = validateAndFixMatchData(participants, events);
     const starters = validationResult.starters;
