@@ -38,18 +38,21 @@ let playerPreferences = {};
 
 // 验证并修复比赛数据一致性 - 移动到全局作用域顶部
 function validateAndFixMatchData(participants, events) {
-    const starters = [];
-    const substitutes = [];
+    let starters = [];
+    let substitutes = [];
     
-    // 从参与者数据中提取首发和替补
+    // 处理参与者数据
     participants.forEach(participant => {
-        if (participant.状态 === '首发' || participant.角色 === '首发') {
-            starters.push(participant.姓名);
-        } else if (participant.状态 === '替补' || participant.角色 === '替补') {
-            substitutes.push(participant.姓名);
+        const playerName = participant.姓名 || participant.playerName;
+        const status = participant.状态 || participant.status || participant.角色;
+        
+        if (status === '首发' || status === '首发球员') {
+            starters.push(playerName);
+        } else if (status === '替补' || status === '替补球员') {
+            substitutes.push(playerName);
         } else {
             // 默认作为首发处理
-            starters.push(participant.姓名);
+            starters.push(playerName);
         }
     });
     
@@ -61,9 +64,13 @@ function validateAndFixMatchData(participants, events) {
         starters.push(...movedFromSubs);
     }
     
+    // 去重
+    starters = [...new Set(starters)];
+    substitutes = [...new Set(substitutes)];
+    
     return {
-        starters: [...new Set(starters)], // 去重
-        substitutes: [...new Set(substitutes)], // 去重
+        starters: starters,
+        substitutes: substitutes,
         isValid: starters.length >= 7
     };
 }
@@ -725,29 +732,6 @@ app.get('/api/match/:id', (req, res) => {
     
     // 获取比赛事件
     const events = matchEventsData.filter(e => e.activityId === matchId);
-    
-    // 确保validateAndFixMatchData函数存在
-    if (typeof validateAndFixMatchData !== 'function') {
-        console.log('警告: validateAndFixMatchData函数未定义，使用简化版本');
-        function validateAndFixMatchData(participants, events) {
-            const starters = [];
-            const substitutes = [];
-            
-            participants.forEach(participant => {
-                if (participant.状态 === '首发' || participant.角色 === '首发') {
-                    starters.push(participant.姓名);
-                } else {
-                    substitutes.push(participant.姓名);
-                }
-            });
-            
-            return {
-                starters: [...new Set(starters)],
-                substitutes: [...new Set(substitutes)],
-                isValid: starters.length >= 7
-            };
-        }
-    }
     
     // 验证并修复比赛数据一致性
     const validationResult = validateAndFixMatchData(participants, events);
