@@ -1,21 +1,22 @@
 {
   "name": "jingweilian-football-management",
-  "version": "1.0.0",
-  "description": "京蔚联足球队管理系统",
-  "main": "server.js",
+  "version": "1.1.0",
+  "description": "京维联足球俱乐部管理系统",
+  "main": "server_simple.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server_simple.js",
+    "dev": "node server_simple.js",
+    "original": "node server.js"
   },
+  "keywords": ["football", "soccer", "management", "formation", "analysis"],
+  "author": "京维联足球俱乐部",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0"
   },
   "engines": {
-    "node": ">=18.0.0"
-  },
-  "keywords": ["football", "management", "nodejs"],
-  "author": "京蔚联足球队",
-  "license": "MIT"
+    "node": ">=14.0.0"
+  }
 } 
