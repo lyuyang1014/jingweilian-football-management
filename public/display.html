@@ -505,34 +505,37 @@
                 font-size: 14px;
             }
 
-            /* 球员列表移动端优化 */
+            /* 球员列表移动端优化 - 更紧凑的设计 */
             .players-grid {
                 grid-template-columns: 1fr;
-                gap: 16px;
+                gap: 12px; /* 减少卡片间距 */
             }
 
             .player-card {
-                padding: 16px;
+                padding: 12px; /* 大幅减少内边距 */
                 min-height: auto;
+                border-radius: 12px; /* 稍小的圆角 */
             }
 
             .player-content {
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px; /* 减少内容间距 */
             }
 
-            /* 球员信息移动端布局 */
+            /* 球员信息移动端布局 - 紧凑化 */
             .player-header {
-                margin-bottom: 12px;
+                margin-bottom: 6px; /* 减少底部间距 */
             }
 
             .player-name {
-                font-size: 18px;
-                margin-bottom: 2px;
+                font-size: 17px; /* 稍小的字体 */
+                margin-bottom: 1px; /* 减少间距 */
+                line-height: 1.2; /* 更紧凑的行高 */
             }
 
             .player-nickname {
-                font-size: 13px;
+                font-size: 12px; /* 更小的昵称字体 */
+                line-height: 1.2;
             }
 
             .player-right {
@@ -540,85 +543,101 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
-                gap: 16px;
+                gap: 12px; /* 减少间距 */
             }
 
-            /* 球衣展示移动端优化 */
+            /* 球衣展示移动端优化 - 更紧凑 */
             .jersey-container {
-                margin-bottom: 8px;
+                margin-bottom: 4px; /* 大幅减少间距 */
             }
 
             .jersey-display {
-                width: 70px;
-                height: 85px;
+                width: 60px; /* 减小尺寸 */
+                height: 75px;
             }
 
             .jersey-pinyin-text {
-                font-size: 8px;
+                font-size: 7px;
             }
 
             .jersey-number-text {
-                font-size: 16px;
-            }
-
-            .jersey-label {
-                font-size: 9px;
-            }
-
-            /* 球员详情移动端优化 */
-            .player-details {
-                gap: 6px;
-                margin-bottom: 12px;
-            }
-
-            .detail-item {
-                font-size: 13px;
-            }
-
-            /* 位置标签移动端优化 */
-            .player-positions {
-                margin-bottom: 12px;
-                gap: 6px;
-            }
-
-            .position-badge {
-                padding: 3px 6px;
-                font-size: 10px;
-            }
-
-            .overall-rating {
                 font-size: 14px;
             }
 
-            .rating-number {
-                font-size: 16px;
+            .jersey-label {
+                font-size: 8px;
+                margin-top: 2px; /* 减少间距 */
             }
 
-            /* 雷达图移动端优化 */
-            .radar-container {
-                width: 100px;
-                height: 80px;
+            /* 球员详情移动端优化 - 更紧凑 */
+            .player-details {
+                gap: 4px; /* 减少间距 */
+                margin-bottom: 8px; /* 减少底部间距 */
             }
 
-            /* 特征标签移动端优化 */
-            .player-features {
+            .detail-item {
+                font-size: 12px; /* 更小字体 */
+                line-height: 1.2;
+            }
+
+            .detail-icon {
+                font-size: 11px; /* 更小图标 */
+                width: 14px;
+            }
+
+            .zodiac-icon {
+                font-size: 14px;
+            }
+
+            /* 位置标签移动端优化 - 更紧凑 */
+            .player-positions {
+                margin-bottom: 8px; /* 减少间距 */
                 gap: 4px;
-                margin-bottom: 12px;
+                align-items: center;
+            }
+
+            .position-badge {
+                padding: 2px 5px; /* 更小的padding */
+                font-size: 9px; /* 更小字体 */
+                border-radius: 4px;
+            }
+
+            .overall-rating {
+                font-size: 13px;
+                gap: 4px;
+            }
+
+            .rating-number {
+                font-size: 15px;
+            }
+
+            /* 雷达图移动端优化 - 更小更紧凑 */
+            .radar-container {
+                width: 85px; /* 更小的雷达图 */
+                height: 70px;
+            }
+
+            /* 特征标签移动端优化 - 更紧凑 */
+            .player-features {
+                gap: 3px; /* 减少间距 */
+                margin-bottom: 8px; /* 减少底部间距 */
             }
 
             .feature-tag {
-                padding: 3px 6px;
-                font-size: 9px;
+                padding: 2px 5px; /* 更小padding */
+                font-size: 8px; /* 更小字体 */
+                border-radius: 8px;
             }
 
-            /* 组别标签移动端优化 */
+            /* 组别标签移动端优化 - 更紧凑 */
             .player-group {
-                margin-bottom: 10px;
+                margin-bottom: 6px; /* 减少间距 */
             }
 
             .group-badge {
-                padding: 4px 8px;
-                font-size: 11px;
+                padding: 3px 6px; /* 更小padding */
+                font-size: 10px; /* 更小字体 */
+                border-radius: 12px;
             }
 
             /* 搜索框移动端优化 */
@@ -632,7 +651,7 @@
             }
         }
 
-        /* 超小屏幕优化 */
+        /* 超小屏幕优化 - 更加紧凑 */
         @media (max-width: 480px) {
             .nav-menu {
                 grid-template-columns: repeat(2, 1fr);
@@ -656,26 +675,105 @@
                 font-size: 24px;
             }
 
+            /* 超紧凑球员卡片 */
             .player-card {
-                padding: 12px;
+                padding: 10px; /* 极小内边距 */
+                border-radius: 10px;
+            }
+
+            .player-content {
+                gap: 6px; /* 极小间距 */
+            }
+
+            .player-name {
+                font-size: 16px;
+            }
+
+            .player-nickname {
+                font-size: 11px;
             }
 
             .jersey-display {
-                width: 60px;
-                height: 75px;
+                width: 50px; /* 更小球衣 */
+                height: 65px;
             }
 
             .jersey-pinyin-text {
-                font-size: 7px;
+                font-size: 6px;
             }
 
             .jersey-number-text {
-                font-size: 14px;
+                font-size: 12px;
+            }
+
+            .jersey-label {
+                font-size: 7px;
+                margin-top: 1px;
             }
 
             .radar-container {
-                width: 80px;
-                height: 65px;
+                width: 70px; /* 极小雷达图 */
+                height: 60px;
+            }
+
+            .detail-item {
+                font-size: 11px;
+            }
+
+            .detail-icon {
+                font-size: 10px;
+                width: 12px;
+            }
+
+            .position-badge {
+                padding: 1px 4px;
+                font-size: 8px;
+            }
+
+            .overall-rating {
+                font-size: 12px;
+            }
+
+            .rating-number {
+                font-size: 14px;
+            }
+
+            .feature-tag {
+                padding: 1px 4px;
+                font-size: 7px;
+            }
+
+            .group-badge {
+                padding: 2px 5px;
+                font-size: 9px;
+            }
+
+            /* 减少各个区块的间距 */
+            .player-header {
+                margin-bottom: 4px;
+            }
+
+            .player-details {
+                gap: 3px;
+                margin-bottom: 6px;
+            }
+
+            .player-positions {
+                margin-bottom: 6px;
+                gap: 3px;
+            }
+
+            .player-features {
+                gap: 2px;
+                margin-bottom: 6px;
+            }
+
+            .player-group {
+                margin-bottom: 4px;
+            }
+
+            .jersey-container {
+                margin-bottom: 2px;
             }
         }
 
