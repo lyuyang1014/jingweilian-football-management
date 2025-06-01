@@ -36,66 +36,64 @@ let famousClubsData = [];
 let famousPlayersData = [];
 let playerPreferences = {};
 
-// 文件路径检查函数
+// 文件路径处理函数 - 确保本地和 Vercel 环境兼容
 function getFilePath(filename) {
-    const currentDir = process.cwd();
+    const possiblePaths = [
+        path.join(process.cwd(), filename),              // 根目录
+        path.join(process.cwd(), 'data', filename),      // data 目录
+        path.join(process.cwd(), 'public', filename),    // public 目录
+        path.join(process.cwd(), 'public', 'data', filename), // public/data 目录
+        path.join(__dirname, filename),                  // 当前脚本目录
+        path.join(__dirname, 'data', filename),          // 当前脚本目录的 data 子目录
+        path.join(__dirname, 'public', filename),        // 当前脚本目录的 public 子目录
+        path.join(__dirname, 'public', 'data', filename) // 当前脚本目录的 public/data 子目录
+    ];
     
-    // 首先尝试data目录（本地开发）
-    const dataPath = path.join(currentDir, 'data', filename);
-    if (fs.existsSync(dataPath)) {
-        return dataPath;
+    // 检查文件是否存在，返回第一个存在的路径
+    for (const filePath of possiblePaths) {
+        if (fs.existsSync(filePath)) {
+            console.log(`找到文件: ${filename} -> ${filePath}`);
+            return filePath;
+        }
     }
     
-    // 然后尝试public/data目录（Vercel部署）
-    const publicDataPath = path.join(currentDir, 'public', 'data', filename);
-    if (fs.existsSync(publicDataPath)) {
-        return publicDataPath;
-    }
-    
-    // 尝试当前目录（向后兼容）
-    const currentPath = path.join(currentDir, filename);
-    if (fs.existsSync(currentPath)) {
-        return currentPath;
-    }
-    
-    // 尝试相对路径
-    if (fs.existsSync(filename)) {
-        return filename;
-    }
-    
-    console.log(`文件未找到: ${filename}, 当前目录: ${currentDir}`);
-    console.log('目录文件列表:', fs.readdirSync(currentDir).filter(f => f.includes('.')). slice(0, 10));
-    
-    throw new Error(`文件不存在: ${filename}`);
+    // 如果都找不到，返回默认路径（data目录下）
+    const defaultPath = path.join(process.cwd(), 'data', filename);
+    console.log(`文件不存在，使用默认路径: ${filename} -> ${defaultPath}`);
+    return defaultPath;
 }
 
-// 简化的数据验证函数
-function validateMatchData(participants, events) {
-    const starters = [];
-    const substitutes = [];
+// 验证并修复比赛数据一致性
+function validateAndFixMatchData(participants, events) {
+    let starters = [];
+    let substitutes = [];
     
     // 处理参与者数据
-    if (participants && Array.isArray(participants)) {
-        participants.forEach(function(participant) {
-            const playerName = participant['姓名'] || participant.playerName || participant.name;
-            const status = participant['状态'] || participant.status || participant['角色'] || '首发';
-            
-            if (playerName) {
-                if (status === '首发' || status === '首发球员') {
-                    starters.push(playerName);
-                } else if (status === '替补' || status === '替补球员') {
-                    substitutes.push(playerName);
-                } else {
-                    starters.push(playerName);
-                }
-            }
-        });
-    }
+    participants.forEach(participant => {
+        const playerName = participant.姓名 || participant.playerName;
+        const status = participant.状态 || participant.status || participant.角色;
+        
+        if (status === '首发' || status === '首发球员') {
+            starters.push(playerName);
+        } else if (status === '替补' || status === '替补球员') {
+            substitutes.push(playerName);
+        } else {
+            // 默认作为首发处理
+            starters.push(playerName);
+        }
+    });
     
     // 确保有足够的首发球员
-    while (starters.length < 7 && substitutes.length > 0) {
-        starters.push(substitutes.shift());
+    if (starters.length < 7) {
+        console.log(`警告: 首发球员不足 (${starters.length}/7)，将从替补中补充`);
+        const needMore = 7 - starters.length;
+        const movedFromSubs = substitutes.splice(0, needMore);
+        starters.push(...movedFromSubs);
     }
+    
+    // 去重
+    starters = [...new Set(starters)];
+    substitutes = [...new Set(substitutes)];
     
     return {
         starters: starters,
@@ -104,143 +102,160 @@ function validateMatchData(participants, events) {
     };
 }
 
-// 读取球员数据
+// 读取球员CSV文件
 function loadPlayersData() {
     playersData = [];
-    try {
-        const filePath = getFilePath('2025member.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                playersData.push(row);
-            })
-            .on('end', function() {
-                console.log('球员数据加载完成，共 ' + playersData.length + ' 名球员');
-            })
-            .on('error', function(err) {
-                console.error('读取球员文件失败:', err);
-            });
-    } catch (error) {
-        console.error('球员数据加载失败:', error);
+    const filePath = getFilePath('2025member.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('球员数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            playersData.push(row);
+        })
+        .on('end', function() {
+            console.log('球员数据加载完成，共 ' + playersData.length + ' 名球员');
+        })
+        .on('error', function(err) {
+            console.error('读取球员文件失败:', err);
+        });
 }
 
 // 读取活动数据
 function loadActivitiesData() {
     activitiesData = [];
-    try {
-        const filePath = getFilePath('activities.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                activitiesData.push(row);
-            })
-            .on('end', function() {
-                console.log('活动数据加载完成，共 ' + activitiesData.length + ' 个活动');
-            })
-            .on('error', function(err) {
-                console.error('读取活动文件失败:', err);
-            });
-    } catch (error) {
-        console.error('活动数据加载失败:', error);
+    const filePath = getFilePath('activities.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('活动数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            activitiesData.push(row);
+        })
+        .on('end', function() {
+            console.log('活动数据加载完成，共 ' + activitiesData.length + ' 个活动');
+        })
+        .on('error', function(err) {
+            console.error('读取活动文件失败:', err);
+        });
 }
 
 // 读取比赛事件数据
 function loadMatchEventsData() {
     matchEventsData = [];
-    try {
-        const filePath = getFilePath('match_events.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                matchEventsData.push(row);
-            })
-            .on('end', function() {
-                console.log('比赛事件加载完成，共 ' + matchEventsData.length + ' 个事件');
-            })
-            .on('error', function(err) {
-                console.error('读取比赛事件文件失败:', err);
-            });
-    } catch (error) {
-        console.error('比赛事件加载失败:', error);
+    const filePath = getFilePath('match_events.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('比赛事件数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            matchEventsData.push(row);
+        })
+        .on('end', function() {
+            console.log('比赛事件加载完成，共 ' + matchEventsData.length + ' 个事件');
+        })
+        .on('error', function(err) {
+            console.error('读取比赛事件文件失败:', err);
+        });
 }
 
 // 读取比赛参与者数据
 function loadMatchParticipantsData() {
     matchParticipantsData = [];
-    try {
-        const filePath = getFilePath('match_participants.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                matchParticipantsData.push(row);
-            })
-            .on('end', function() {
-                console.log('比赛参与者加载完成，共 ' + matchParticipantsData.length + ' 条记录');
-            })
-            .on('error', function(err) {
-                console.error('读取比赛参与者文件失败:', err);
-            });
-    } catch (error) {
-        console.error('比赛参与者加载失败:', error);
+    const filePath = getFilePath('match_participants.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('比赛参与者数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            matchParticipantsData.push(row);
+        })
+        .on('end', function() {
+            console.log('比赛参与者加载完成，共 ' + matchParticipantsData.length + ' 条记录');
+        })
+        .on('error', function(err) {
+            console.error('读取比赛参与者文件失败:', err);
+        });
 }
 
 // 读取训练出勤数据
 function loadTrainingAttendanceData() {
     trainingAttendanceData = [];
-    try {
-        const filePath = getFilePath('training_attendance.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                trainingAttendanceData.push(row);
-            })
-            .on('end', function() {
-                console.log('训练出勤加载完成，共 ' + trainingAttendanceData.length + ' 条记录');
-            })
-            .on('error', function(err) {
-                console.error('读取训练出勤文件失败:', err);
-            });
-    } catch (error) {
-        console.error('训练出勤加载失败:', error);
+    const filePath = getFilePath('training_attendance.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('训练出勤数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            trainingAttendanceData.push(row);
+        })
+        .on('end', function() {
+            console.log('训练出勤加载完成，共 ' + trainingAttendanceData.length + ' 条记录');
+        })
+        .on('error', function(err) {
+            console.error('读取训练出勤文件失败:', err);
+        });
 }
 
 // 读取门将数据
 function loadGoalkeepersData() {
     goalkeepersData = [];
-    try {
-        const filePath = getFilePath('goalkeepers.csv');
-        fs.createReadStream(filePath)
-            .pipe(csv())
-            .on('data', function(row) {
-                goalkeepersData.push(row);
-            })
-            .on('end', function() {
-                console.log('门将数据加载完成，共 ' + goalkeepersData.length + ' 名门将');
-            })
-            .on('error', function(err) {
-                console.error('读取门将文件失败:', err);
-            });
-    } catch (error) {
-        console.error('门将数据加载失败:', error);
+    const filePath = getFilePath('goalkeepers.csv');
+    
+    if (!fs.existsSync(filePath)) {
+        console.error('门将数据文件不存在:', filePath);
+        return;
     }
+    
+    fs.createReadStream(filePath)
+        .pipe(csv())
+        .on('data', function(row) {
+            goalkeepersData.push(row);
+        })
+        .on('end', function() {
+            console.log('门将数据加载完成，共 ' + goalkeepersData.length + ' 名门将');
+        })
+        .on('error', function(err) {
+            console.error('读取门将文件失败:', err);
+        });
 }
 
 // 读取知名俱乐部数据
 function loadFamousClubsData() {
     try {
         const filePath = getFilePath('famous_clubs.json');
+        
+        if (!fs.existsSync(filePath)) {
+            console.error('知名俱乐部数据文件不存在:', filePath);
+            return;
+        }
+        
         const data = fs.readFileSync(filePath, 'utf8');
         const clubsData = JSON.parse(data);
-        famousClubsData = clubsData.clubs || [];
+        famousClubsData = clubsData.clubs;
         console.log('知名俱乐部数据加载完成，共 ' + famousClubsData.length + ' 个俱乐部');
     } catch (err) {
         console.error('读取知名俱乐部文件失败:', err);
-        famousClubsData = [];
     }
 }
 
@@ -248,13 +263,18 @@ function loadFamousClubsData() {
 function loadFamousPlayersData() {
     try {
         const filePath = getFilePath('famous_players.json');
+        
+        if (!fs.existsSync(filePath)) {
+            console.error('知名球员数据文件不存在:', filePath);
+            return;
+        }
+        
         const data = fs.readFileSync(filePath, 'utf8');
         const playersDataFromFile = JSON.parse(data);
-        famousPlayersData = playersDataFromFile.players || [];
+        famousPlayersData = playersDataFromFile.players;
         console.log('知名球员数据加载完成，共 ' + famousPlayersData.length + ' 个球员');
     } catch (err) {
         console.error('读取知名球员文件失败:', err);
-        famousPlayersData = [];
     }
 }
 
@@ -373,7 +393,7 @@ app.get('/api/match/:id', function(req, res) {
         });
         
         // 使用简化的验证函数
-        const validationResult = validateMatchData(participants, events);
+        const validationResult = validateAndFixMatchData(participants, events);
         const starters = validationResult.starters;
         const substitutes = validationResult.substitutes;
         
