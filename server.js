@@ -36,6 +36,26 @@ let famousClubsData = [];
 let famousPlayersData = [];
 let playerPreferences = {};
 
+// 文件路径检查函数
+function getFilePath(filename) {
+    const currentDir = process.cwd();
+    const filePath = path.join(currentDir, filename);
+    
+    if (fs.existsSync(filePath)) {
+        return filePath;
+    }
+    
+    // 尝试相对路径
+    if (fs.existsSync(filename)) {
+        return filename;
+    }
+    
+    console.log(`文件未找到: ${filename}, 当前目录: ${currentDir}`);
+    console.log('目录文件列表:', fs.readdirSync(currentDir).filter(f => f.includes('.')). slice(0, 10));
+    
+    throw new Error(`文件不存在: ${filename}`);
+}
+
 // 简化的数据验证函数
 function validateMatchData(participants, events) {
     const starters = [];
@@ -75,7 +95,8 @@ function validateMatchData(participants, events) {
 function loadPlayersData() {
     playersData = [];
     try {
-        fs.createReadStream('2025member.csv')
+        const filePath = getFilePath('2025member.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 playersData.push(row);
@@ -95,7 +116,8 @@ function loadPlayersData() {
 function loadActivitiesData() {
     activitiesData = [];
     try {
-        fs.createReadStream('activities.csv')
+        const filePath = getFilePath('activities.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 activitiesData.push(row);
@@ -115,7 +137,8 @@ function loadActivitiesData() {
 function loadMatchEventsData() {
     matchEventsData = [];
     try {
-        fs.createReadStream('match_events.csv')
+        const filePath = getFilePath('match_events.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 matchEventsData.push(row);
@@ -135,7 +158,8 @@ function loadMatchEventsData() {
 function loadMatchParticipantsData() {
     matchParticipantsData = [];
     try {
-        fs.createReadStream('match_participants.csv')
+        const filePath = getFilePath('match_participants.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 matchParticipantsData.push(row);
@@ -155,7 +179,8 @@ function loadMatchParticipantsData() {
 function loadTrainingAttendanceData() {
     trainingAttendanceData = [];
     try {
-        fs.createReadStream('training_attendance.csv')
+        const filePath = getFilePath('training_attendance.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 trainingAttendanceData.push(row);
@@ -175,7 +200,8 @@ function loadTrainingAttendanceData() {
 function loadGoalkeepersData() {
     goalkeepersData = [];
     try {
-        fs.createReadStream('goalkeepers.csv')
+        const filePath = getFilePath('goalkeepers.csv');
+        fs.createReadStream(filePath)
             .pipe(csv())
             .on('data', function(row) {
                 goalkeepersData.push(row);
@@ -194,7 +220,8 @@ function loadGoalkeepersData() {
 // 读取知名俱乐部数据
 function loadFamousClubsData() {
     try {
-        const data = fs.readFileSync('famous_clubs.json', 'utf8');
+        const filePath = getFilePath('famous_clubs.json');
+        const data = fs.readFileSync(filePath, 'utf8');
         const clubsData = JSON.parse(data);
         famousClubsData = clubsData.clubs || [];
         console.log('知名俱乐部数据加载完成，共 ' + famousClubsData.length + ' 个俱乐部');
@@ -207,7 +234,8 @@ function loadFamousClubsData() {
 // 读取知名球员数据
 function loadFamousPlayersData() {
     try {
-        const data = fs.readFileSync('famous_players.json', 'utf8');
+        const filePath = getFilePath('famous_players.json');
+        const data = fs.readFileSync(filePath, 'utf8');
         const playersDataFromFile = JSON.parse(data);
         famousPlayersData = playersDataFromFile.players || [];
         console.log('知名球员数据加载完成，共 ' + famousPlayersData.length + ' 个球员');
