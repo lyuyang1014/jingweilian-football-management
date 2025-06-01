@@ -230,6 +230,38 @@ function generatePlayerPreferences() {
     console.log('球员偏好数据生成完成');
 }
 
+// 验证并修复比赛数据一致性
+function validateAndFixMatchData(participants, events) {
+    const starters = [];
+    const substitutes = [];
+    
+    // 从参与者数据中提取首发和替补
+    participants.forEach(participant => {
+        if (participant.状态 === '首发' || participant.角色 === '首发') {
+            starters.push(participant.姓名);
+        } else if (participant.状态 === '替补' || participant.角色 === '替补') {
+            substitutes.push(participant.姓名);
+        } else {
+            // 默认作为首发处理
+            starters.push(participant.姓名);
+        }
+    });
+    
+    // 确保有足够的首发球员
+    if (starters.length < 7) {
+        console.log(`警告: 首发球员不足 (${starters.length}/7)，将从替补中补充`);
+        const needMore = 7 - starters.length;
+        const movedFromSubs = substitutes.splice(0, needMore);
+        starters.push(...movedFromSubs);
+    }
+    
+    return {
+        starters: [...new Set(starters)], // 去重
+        substitutes: [...new Set(substitutes)], // 去重
+        isValid: starters.length >= 7
+    };
+}
+
 // 初始化加载数据
 loadPlayersData();
 loadActivitiesData();
@@ -695,38 +727,6 @@ app.get('/api/match/:id', (req, res) => {
     const events = matchEventsData.filter(e => e.activityId === matchId);
     
     // 验证并修复比赛数据一致性
-    function validateAndFixMatchData(participants, events) {
-        const starters = [];
-        const substitutes = [];
-        
-        // 从参与者数据中提取首发和替补
-        participants.forEach(participant => {
-            if (participant.状态 === '首发' || participant.角色 === '首发') {
-                starters.push(participant.姓名);
-            } else if (participant.状态 === '替补' || participant.角色 === '替补') {
-                substitutes.push(participant.姓名);
-            } else {
-                // 默认作为首发处理
-                starters.push(participant.姓名);
-            }
-        });
-        
-        // 确保有足够的首发球员
-        if (starters.length < 7) {
-            console.log(`警告: 首发球员不足 (${starters.length}/7)，将从替补中补充`);
-            const needMore = 7 - starters.length;
-            const movedFromSubs = substitutes.splice(0, needMore);
-            starters.push(...movedFromSubs);
-        }
-        
-        return {
-            starters: [...new Set(starters)], // 去重
-            substitutes: [...new Set(substitutes)], // 去重
-            isValid: starters.length >= 7
-        };
-    }
-    
-    // 验证并修复数据一致性
     const validationResult = validateAndFixMatchData(participants, events);
     const starters = validationResult.starters;
     const substitutes = validationResult.substitutes;
