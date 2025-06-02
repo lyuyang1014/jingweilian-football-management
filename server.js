@@ -35,6 +35,7 @@ let attributeDescriptions = {};
 let famousClubsData = [];
 let famousPlayersData = [];
 let playerPreferences = {};
+let jerseyNameMapping = {};
 
 // 文件路径处理函数 - 确保本地和 Vercel 环境兼容
 function getFilePath(filename) {
@@ -363,6 +364,24 @@ function loadAttributeDescriptions() {
         });
 }
 
+// 加载球衣印名字映射数据
+function loadJerseyNameMapping() {
+    try {
+        const filePath = getFilePath('jersey_name_mapping.json');
+        
+        if (!fs.existsSync(filePath)) {
+            console.log('球衣印名字映射文件不存在，跳过加载');
+            return;
+        }
+        
+        const data = fs.readFileSync(filePath, 'utf8');
+        jerseyNameMapping = JSON.parse(data);
+        console.log('球衣印名字映射数据加载完成，共 ' + Object.keys(jerseyNameMapping).length + ' 名球员');
+    } catch (err) {
+        console.error('读取球衣印名字映射文件失败:', err);
+    }
+}
+
 // 初始化数据加载
 console.log('开始加载数据...');
 loadFamousClubsData();
@@ -374,6 +393,7 @@ loadMatchParticipantsData();
 loadTrainingAttendanceData();
 loadGoalkeepersData();
 loadAttributeDescriptions();
+loadJerseyNameMapping();
 
 // 延迟生成球员偏好数据，确保所有数据都已加载
 setTimeout(() => {
@@ -382,9 +402,22 @@ setTimeout(() => {
 
 // API: 获取所有球员列表
 app.get('/api/players', function(req, res) {
+    // 增强球员数据，添加球衣印名字信息
+    const enhancedPlayersData = playersData.map(player => {
+        const playerName = player.姓名;
+        const jerseyInfo = jerseyNameMapping[playerName] || {};
+        
+        return {
+            ...player,
+            球衣印名字: jerseyInfo.球衣印名字 || player.姓名,
+            实际年龄: jerseyInfo.年龄 || player.年龄,
+            球衣号码显示: jerseyInfo.球衣号码 || player.球衣号码
+        };
+    });
+    
     res.json({
         success: true,
-        data: playersData
+        data: enhancedPlayersData
     });
 });
 

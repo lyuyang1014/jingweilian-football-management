@@ -1413,8 +1413,9 @@
                 const overallRating = player.综合评分 || player.综合能力 || '0';
                 const primaryPosition = player.主要位置 || '';
                 const secondaryPosition = player.次要位置 || '';
-                const jerseyNumber = player.球衣号码 || '?';
-                const playerPinyin = chineseNameToPinyin(player.姓名);
+                const jerseyNumber = player.球衣号码显示 || player.球衣号码 || '?';
+                const jerseyName = player.球衣印名字 || chineseNameToPinyin(player.姓名);
+                const actualAge = player.实际年龄 || player.年龄;
                 
                 // 处理标签，确保总是显示3个
                 const tag1 = player.标签1 || '待评估';
@@ -1450,7 +1451,7 @@
                                 <div class="player-details">
                                     <div class="detail-item">
                                         <i class="fas fa-birthday-cake detail-icon"></i>
-                                        <span>${player.年龄}岁</span>
+                                        <span>${actualAge}岁</span>
                                     </div>
                                     <div class="detail-item">
                                         <span class="zodiac-icon">${zodiacIcons[player.星座] || '⭐'}</span>
@@ -1467,7 +1468,7 @@
                                 <div class="jersey-container">
                                     <div class="jersey-display">
                                         <div class="jersey-number-text">${jerseyNumber}</div>
-                                        <div class="jersey-pinyin-text">${playerPinyin}</div>
+                                        <div class="jersey-pinyin-text">${jerseyName}</div>
                                     </div>
                                     <div class="jersey-label">${jerseyNumber === '?' ? '未选号码' : jerseyNumber + '号球衣'}</div>
                                 </div>
@@ -1507,9 +1508,9 @@
         function updateStats(players) {
             document.getElementById('totalPlayers').textContent = players.length;
             
-            // 平均年龄保留1位小数
+            // 使用实际年龄计算平均年龄，保留1位小数
             const avgAge = (
-                players.reduce((sum, p) => sum + parseInt(p.年龄), 0) / players.length
+                players.reduce((sum, p) => sum + parseInt(p.实际年龄 || p.年龄), 0) / players.length
             ).toFixed(1);
             document.getElementById('avgAge').textContent = avgAge;
             
