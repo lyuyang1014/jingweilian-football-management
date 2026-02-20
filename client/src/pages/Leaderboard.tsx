@@ -1,4 +1,4 @@
-import { useMatches, usePlayers } from "@/hooks/useStaticData";
+import { useMatches, usePlayers, useGoalRecords } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { PLAYER_PHOTOS } from "@shared/constants";
 import { useState, useMemo } from "react";
@@ -10,6 +10,7 @@ type BoardType = "goals" | "assists" | "value";
 export default function Leaderboard() {
   const { data: matches, isLoading: matchesLoading } = useMatches();
   const { data: players, isLoading: playersLoading } = usePlayers();
+  const { data: goalRecords, isLoading: goalRecordsLoading } = useGoalRecords();
   const [board, setBoard] = useState<BoardType>("goals");
 
   const playerIdMap = useMemo(() => {
@@ -20,29 +21,30 @@ export default function Leaderboard() {
   }, [players]);
 
   const topScorers = useMemo(() => {
-    if (!matches || !Array.isArray(matches)) return [];
+    if (!goalRecords || !Array.isArray(goalRecords)) return [];
     const map: Record<string, number> = {};
-    matches.forEach((m: any) => {
-      (m.events?.goalScorers || []).forEach((g: any) => {
-        const name = g.scorer || g.name || g.playerName;
+    goalRecords.forEach((record: any) => {
+      (record.goals || []).forEach((goal: any) => {
+        const name = goal.scorer_name;
         if (name) map[name] = (map[name] || 0) + 1;
       });
     });
     return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 20)
       .map(([name, goals], i) => ({ name, value: goals, rank: i + 1 }));
-  }, [matches]);
+  }, [goalRecords]);
 
   const topAssists = useMemo(() => {
-    if (!matches || !Array.isArray(matches)) return [];
+    if (!goalRecords || !Array.isArray(goalRecords)) return [];
     const map: Record<string, number> = {};
-    matches.forEach((m: any) => {
-      (m.events?.goalScorers || []).forEach((g: any) => {
-        if (g.assister) map[g.assister] = (map[g.assister] || 0) + 1;
+    goalRecords.forEach((record: any) => {
+      (record.goals || []).forEach((goal: any) => {
+        const name = goal.assister_name;
+        if (name) map[name] = (map[name] || 0) + 1;
       });
     });
     return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 20)
       .map(([name, assists], i) => ({ name, value: assists, rank: i + 1 }));
-  }, [matches]);
+  }, [goalRecords]);
 
   const topValue = useMemo(() => {
     if (!players || !Array.isArray(players)) return [];
@@ -55,7 +57,7 @@ export default function Leaderboard() {
 
   const currentList = board === "goals" ? topScorers : board === "assists" ? topAssists : topValue;
   const unitLabel = board === "goals" ? "球" : board === "assists" ? "助攻" : "万";
-  const isLoading = matchesLoading || playersLoading;
+  const isLoading = matchesLoading || playersLoading || goalRecordsLoading;
 
   const findJerseyNumber = (name: string) => {
     if (!players || !Array.isArray(players)) return null;

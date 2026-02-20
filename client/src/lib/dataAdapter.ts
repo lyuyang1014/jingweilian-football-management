@@ -253,9 +253,10 @@ export async function loadStaticData() {
     const players = users.map(u => transformUser(u));
     const matches = events.map(e => transformEvent(e, goalRecords));
 
-    return { players, matches };
+    // Also return raw goal_records for leaderboard calculation
+    return { players, matches, goalRecords };
   } catch (error) {
     console.error("Failed to load static data:", error);
-    return { players: [], matches: [] };
+    return { players: [], matches: [], goalRecords: [] };
   }
 }

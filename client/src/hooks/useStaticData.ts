@@ -4,6 +4,7 @@ import { loadStaticData, Player, Match } from "@/lib/dataAdapter";
 interface StaticData {
   players: Player[];
   matches: Match[];
+  goalRecords: any[];
 }
 
 /**
@@ -81,6 +82,19 @@ export function useMatch(id: string) {
   
   return {
     data: match,
+    isLoading,
+    error,
+  };
+}
+
+/**
+ * Hook to get all goal records
+ */
+export function useGoalRecords() {
+  const { data, isLoading, error } = useStaticData();
+  
+  return {
+    data: data?.goalRecords || [],
     isLoading,
     error,
   };

@@ -71,3 +71,6 @@
 - [x] Fix data adapter to correctly extract opponent names and scores from match_score field
 - [x] URGENT: Change team name from "蔚来联队" to "京蔚联" in all match titles and displays
 - [ ] Rebuild and redeploy to production with all fixes
+- [x] URGENT: Investigate leaderboard (射手榜/助攻榜) data source - found 83/209 goal_records unmatched due to historical import event_ids
+- [x] Fix goal scorer rankings calculation from goal_records data - now using all 209 goal_records directly
+- [x] Fix assist rankings calculation from goal_records data - now using all 209 goal_records directly
