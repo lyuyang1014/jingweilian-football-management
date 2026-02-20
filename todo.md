@@ -69,3 +69,5 @@
 - [x] URGENT: Check win/draw/loss statistics accuracy
 - [x] Deep dive into WeChat Cloud events collection raw data structure
 - [x] Fix data adapter to correctly extract opponent names and scores from match_score field
+- [x] URGENT: Change team name from "蔚来联队" to "京蔚联" in all match titles and displays
+- [ ] Rebuild and redeploy to production with all fixes

@@ -161,7 +161,7 @@ export default function Matches() {
                       {/* Teams & Score */}
                       <div className="flex-1 flex items-center gap-4">
                         <div className="flex items-center gap-2 w-28 justify-end shrink-0">
-                          <span className="text-white text-sm font-medium">蔚来联队</span>
+                          <span className="text-white text-sm font-medium">京蔚联</span>
                           <Shield className="w-4 h-4 text-cyan-400 shrink-0" />
                         </div>
 

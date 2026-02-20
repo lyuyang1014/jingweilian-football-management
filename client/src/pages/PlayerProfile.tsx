@@ -583,7 +583,7 @@ export default function PlayerProfile() {
                       >
                         <div className="w-24 text-white/30 text-xs shrink-0">{m.date}</div>
                         <div className="flex-1 flex items-center gap-4">
-                          <span className="text-white text-sm">蔚来联队</span>
+                          <span className="text-white text-sm">京蔚联</span>
                           <span className={`stat-number text-xl ${isWin ? "text-emerald-400" : isDraw ? "text-amber-400" : "text-red-400"}`}>
                             {m.ourScore} : {m.opponentScore}
                           </span>

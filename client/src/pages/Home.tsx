@@ -234,7 +234,7 @@ export default function Home() {
                     </div>
                     <div className="w-28 text-white/30 text-sm shrink-0">{m.date}</div>
                     <div className="flex-1 flex items-center justify-center gap-4">
-                      <span className="text-white font-medium text-right flex-1">蔚来联队</span>
+                      <span className="text-white font-medium text-right flex-1">京蔚联</span>
                       <div className="flex items-center gap-3">
                         <span className={`stat-number text-2xl ${rc}`}>{m.ourScore}</span>
                         <span className="text-white/20">:</span>

@@ -215,7 +215,7 @@ export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
     opponentScore,
     result,
     venue: event.location || "未知场地",
-    title: `蔚来联队 ${ourScore}:${opponentScore} ${opponentName}`,
+    title: `京蔚联 ${ourScore}:${opponentScore} ${opponentName}`,
     status: "completed",
     participants: {
       starters: 0,

@@ -114,7 +114,7 @@ export default function MatchDetail() {
                 <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
                   <Shield className="w-8 h-8 text-cyan-400" />
                 </div>
-                <h3 className="text-white font-[Oswald] text-xl md:text-2xl">蔚来联队</h3>
+                <h3 className="text-white font-[Oswald] text-xl md:text-2xl">京蔚联</h3>
                 <p className="text-white/30 text-xs mt-1">NIO UNITED</p>
               </div>
 
