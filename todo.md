@@ -36,3 +36,9 @@
 - [x] Match detail page: player names clickable to player profile
 - [x] Match detail page: goal/assist timeline display
 - [x] 4-3-3 formation tactical board at top of Players page with player photos at positions
+- [x] 3D rotating jersey showcase using Three.js with procedural geometry and texture mapping for 360° view
+- [x] Test Fast3D.io for jersey image to 3D model (skipped - browser automation issues)
+- [x] Test Trellis 3D (Microsoft) for jersey image to 3D model (skipped - browser automation issues)
+- [x] Test Hunyuan3D-2.0 (Tencent) for jersey image to 3D model (skipped - browser automation issues)
+- [x] Integrate 3D jersey showcase with Three.js using procedural geometry
+- [x] Fix 3D jersey color display (changed from texture mapping to solid color materials - white for home, red for away)

@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc";
 import Layout from "@/components/Layout";
+import JerseyShowcase3D from "@/components/JerseyShowcase3D";
 import { Link } from "wouter";
 import { SITE_ASSETS, PLAYER_PHOTOS } from "@shared/constants";
 import { useMemo } from "react";
@@ -338,34 +339,7 @@ export default function Home() {
       )}
 
       {/* ===== JERSEY SHOWCASE ===== */}
-      <section className="py-24 bg-[#03060d]">
-        <div className="container">
-          <div className="text-center mb-16">
-            <span className="text-cyan-400/60 text-xs font-[Oswald] tracking-[0.3em] block mb-3">TEAM JERSEYS</span>
-            <h2 className="text-3xl md:text-5xl font-[Oswald] text-white font-bold">球队队服</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-10 text-center group hover:border-white/10 transition-all">
-              <h3 className="text-white font-[Oswald] text-lg mb-1">主场队服</h3>
-              <p className="text-white/30 text-xs font-[Oswald] tracking-wider mb-8">HOME JERSEY · 白色</p>
-              <div className="flex justify-center gap-8">
-                <img src={SITE_ASSETS.jerseyHomeFront} alt="主场球衣正面" className="h-72 object-contain group-hover:scale-105 transition-transform duration-500" />
-                <img src={SITE_ASSETS.jerseyHomeBack} alt="主场球衣背面" className="h-72 object-contain group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <p className="text-white/30 text-xs mt-6">白色主场队服，胸前印有京蔚联狮子logo和YOUMAGIC赞助商标识</p>
-            </div>
-            <div className="bg-white/[0.03] border border-white/5 rounded-2xl p-10 text-center group hover:border-white/10 transition-all">
-              <h3 className="text-white font-[Oswald] text-lg mb-1">客场队服</h3>
-              <p className="text-white/30 text-xs font-[Oswald] tracking-wider mb-8">AWAY JERSEY · 红色</p>
-              <div className="flex justify-center gap-8">
-                <img src={SITE_ASSETS.jerseyAwayFront} alt="客场球衣正面" className="h-72 object-contain group-hover:scale-105 transition-transform duration-500" />
-                <img src={SITE_ASSETS.jerseyAwayBack} alt="客场球衣背面" className="h-72 object-contain group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <p className="text-white/30 text-xs mt-6">红色客场队服，激情与活力的象征，展现球队的战斗精神</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <JerseyShowcase3D />
     </Layout>
   );
 }
