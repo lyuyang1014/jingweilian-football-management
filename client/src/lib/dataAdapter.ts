@@ -131,11 +131,21 @@ export function transformUser(user: WeChatUser): Player {
  */
 export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
   // Find goal records for this event
-  const eventGoals = goalRecords.filter(g => g.event_id === event._id);
+  const eventGoalRecords = goalRecords.filter(g => g.event_id === event._id);
   
-  // Calculate scores
-  const ourGoals = eventGoals.filter(g => g.is_own_goal === false);
-  const opponentGoals = eventGoals.filter(g => g.is_own_goal === true);
+  // Flatten nested goals array
+  const allGoals = eventGoalRecords.flatMap(record => 
+    (record.goals || []).map((goal: any) => ({
+      scorer_name: goal.scorer_name,
+      assister_name: goal.assister_name,
+      minute: goal.minute,
+      is_own_goal: goal.is_own_goal || false,
+    }))
+  );
+  
+  // Calculate scores (own goals count for opponent)
+  const ourGoals = allGoals.filter((g: any) => !g.is_own_goal);
+  const opponentGoals = allGoals.filter((g: any) => g.is_own_goal);
   
   const ourScore = ourGoals.length;
   const opponentScore = opponentGoals.length;
@@ -174,7 +184,7 @@ export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
     },
     events: {
       goals: ourGoals.length,
-      goalScorers: eventGoals.map(g => ({
+      goalScorers: allGoals.map((g: any) => ({
         scorer: g.scorer_name || "未知",
         assister: g.assister_name || null,
         minute: g.minute || 0,

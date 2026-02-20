@@ -56,4 +56,11 @@
 - [x] Add data filtering: only fetch official matches and friendly matches (exclude other types)
 - [x] Update fetch-data script with filtering conditions
 - [x] Test filtered data counts (80 players, 53 matches)
-- [ ] Rebuild and deploy to production with filtered data
+- [x] Rebuild and deploy to production with filtered data (verified: 80 players, 53 matches displayed correctly on niounited.yang-lyu.com)
+- [ ] Generate AI hero background image combining team flag, Beijing skyline, and football field
+- [ ] Integrate generated hero image into homepage
+- [ ] Deploy updated homepage with new hero background
+- [x] URGENT: Fix match history page showing no data (fixed goal scoring logic in dataAdapter)
+- [x] Fix SEO issues: add proper title (京蔚联足球俱乐部 - 北京蔚来车主足球队 | NIO United FC Beijing), meta description, keywords, and image alt text
+- [ ] URGENT: Check production site for "员工风采" section (not found in dev environment)
+- [ ] Rebuild and deploy fixes to production

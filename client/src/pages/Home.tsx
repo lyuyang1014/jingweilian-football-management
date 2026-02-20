@@ -80,7 +80,7 @@ export default function Home() {
         <div className="absolute inset-0">
           <img
             src={SITE_ASSETS.heroBg}
-            alt=""
+            alt="京蔚联足球俱乐部主场背景 - 北京天际线与足球场"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#020309]/95 via-[#020309]/60 to-transparent" />
