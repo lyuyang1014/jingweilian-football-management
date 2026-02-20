@@ -80,3 +80,7 @@
 - [x] Optimize mobile responsiveness for players page and formation (smaller bubbles on mobile)
 - [x] Optimize mobile responsiveness for matches page (stats grid layout)
 - [ ] Test mobile responsiveness on actual device or browser dev tools
+- [ ] URGENT BUG: Production regression - opponent names and scores missing after latest deploy
+- [ ] Verify dataAdapter.ts still has match_score extraction logic
+- [ ] Verify static JSON files contain correct data with opponent names
+- [ ] Redeploy with verified fix
