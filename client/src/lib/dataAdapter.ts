@@ -71,7 +71,15 @@ interface WeChatEvent {
   field_size?: string;
   start_time?: string;
   end_time?: string;
+  planned_start_time?: string;
   competition_id?: string;
+  match_score?: {
+    opponent_name?: string;
+    our_score?: number;
+    opponent_score?: number;
+    result?: 'win' | 'loss' | 'draw';
+  };
+  title?: string;
 }
 
 // Website match format
@@ -99,28 +107,37 @@ export interface Match {
  * Transform WeChat user to website player format
  */
 export function transformUser(user: WeChatUser): Player {
-  const jerseyNumber = user.current_jersey_number || 0;
+  const name = user.real_name || user.nickname || "未知";
+  const number = user.current_jersey_number || 0;
+  const positions = user.positions || [];
+  const group = user.group === "competitive" ? "competitive" : "recreational";
+  
+  // Get avatar from PLAYER_PHOTOS or use default
+  const avatar_url = PLAYER_PHOTOS[number] || user.avatar_url || "";
+  
+  // Transform teammate evaluations
+  const teammate_evaluations = (user.teammate_evaluations || []).map(evaluation => ({
+    text: evaluation.tag.text,
+    icon: evaluation.tag.icon,
+    category: evaluation.tag.category,
+    description: evaluation.tag.description,
+    count: evaluation.count,
+    evaluators: evaluation.evaluators.map(e => e.name),
+  }));
   
   return {
     id: user._id,
-    name: user.real_name || user.nickname || "未知",
-    number: jerseyNumber,
-    positions: user.positions || [],
-    group: user.group === "competitive" ? "competitive" : "recreational",
+    name,
+    number,
+    positions,
+    group,
     bio: user.bio || "",
     value: user.player_value || 0,
-    avatar_url: PLAYER_PHOTOS[jerseyNumber] || user.avatar_url || "",
+    avatar_url,
     preferred_foot: user.preferred_foot || "右脚",
-    height_cm: user.height_cm || 175,
-    weight_kg: user.weight_kg || 70,
-    teammate_evaluations: (user.teammate_evaluations || []).map(evaluation => ({
-      text: evaluation.tag.text,
-      icon: evaluation.tag.icon,
-      category: evaluation.tag.category,
-      description: evaluation.tag.description,
-      count: evaluation.count,
-      evaluators: evaluation.evaluators.map(e => e.name),
-    })),
+    height_cm: user.height_cm || 0,
+    weight_kg: user.weight_kg || 0,
+    teammate_evaluations,
     skill_ratings: user.skill_ratings || {},
     self_skill_ratings: user.self_skill_ratings || null,
   };
@@ -130,10 +147,44 @@ export function transformUser(user: WeChatUser): Player {
  * Transform WeChat event to website match format
  */
 export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
-  // Find goal records for this event
-  const eventGoalRecords = goalRecords.filter(g => g.event_id === event._id);
+  // Use match_score if available (official data from WeChat Cloud)
+  let ourScore = 0;
+  let opponentScore = 0;
+  let result = "平";
+  let opponentName = "对手";
   
-  // Flatten nested goals array
+  if (event.match_score) {
+    // Use official match score
+    ourScore = event.match_score.our_score || 0;
+    opponentScore = event.match_score.opponent_score || 0;
+    opponentName = event.match_score.opponent_name || "对手";
+    
+    // Map result
+    if (event.match_score.result === 'win') result = "胜";
+    else if (event.match_score.result === 'loss') result = "负";
+    else result = "平";
+  } else {
+    // Fallback: calculate from goal records
+    const eventGoalRecords = goalRecords.filter(g => g.event_id === event._id);
+    const allGoals = eventGoalRecords.flatMap(record => 
+      (record.goals || []).map((goal: any) => ({
+        is_own_goal: goal.is_own_goal || false,
+      }))
+    );
+    
+    const ourGoals = allGoals.filter((g: any) => !g.is_own_goal);
+    const opponentGoals = allGoals.filter((g: any) => g.is_own_goal);
+    ourScore = ourGoals.length;
+    opponentScore = opponentGoals.length;
+    
+    if (ourScore > opponentScore) result = "胜";
+    else if (ourScore < opponentScore) result = "负";
+    
+    opponentName = event.opponent || "对手";
+  }
+  
+  // Get all goals for goal scorers list
+  const eventGoalRecords = goalRecords.filter(g => g.event_id === event._id);
   const allGoals = eventGoalRecords.flatMap(record => 
     (record.goals || []).map((goal: any) => ({
       scorer_name: goal.scorer_name,
@@ -143,20 +194,9 @@ export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
     }))
   );
   
-  // Calculate scores (own goals count for opponent)
-  const ourGoals = allGoals.filter((g: any) => !g.is_own_goal);
-  const opponentGoals = allGoals.filter((g: any) => g.is_own_goal);
-  
-  const ourScore = ourGoals.length;
-  const opponentScore = opponentGoals.length;
-  
-  // Determine result
-  let result = "平";
-  if (ourScore > opponentScore) result = "胜";
-  if (ourScore < opponentScore) result = "负";
-  
-  // Format date
-  const date = event.start_time ? new Date(event.start_time) : new Date();
+  // Format date (prefer planned_start_time over start_time)
+  const dateSource = event.planned_start_time || event.start_time;
+  const date = dateSource ? new Date(dateSource) : new Date();
   const dateStr = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
   
   // Determine type
@@ -167,15 +207,15 @@ export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
   return {
     id: event._id,
     date: dateStr,
-    dateRaw: event.start_time || "",
+    dateRaw: dateSource || "",
     type,
     typeLabel,
-    opponent: event.opponent || "对手",
+    opponent: opponentName,
     ourScore,
     opponentScore,
     result,
     venue: event.location || "未知场地",
-    title: `蔚来联队 ${ourScore}:${opponentScore} ${event.opponent || "对手"}`,
+    title: `蔚来联队 ${ourScore}:${opponentScore} ${opponentName}`,
     status: "completed",
     participants: {
       starters: 0,
@@ -183,7 +223,7 @@ export function transformEvent(event: WeChatEvent, goalRecords: any[]): Match {
       total: 0,
     },
     events: {
-      goals: ourGoals.length,
+      goals: allGoals.filter((g: any) => !g.is_own_goal).length,
       goalScorers: allGoals.map((g: any) => ({
         scorer: g.scorer_name || "未知",
         assister: g.assister_name || null,

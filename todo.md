@@ -64,3 +64,8 @@
 - [x] Fix SEO issues: add proper title (京蔚联足球俱乐部 - 北京蔚来车主足球队 | NIO United FC Beijing), meta description, keywords, and image alt text
 - [ ] URGENT: Check production site for "员工风采" section (not found in dev environment)
 - [ ] Rebuild and deploy fixes to production
+- [x] URGENT: Investigate why opponent names are missing (showing "未知")
+- [x] URGENT: Verify match scores calculation logic is correct
+- [x] URGENT: Check win/draw/loss statistics accuracy
+- [x] Deep dive into WeChat Cloud events collection raw data structure
+- [x] Fix data adapter to correctly extract opponent names and scores from match_score field
