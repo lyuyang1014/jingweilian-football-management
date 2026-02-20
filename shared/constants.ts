@@ -1,6 +1,7 @@
 // CDN image URLs for the club website
 export const SITE_ASSETS = {
   clubLogo: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/iWznrpRoCqgXfbHE.png",
+  heroBg: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/rEkGEecGaEDQQLjn.jpg",
   jerseyHomeFront: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/bpCqYeGAtYafzXyy.jpg",
   jerseyHomeBack: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/BOWWrglrWpUeDlWP.jpg",
   jerseyAwayBack: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/OihbbTXDZTHUFKJo.jpg",

@@ -22,5 +22,16 @@
 - [x] Leaderboard page (scorers, assists, value)
 - [x] App.tsx routing for all pages
 - [x] Vitest tests for API proxy (7 tests passed)
-- [ ] Force push to GitHub repo
-- [ ] Deploy to Vercel (niounited.yang-lyu.com)
+- [x] Force push to GitHub repo
+- [x] Deploy via Manus Publish + GitHub push completed
+- [x] Generate hero background image (club flag + Beijing skyline) with nano banana
+- [x] Redesign Hero section for full-screen grand visual impact
+- [x] Improve overall visual style to match professional club aesthetic
+- [x] Enhance all pages with more professional, grand design
+- [x] FIFA-style player cards (gold/gradient card face, photo, number, position, overall rating)
+- [x] Radar chart for player abilities (6-axis: attack, technique, physical, defense, power, speed)
+- [x] Player match history tab
+- [x] Improve player teammate reviews tab with impression tags and detailed scores
+- [x] Match detail page: show complete info (time, venue, goalScorers, assists)
+- [x] Match detail page: player names clickable to player profile
+- [x] Match detail page: goal/assist timeline display
