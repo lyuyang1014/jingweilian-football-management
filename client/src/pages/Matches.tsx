@@ -1,11 +1,11 @@
-import { trpc } from "@/lib/trpc";
+import { useMatches } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { Link } from "wouter";
 import { useState, useMemo } from "react";
 import { Calendar, Shield, MapPin, Trophy, Minus, X } from "lucide-react";
 
 export default function Matches() {
-  const { data: matches, isLoading } = trpc.matches.list.useQuery();
+  const { data: matches, isLoading } = useMatches();
   const [yearFilter, setYearFilter] = useState<string>("all");
   const [typeFilter, setTypeFilter] = useState<string>("all");
 

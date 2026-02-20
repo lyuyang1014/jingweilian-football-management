@@ -1,0 +1,162 @@
+[
+  {
+    "_id": "c611b946685388ff033d1cf31c7e651e",
+    "contact_info": "",
+    "created_at": "2025-06-19T03:50:23.369Z",
+    "creator_id": "oDJ4D7h0kOO7UYl9dR3uDt03YmBg",
+    "creator_name": "吕洋",
+    "description": "",
+    "duration": "2025年 6 月底结束",
+    "name": "石佛营时光主体联赛",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [
+          "oDJ4D7vwN8AV1tzDrVrUFaRVoWxw"
+        ],
+        "removed_players": []
+      },
+      "selected_groups": [
+        "competitive",
+        "recreational"
+      ],
+      "type": "group"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "",
+    "status": "active",
+    "updated_at": "2025-06-19T03:50:23.371Z",
+    "venue": "石佛营足球场"
+  },
+  {
+    "_id": "5377d5c068538929033eaea51f396234",
+    "contact_info": "",
+    "created_at": "2025-06-19T03:51:05.824Z",
+    "creator_id": "oDJ4D7h0kOO7UYl9dR3uDt03YmBg",
+    "creator_name": "吕洋",
+    "description": "",
+    "duration": "2025年6月-9月",
+    "name": "绿茵刺客八人制超级联赛",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [],
+        "removed_players": []
+      },
+      "selected_groups": [
+        "competitive",
+        "recreational"
+      ],
+      "type": "group"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "",
+    "status": "active",
+    "updated_at": "2025-06-19T03:51:05.828Z",
+    "venue": "周家庄足球场"
+  },
+  {
+    "_id": "668ca01e6885a528002fd094690f5efa",
+    "contact_info": "",
+    "created_at": "2025-07-27T04:03:52.720Z",
+    "creator_id": "oDJ4D7pAMXUfLmMv_BuKNS7YQDJw",
+    "creator_name": "衣庆吉",
+    "description": "聚加秋季联赛，14支队伍参加。",
+    "duration": "2025年8月-11月",
+    "name": "聚加秋季联赛",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [],
+        "removed_players": []
+      },
+      "selected_groups": [
+        "competitive"
+      ],
+      "type": "group"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "九人制比赛，双裁判。",
+    "status": "active",
+    "updated_at": "2025-07-27T04:03:52.723Z",
+    "venue": "聚加球场10号场"
+  },
+  {
+    "_id": "9183f5bb68c14ef60008ecb1639cff56",
+    "contact_info": "",
+    "created_at": "2025-09-10T10:12:06.717Z",
+    "creator_id": "oDJ4D7pAMXUfLmMv_BuKNS7YQDJw",
+    "creator_name": "衣庆吉",
+    "description": "2025蔚来社群全国足球赛预选赛大连赛区",
+    "duration": "2025.9.13-9.14",
+    "name": "2025蔚来杯足球预选赛大连赛区",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [],
+        "removed_players": []
+      },
+      "selected_groups": [],
+      "type": "custom"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "8人制，人造草，有越位",
+    "status": "active",
+    "updated_at": "2025-09-10T10:12:06.717Z",
+    "venue": "大连亿辰体育"
+  },
+  {
+    "_id": "a235246468f8a97b0031bfa221f42b9a",
+    "contact_info": "",
+    "created_at": "2025-10-22T09:52:59.456Z",
+    "creator_id": "oDJ4D7pAMXUfLmMv_BuKNS7YQDJw",
+    "creator_name": "衣庆吉",
+    "description": "荣耀森源杯，九人制比赛，全员可参加",
+    "duration": "2025年10月-12月",
+    "name": "荣耀森源杯",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [],
+        "removed_players": []
+      },
+      "selected_groups": [],
+      "type": "custom"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "",
+    "status": "active",
+    "updated_at": "2025-10-22T09:53:42.662Z",
+    "venue": "西红门森源足球场"
+  },
+  {
+    "_id": "5d2610946963506e0b8ce3e7741e9f51",
+    "contact_info": "",
+    "created_at": "2026-01-11T07:25:34.302Z",
+    "creator_id": "oDJ4D7pAMXUfLmMv_BuKNS7YQDJw",
+    "creator_name": "衣庆吉",
+    "description": "京蔚联传统赛事，第五届贺岁杯。京蔚联所有队员都可参加。",
+    "duration": "2026年1月10日-1月17日",
+    "name": "京蔚联第五届贺岁杯",
+    "participant_setting": {
+      "custom_players": [],
+      "group_adjustments": {
+        "added_players": [],
+        "removed_players": []
+      },
+      "selected_groups": [],
+      "type": "custom"
+    },
+    "prizes": "",
+    "remarks": "",
+    "rules": "八人制",
+    "status": "active",
+    "updated_at": "2026-01-11T07:25:34.302Z",
+    "venue": "周家庄文化体育公园"
+  }
+]

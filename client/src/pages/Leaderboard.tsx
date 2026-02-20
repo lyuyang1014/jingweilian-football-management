@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { useMatches, usePlayers } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { PLAYER_PHOTOS } from "@shared/constants";
 import { useState, useMemo } from "react";
@@ -8,8 +8,8 @@ import { Trophy, Target, Handshake, Crown, Medal, Award } from "lucide-react";
 type BoardType = "goals" | "assists" | "value";
 
 export default function Leaderboard() {
-  const { data: matches, isLoading: matchesLoading } = trpc.matches.list.useQuery();
-  const { data: players, isLoading: playersLoading } = trpc.players.list.useQuery();
+  const { data: matches, isLoading: matchesLoading } = useMatches();
+  const { data: players, isLoading: playersLoading } = usePlayers();
   const [board, setBoard] = useState<BoardType>("goals");
 
   const playerIdMap = useMemo(() => {

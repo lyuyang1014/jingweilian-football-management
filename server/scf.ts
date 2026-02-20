@@ -1,7 +1,13 @@
 import axios from "axios";
+import {
+  fetchPlayersFromCloud,
+  fetchMatchesFromCloud,
+  fetchPlayerByIdFromCloud,
+  fetchMatchByIdFromCloud,
+} from "./wechat-cloud";
 
 // Use the existing API from the old Vercel deployment as data source
-// This will be replaced with direct DB calls once we migrate the data
+// Falls back to WeChat Cloud API if old API fails
 const API_BASE = "https://niounited.yang-lyu.com";
 
 // Player data structure from the API
@@ -70,8 +76,17 @@ export async function fetchPlayers(): Promise<Player[]> {
     playersCacheTime = now;
     return players;
   } catch (error) {
-    console.error("[SCF] Failed to fetch players:", error instanceof Error ? error.message : error);
-    return playersCache || [];
+    console.error("[SCF] Failed to fetch players from old API:", error instanceof Error ? error.message : error);
+    console.log("[SCF] Falling back to WeChat Cloud API...");
+    try {
+      const cloudPlayers = await fetchPlayersFromCloud();
+      playersCache = cloudPlayers;
+      playersCacheTime = now;
+      return cloudPlayers;
+    } catch (cloudError) {
+      console.error("[SCF] WeChat Cloud API also failed:", cloudError instanceof Error ? cloudError.message : cloudError);
+      return playersCache || [];
+    }
   }
 }
 
@@ -89,17 +104,44 @@ export async function fetchMatches(): Promise<Match[]> {
     matchesCacheTime = now;
     return matches;
   } catch (error) {
-    console.error("[SCF] Failed to fetch matches:", error instanceof Error ? error.message : error);
-    return matchesCache || [];
+    console.error("[SCF] Failed to fetch matches from old API:", error instanceof Error ? error.message : error);
+    console.log("[SCF] Falling back to WeChat Cloud API...");
+    try {
+      const cloudMatches = await fetchMatchesFromCloud();
+      matchesCache = cloudMatches;
+      matchesCacheTime = now;
+      return cloudMatches;
+    } catch (cloudError) {
+      console.error("[SCF] WeChat Cloud API also failed:", cloudError instanceof Error ? cloudError.message : cloudError);
+      return matchesCache || [];
+    }
   }
 }
 
 export async function fetchPlayerById(id: string): Promise<Player | null> {
-  const players = await fetchPlayers();
-  return players.find((p) => p.id === id) || null;
+  try {
+    const players = await fetchPlayers();
+    const player = players.find((p) => p.id === id);
+    if (player) return player;
+    
+    // If not found in list, try direct cloud API call
+    return await fetchPlayerByIdFromCloud(id);
+  } catch (error) {
+    console.error("[SCF] Failed to fetch player by ID:", error);
+    return null;
+  }
 }
 
 export async function fetchMatchById(id: string): Promise<Match | null> {
-  const matches = await fetchMatches();
-  return matches.find((m) => m.id === id) || null;
+  try {
+    const matches = await fetchMatches();
+    const match = matches.find((m) => m.id === id);
+    if (match) return match;
+    
+    // If not found in list, try direct cloud API call
+    return await fetchMatchByIdFromCloud(id);
+  } catch (error) {
+    console.error("[SCF] Failed to fetch match by ID:", error);
+    return null;
+  }
 }

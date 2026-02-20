@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { usePlayers } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { Link } from "wouter";
 import { PLAYER_PHOTOS } from "@shared/constants";
@@ -9,7 +9,7 @@ import Formation433 from "@/components/Formation433";
 type FilterType = "all" | "competitive" | "entertainment" | "hasPhoto";
 
 export default function Players() {
-  const { data: players, isLoading } = trpc.players.list.useQuery();
+  const { data: players, isLoading } = usePlayers();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
 

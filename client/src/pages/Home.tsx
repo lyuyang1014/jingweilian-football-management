@@ -5,10 +5,11 @@ import { Link } from "wouter";
 import { SITE_ASSETS, PLAYER_PHOTOS } from "@shared/constants";
 import { useMemo } from "react";
 import { ChevronRight, MapPin, Trophy, Users, Calendar, Target, Shield, Zap, Heart, Beer } from "lucide-react";
+import { usePlayers, useMatches } from "@/hooks/useStaticData";
 
 export default function Home() {
-  const { data: players, isLoading: playersLoading } = trpc.players.list.useQuery();
-  const { data: matches, isLoading: matchesLoading } = trpc.matches.list.useQuery();
+  const { data: players, isLoading: playersLoading } = usePlayers();
+  const { data: matches, isLoading: matchesLoading } = useMatches();
 
   const stats = useMemo(() => {
     if (!matches || !Array.isArray(matches)) return null;

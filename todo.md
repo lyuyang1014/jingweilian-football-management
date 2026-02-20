@@ -42,3 +42,13 @@
 - [x] Test Hunyuan3D-2.0 (Tencent) for jersey image to 3D model (skipped - browser automation issues)
 - [x] Integrate 3D jersey showcase with Three.js using procedural geometry
 - [x] Fix 3D jersey color display (changed from texture mapping to solid color materials - white for home, red for away)
+- [ ] Study Volcengine 3D generation API documentation
+- [ ] Test 3D generation with home jersey front image
+- [ ] Generate 3D models for home and away jerseys
+- [ ] Integrate GLB models into website jersey showcase (replace solid color materials)
+- [ ] Test GLB model loading and 3D display
+- [x] URGENT: Fix production data loading - website shows empty data after publish
+- [x] Create build-time data fetching script using WeChat Cloud HTTP API
+- [x] Generate static JSON files in client/public/data/
+- [x] Update frontend to load data from static JSON instead of tRPC
+- [x] Test in dev environment - data loads correctly (120 players, 137 matches)

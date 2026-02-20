@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { usePlayer, useMatches } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { useParams, Link } from "wouter";
 import { PLAYER_PHOTOS } from "@shared/constants";
@@ -145,8 +145,8 @@ function RadarChart({ scores }: { scores: { label: string; value: number }[] }) 
 
 export default function PlayerProfile() {
   const { id } = useParams<{ id: string }>();
-  const { data: player, isLoading } = trpc.players.getById.useQuery({ id: id || "" });
-  const { data: matches } = trpc.matches.list.useQuery();
+  const { data: player, isLoading } = usePlayer(id || "");
+  const { data: matches } = useMatches();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
   const playerPhoto = useMemo(() => {

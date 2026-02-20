@@ -1,4 +1,4 @@
-import { trpc } from "@/lib/trpc";
+import { useMatch, usePlayers } from "@/hooks/useStaticData";
 import Layout from "@/components/Layout";
 import { useParams, Link } from "wouter";
 import { ArrowLeft, Shield, MapPin, Calendar, Target, Swords, Trophy, Clock } from "lucide-react";
@@ -6,8 +6,8 @@ import { useMemo } from "react";
 
 export default function MatchDetail() {
   const { id } = useParams<{ id: string }>();
-  const { data: match, isLoading } = trpc.matches.getById.useQuery({ id: id || "" });
-  const { data: players } = trpc.players.list.useQuery();
+  const { data: match, isLoading } = useMatch(id || "");
+  const { data: players } = usePlayers();
 
   // Build a name -> player id lookup
   const playerIdMap = useMemo(() => {
