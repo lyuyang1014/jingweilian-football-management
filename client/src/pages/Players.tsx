@@ -4,6 +4,7 @@ import { Link } from "wouter";
 import { PLAYER_PHOTOS } from "@shared/constants";
 import { useState, useMemo } from "react";
 import { Search, Users, Swords, Gamepad2, Camera, Star } from "lucide-react";
+import Formation433 from "@/components/Formation433";
 
 type FilterType = "all" | "competitive" | "entertainment" | "hasPhoto";
 
@@ -50,8 +51,15 @@ export default function Players() {
 
   return (
     <Layout>
+      {/* Formation tactical board */}
+      {!isLoading && players && (
+        <div className="container pt-20">
+          <Formation433 players={players as any[]} />
+        </div>
+      )}
+
       {/* Hero Header */}
-      <section className="relative pt-20 pb-12 overflow-hidden">
+      <section className="relative pt-8 pb-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0e1a] via-[#070b14] to-[#020309]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(79,195,247,0.05),transparent_70%)]" />
 

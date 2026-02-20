@@ -35,3 +35,4 @@
 - [x] Match detail page: show complete info (time, venue, goalScorers, assists)
 - [x] Match detail page: player names clickable to player profile
 - [x] Match detail page: goal/assist timeline display
+- [x] 4-3-3 formation tactical board at top of Players page with player photos at positions
