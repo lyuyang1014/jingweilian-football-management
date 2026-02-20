@@ -1,0 +1,26 @@
+# 京蔚联足球俱乐部官网 TODO
+
+- [x] Dark theme CSS setup (colors, fonts, global styles)
+- [x] Upload jersey/player images to S3 CDN
+- [x] tRPC API: players endpoint (proxy to Tencent Cloud SCF)
+- [x] tRPC API: matches endpoint (proxy to Tencent Cloud SCF)
+- [x] Navbar component (logo, navigation links, mobile menu)
+- [x] Footer component
+- [x] Home page: Hero section with background image
+- [x] Home page: About section (club intro)
+- [x] Home page: Recent matches section
+- [x] Home page: Top scorers section
+- [x] Home page: Squad preview section
+- [x] Home page: Jersey showcase section
+- [x] Players list page with search/filter
+- [x] Player profile detail page with tabs
+- [x] Player profile: teammate reviews tab
+- [x] Player profile: ability radar/stats tab
+- [x] Player profile: highlights data tab
+- [x] Matches list page with year/type filters
+- [x] Match detail page
+- [x] Leaderboard page (scorers, assists, value)
+- [x] App.tsx routing for all pages
+- [x] Vitest tests for API proxy (7 tests passed)
+- [ ] Force push to GitHub repo
+- [ ] Deploy to Vercel (niounited.yang-lyu.com)
