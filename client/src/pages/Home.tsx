@@ -75,7 +75,7 @@ export default function Home() {
   return (
     <Layout>
       {/* ===== HERO SECTION - Full viewport, dramatic background ===== */}
-      <section className="relative h-screen min-h-[700px] flex items-end overflow-hidden">
+      <section className="relative h-screen min-h-[600px] md:min-h-[700px] flex items-end overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -95,10 +95,10 @@ export default function Home() {
               <span className="text-white/50 text-sm font-[Oswald] tracking-[0.2em]">EST. 2018 · BEIJING</span>
             </div>
 
-            <h1 className="text-6xl md:text-8xl font-[Oswald] font-bold text-white leading-[0.95] mb-2">
+            <h1 className="text-5xl md:text-6xl lg:text-8xl font-[Oswald] font-bold text-white leading-[0.95] mb-2">
               京蔚联
             </h1>
-            <h2 className="text-4xl md:text-6xl font-[Oswald] font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 leading-tight mb-6">
+            <h2 className="text-3xl md:text-4xl lg:text-6xl font-[Oswald] font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 leading-tight mb-6">
               足球俱乐部
             </h2>
 
@@ -106,16 +106,16 @@ export default function Home() {
               源自蔚来车主的热爱，以球会友。我们不只是一支球队，更是一个充满激情的足球大家庭。
             </p>
 
-            <div className="flex items-center gap-4 mb-16">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-12 md:mb-16">
               <Link
                 href="/players"
-                className="inline-flex items-center gap-2 bg-cyan-500/90 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline"
+                className="inline-flex items-center justify-center gap-2 bg-cyan-500/90 hover:bg-cyan-500 text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline"
               >
                 查看阵容 <ChevronRight size={18} />
               </Link>
               <Link
                 href="/matches"
-                className="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline"
+                className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-white/40 text-white/80 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors no-underline"
               >
                 比赛记录
               </Link>
@@ -123,7 +123,7 @@ export default function Home() {
 
             {/* Stats Bar */}
             {stats && (
-              <div className="grid grid-cols-4 gap-6 border-t border-white/10 pt-8">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 border-t border-white/10 pt-6 md:pt-8">
                 {[
                   { value: players?.length || 0, unit: "人", label: "注册球员" },
                   { value: stats.total, unit: "场", label: "比赛场次" },
@@ -132,8 +132,8 @@ export default function Home() {
                 ].map((s) => (
                   <div key={s.label}>
                     <div className="flex items-baseline gap-0.5">
-                      <span className="stat-number text-3xl md:text-4xl text-white">{s.value}</span>
-                      {s.unit && <span className="text-white/30 text-sm">{s.unit}</span>}
+                      <span className="stat-number text-2xl md:text-3xl lg:text-4xl text-white">{s.value}</span>
+                      {s.unit && <span className="text-white/30 text-xs md:text-sm">{s.unit}</span>}
                     </div>
                     <div className="text-white/30 text-xs mt-1">{s.label}</div>
                   </div>

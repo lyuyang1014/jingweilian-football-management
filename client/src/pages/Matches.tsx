@@ -61,7 +61,7 @@ export default function Matches() {
           </p>
 
           {/* Stats Bar */}
-          <div className="flex justify-center gap-8 md:gap-12 mb-10">
+          <div className="grid grid-cols-3 sm:flex sm:justify-center gap-6 sm:gap-8 md:gap-12 mb-10 max-w-2xl mx-auto">
             {[
               { label: "总场次", value: stats.total, color: "text-white" },
               { label: "胜", value: stats.wins, color: "text-emerald-400" },
@@ -70,8 +70,8 @@ export default function Matches() {
               { label: "进球", value: stats.goalsFor, color: "text-cyan-400" },
               { label: "失球", value: stats.goalsAgainst, color: "text-white/50" },
             ].map((s) => (
-              <div key={s.label}>
-                <div className={`stat-number text-3xl ${s.color}`}>{s.value}</div>
+              <div key={s.label} className="text-center">
+                <div className={`stat-number text-2xl md:text-3xl ${s.color}`}>{s.value}</div>
                 <div className="text-white/20 text-[10px] font-[Oswald] tracking-wider mt-1">{s.label}</div>
               </div>
             ))}

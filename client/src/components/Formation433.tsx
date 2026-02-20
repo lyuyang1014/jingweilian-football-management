@@ -64,13 +64,13 @@ function PlayerBubble({ player, index }: { player: Player; index: number }) {
       }}
     >
       <div className="relative">
-        <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-cyan-400/60 bg-slate-800 shadow-[0_0_12px_rgba(0,200,255,0.15)]">
+        <div className="w-9 h-9 md:w-11 md:h-11 rounded-full overflow-hidden border-2 border-cyan-400/60 bg-slate-800 shadow-[0_0_12px_rgba(0,200,255,0.15)]">
           <img src={player.photo} alt={player.name} className="w-full h-full object-cover" loading="lazy" />
         </div>
-        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white text-[9px] font-bold px-1 py-px rounded shadow">
+        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white text-[8px] md:text-[9px] font-bold px-1 py-px rounded shadow">
           #{player.number}
         </div>
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-2 py-1 bg-slate-900/95 text-white text-[11px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 border border-cyan-500/20">
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 md:mb-3 px-1.5 md:px-2 py-0.5 md:py-1 bg-slate-900/95 text-white text-[10px] md:text-[11px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 border border-cyan-500/20">
           {player.name}
         </div>
       </div>
@@ -131,14 +131,14 @@ export default function Formation433({ players }: Formation433Props) {
   );
 
   return (
-    <div className="w-full max-w-5xl mx-auto mb-12">
+    <div className="w-full max-w-5xl mx-auto mb-12 px-4">
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-white font-[Oswald] mb-1">4-3-3 阵型</h3>
-        <p className="text-sm text-slate-500">展示有写真照片的球员在各首选位置的分布</p>
+        <h3 className="text-xl md:text-2xl font-bold text-white font-[Oswald] mb-1">4-3-3 阵型</h3>
+        <p className="text-xs md:text-sm text-slate-500">展示有写真照片的球员在各首选位置的分布</p>
       </div>
 
       {/* Football pitch */}
-      <div className="relative w-full aspect-[5/4] rounded-xl overflow-hidden border border-green-800/30"
+      <div className="relative w-full aspect-[5/4] rounded-lg md:rounded-xl overflow-hidden border border-green-800/30"
         style={{
           background: "linear-gradient(180deg, #0a2e1a 0%, #0d3820 30%, #0a2e1a 50%, #0d3820 70%, #0a2e1a 100%)",
         }}

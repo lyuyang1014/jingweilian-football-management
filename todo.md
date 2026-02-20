@@ -74,3 +74,9 @@
 - [x] URGENT: Investigate leaderboard (射手榜/助攻榜) data source - found 83/209 goal_records unmatched due to historical import event_ids
 - [x] Fix goal scorer rankings calculation from goal_records data - now using all 209 goal_records directly
 - [x] Fix assist rankings calculation from goal_records data - now using all 209 goal_records directly
+- [x] URGENT: Filter out ungrouped players (group === null) - already filtered in fetch-data script (80 players total)
+- [x] Fix formation layout - optimized player bubble sizes and spacing for mobile
+- [x] Optimize mobile responsiveness for homepage (hero section, stats bar, buttons)
+- [x] Optimize mobile responsiveness for players page and formation (smaller bubbles on mobile)
+- [x] Optimize mobile responsiveness for matches page (stats grid layout)
+- [ ] Test mobile responsiveness on actual device or browser dev tools
