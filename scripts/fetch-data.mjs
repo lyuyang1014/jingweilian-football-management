@@ -126,8 +126,25 @@ async function main() {
     console.log("");
 
     // Fetch all collections
-    const users = await fetchAllRecords(accessToken, "users", 120);
-    const events = await fetchAllRecords(accessToken, "events", 137);
+    const allUsers = await fetchAllRecords(accessToken, "users", 120);
+    const allEvents = await fetchAllRecords(accessToken, "events", 137);
+    
+    // Filter users: only competitive and recreational groups
+    const users = allUsers.filter(u => 
+      u.group === 'competitive' || u.group === 'recreational'
+    );
+    console.log(`\n🔍 Filtered to ${users.length} users (competitive + recreational only)`);
+    
+    // Filter events: only official matches and friendly matches (exclude internal training)
+    const events = allEvents.filter(e => {
+      const title = e.title || '';
+      // Exclude internal training matches
+      if (title.includes('队内对抗赛')) return false;
+      // Include matches with "联赛" or "vs" (league matches and friendly matches)
+      return title.includes('联赛') || title.includes('vs');
+    });
+    console.log(`🔍 Filtered to ${events.length} events (official + friendly matches only)\n`);
+    
     const goalRecords = await fetchAllRecords(accessToken, "goal_records", 209);
     const evaluations = await fetchAllRecords(accessToken, "evaluations", 178);
     const competitions = await fetchAllRecords(accessToken, "competitions", 6);

@@ -52,3 +52,8 @@
 - [x] Generate static JSON files in client/public/data/
 - [x] Update frontend to load data from static JSON instead of tRPC
 - [x] Test in dev environment - data loads correctly (120 players, 137 matches)
+- [x] Add data filtering: only fetch competitive/recreational squad players (exclude informal members)
+- [x] Add data filtering: only fetch official matches and friendly matches (exclude other types)
+- [x] Update fetch-data script with filtering conditions
+- [x] Test filtered data counts (80 players, 53 matches)
+- [ ] Rebuild and deploy to production with filtered data
