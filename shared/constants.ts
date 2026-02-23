@@ -10,6 +10,7 @@ export const SITE_ASSETS = {
 
 // Player photo mapping: jerseyNumber -> CDN URL
 export const PLAYER_PHOTOS: Record<number, string> = {
+  0: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/hPnncETbzIFkTTwn.png",
   2: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/VqDJdLfIDjPvliGo.png",
   4: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/GMtBGaHWtUmMTCWQ.png",
   5: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/IjubIqmfeDFZdpsd.png",
@@ -23,9 +24,11 @@ export const PLAYER_PHOTOS: Record<number, string> = {
   21: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/fgCTuVviSayheLHN.png",
   22: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/DTjCjHvESLtkxVNS.png",
   24: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/DvapUAPaShUWMElR.png",
+  27: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/YUgNIqQnjtWZLfwO.png",
   30: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/wCMoZgzPQBkNXuMu.png",
   31: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/yTRxjScMOusQsACe.png",
   33: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/FATncDkVwwSsNacX.png",
+  44: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/drlreYsUcYIuykUD.png",
   57: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/LqRCoSXbEkiAACYX.png",
   58: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/CQmikQDGEbeqhong.png",
   68: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/BenfytudutYfUORl.png",
