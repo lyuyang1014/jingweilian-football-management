@@ -3,7 +3,8 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { z } from "zod";
-import { fetchPlayers, fetchMatches, fetchPlayerById, fetchMatchById } from "./scf";
+import { fetchPlayers, fetchMatches, fetchPlayerById, fetchMatchById, fetchSignups, fetchAppreciations } from "./scf";
+import { fetchGoalRecordsFromCloud } from "./wechat-cloud";
 
 export const appRouter = router({
   system: systemRouter,
@@ -36,6 +37,29 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await fetchMatchById(input.id);
       }),
+  }),
+
+  // Signups: player attendance records from WeChat Cloud `signups` collection
+  // _openid is mapped to openid for frontend compatibility
+  signups: router({
+    list: publicProcedure.query(async () => {
+      return await fetchSignups();
+    }),
+  }),
+
+  // Appreciations: peer recognition records from WeChat Cloud `event_appreciations` collection
+  // Used by frontend to calculate MVP count per player (most appreciations received in a match)
+  appreciations: router({
+    list: publicProcedure.query(async () => {
+      return await fetchAppreciations();
+    }),
+  }),
+
+  // Goal records: goal and assist records from WeChat Cloud `goal_records` collection
+  goalRecords: router({
+    list: publicProcedure.query(async () => {
+      return await fetchGoalRecordsFromCloud();
+    }),
   }),
 });
 
