@@ -174,3 +174,167 @@ export async function fetchMatchByIdFromCloud(id: string): Promise<any | null> {
     return null;
   }
 }
+
+/**
+ * Fetch all signups from WeChat Cloud database (signups collection)
+ * Maps _openid -> openid for frontend compatibility
+ * Uses pagination to fetch all records (API limit: 100 per request)
+ */
+export async function fetchSignupsFromCloud(): Promise<any[]> {
+  try {
+    const token = await getAccessToken();
+    const allRecords: any[] = [];
+    let offset = 0;
+    const pageSize = 100;
+
+    while (true) {
+      const response = await axios.post(
+        `https://api.weixin.qq.com/tcb/databasequery?access_token=${token}`,
+        {
+          env: ENV_ID,
+          query: `db.collection("signups").skip(${offset}).limit(${pageSize}).get()`,
+        },
+        { timeout: 20000 }
+      );
+
+      if (response.data.errcode) {
+        throw new Error(`WeChat Cloud API error: ${response.data.errmsg}`);
+      }
+
+      const rawData: any[] = response.data.data || [];
+      if (rawData.length === 0) break;
+
+      // Parse JSON strings and map _openid -> openid
+      for (const item of rawData) {
+        let record: any;
+        if (typeof item === "string") {
+          try { record = JSON.parse(item); } catch { record = item; }
+        } else {
+          record = item;
+        }
+        if (record && typeof record === "object") {
+          // Map _openid to openid for frontend compatibility
+          if (record._openid && !record.openid) {
+            record.openid = record._openid;
+          }
+          allRecords.push(record);
+        }
+      }
+
+      if (rawData.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    console.log(`[WeChat Cloud] Fetched signups: ${allRecords.length}`);
+    return allRecords;
+  } catch (error) {
+    console.error("[WeChat Cloud] Failed to fetch signups:", error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all appreciations from WeChat Cloud database (event_appreciations collection)
+ * Returns records with event_id and receiver_openid for MVP calculation
+ * Uses pagination to fetch all records (API limit: 100 per request)
+ */
+export async function fetchAppreciationsFromCloud(): Promise<any[]> {
+  try {
+    const token = await getAccessToken();
+    const allRecords: any[] = [];
+    let offset = 0;
+    const pageSize = 100;
+
+    while (true) {
+      const response = await axios.post(
+        `https://api.weixin.qq.com/tcb/databasequery?access_token=${token}`,
+        {
+          env: ENV_ID,
+          query: `db.collection("event_appreciations").skip(${offset}).limit(${pageSize}).get()`,
+        },
+        { timeout: 20000 }
+      );
+
+      if (response.data.errcode) {
+        throw new Error(`WeChat Cloud API error: ${response.data.errmsg}`);
+      }
+
+      const rawData: any[] = response.data.data || [];
+      if (rawData.length === 0) break;
+
+      for (const item of rawData) {
+        let record: any;
+        if (typeof item === "string") {
+          try { record = JSON.parse(item); } catch { record = item; }
+        } else {
+          record = item;
+        }
+        if (record && typeof record === "object") {
+          allRecords.push(record);
+        }
+      }
+
+      if (rawData.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    console.log(`[WeChat Cloud] Fetched event_appreciations: ${allRecords.length}`);
+    return allRecords;
+  } catch (error) {
+    console.error("[WeChat Cloud] Failed to fetch appreciations:", error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
+/**
+ * Fetch all goal records from WeChat Cloud database (goal_records collection)
+ * Returns records with event_id and goals array (scorer_name, assister_name, etc.)
+ * Uses pagination to fetch all records (API limit: 100 per request)
+ */
+export async function fetchGoalRecordsFromCloud(): Promise<any[]> {
+  try {
+    const token = await getAccessToken();
+    const allRecords: any[] = [];
+    let offset = 0;
+    const pageSize = 100;
+
+    while (true) {
+      const response = await axios.post(
+        `https://api.weixin.qq.com/tcb/databasequery?access_token=${token}`,
+        {
+          env: ENV_ID,
+          query: `db.collection("goal_records").skip(${offset}).limit(${pageSize}).get()`,
+        },
+        { timeout: 20000 }
+      );
+
+      if (response.data.errcode) {
+        throw new Error(`WeChat Cloud API error: ${response.data.errmsg}`);
+      }
+
+      const rawData: any[] = response.data.data || [];
+      if (rawData.length === 0) break;
+
+      for (const item of rawData) {
+        let record: any;
+        if (typeof item === "string") {
+          try { record = JSON.parse(item); } catch { record = item; }
+        } else {
+          record = item;
+        }
+        if (record && typeof record === "object") {
+          allRecords.push(record);
+        }
+      }
+
+      if (rawData.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    console.log(`[WeChat Cloud] Fetched goal_records: ${allRecords.length}`);
+    return allRecords;
+  } catch (error) {
+    console.error("[WeChat Cloud] Failed to fetch goal records:", error instanceof Error ? error.message : error);
+    return [];
+  }
+}

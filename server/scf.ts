@@ -4,6 +4,8 @@ import {
   fetchMatchesFromCloud,
   fetchPlayerByIdFromCloud,
   fetchMatchByIdFromCloud,
+  fetchSignupsFromCloud,
+  fetchAppreciationsFromCloud,
 } from "./wechat-cloud";
 
 // Use the existing API from the old Vercel deployment as data source
@@ -143,5 +145,52 @@ export async function fetchMatchById(id: string): Promise<Match | null> {
   } catch (error) {
     console.error("[SCF] Failed to fetch match by ID:", error);
     return null;
+  }
+}
+
+let signupsCache: any[] | null = null;
+let signupsCacheTime = 0;
+let appreciationsCache: any[] | null = null;
+let appreciationsCacheTime = 0;
+
+/**
+ * Fetch all signups from WeChat Cloud (signups collection)
+ * Returns records with openid (mapped from _openid) and status fields
+ */
+export async function fetchSignups(): Promise<any[]> {
+  const now = Date.now();
+  if (signupsCache && now - signupsCacheTime < CACHE_TTL) {
+    return signupsCache;
+  }
+  try {
+    const data = await fetchSignupsFromCloud();
+    signupsCache = data;
+    signupsCacheTime = now;
+    console.log(`[SCF] Fetched ${data.length} signups`);
+    return data;
+  } catch (error) {
+    console.error("[SCF] Failed to fetch signups:", error instanceof Error ? error.message : error);
+    return signupsCache || [];
+  }
+}
+
+/**
+ * Fetch all appreciations from WeChat Cloud (event_appreciations collection)
+ * Returns records with event_id and receiver_openid for MVP calculation
+ */
+export async function fetchAppreciations(): Promise<any[]> {
+  const now = Date.now();
+  if (appreciationsCache && now - appreciationsCacheTime < CACHE_TTL) {
+    return appreciationsCache;
+  }
+  try {
+    const data = await fetchAppreciationsFromCloud();
+    appreciationsCache = data;
+    appreciationsCacheTime = now;
+    console.log(`[SCF] Fetched ${data.length} appreciations`);
+    return data;
+  } catch (error) {
+    console.error("[SCF] Failed to fetch appreciations:", error instanceof Error ? error.message : error);
+    return appreciationsCache || [];
   }
 }
