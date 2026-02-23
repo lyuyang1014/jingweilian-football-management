@@ -24,6 +24,7 @@ export const PLAYER_PHOTOS: Record<number, string> = {
   21: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/fgCTuVviSayheLHN.png",
   22: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/DTjCjHvESLtkxVNS.png",
   24: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/DvapUAPaShUWMElR.png",
+  27: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/YUgNIqQnjtWZLfwO.png",
   30: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/wCMoZgzPQBkNXuMu.png",
   31: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/yTRxjScMOusQsACe.png",
   33: "https://files.manuscdn.com/user_upload_by_module/session_file/309935782011963950/FATncDkVwwSsNacX.png",
